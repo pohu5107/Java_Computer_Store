@@ -1,0 +1,17 @@
+# --- Maven ---
+target/
+*.class
+.gitignore
+
+# --- NetBeans ---
+nbproject/private/
+nbbuild/
+dist/
+nb-configuration.xml
+nbactions.xml
+
+# --- Hệ điều hành & File rác ---
+Thumbs.db
+.DS_Store
+*.log
+*.tmp
