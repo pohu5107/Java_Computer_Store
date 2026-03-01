@@ -1,2 +1,8 @@
-D:\workspace\HK8\java\Java_Computer_Store\src\main\java\ConnectDB\ConnectDB.java
+D:\workspace\HK8\java\Java_Computer_Store\src\main\java\BUS\BrandsBUS.java
+D:\workspace\HK8\java\Java_Computer_Store\src\main\java\BUS\CategoriesBUS.java
+D:\workspace\HK8\java\Java_Computer_Store\src\main\java\ConnectDB\MySQLConnectDB.java
+D:\workspace\HK8\java\Java_Computer_Store\src\main\java\DAO\BrandsDAO.java
+D:\workspace\HK8\java\Java_Computer_Store\src\main\java\DAO\CategoriesDAO.java
+D:\workspace\HK8\java\Java_Computer_Store\src\main\java\GUI\BrandsGUI.java
+D:\workspace\HK8\java\Java_Computer_Store\src\main\java\GUI\CategoriesGUI.java
 D:\workspace\HK8\java\Java_Computer_Store\src\main\java\java_computer_store\Java_Computer_Store.java

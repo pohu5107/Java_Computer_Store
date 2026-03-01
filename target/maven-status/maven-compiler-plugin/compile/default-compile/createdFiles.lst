@@ -1,2 +1,8 @@
 java_computer_store\Java_Computer_Store.class
-ConnectDB\ConnectDB.class
+ConnectDB\MySQLConnectDB.class
+GUI\BrandsGUI.class
+BUS\BrandsBUS.class
+BUS\CategoriesBUS.class
+GUI\CategoriesGUI.class
+DAO\BrandsDAO.class
+DAO\CategoriesDAO.class

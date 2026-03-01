@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class ConnectDB {
+public class MySQLConnectDB {
     // Cấu hình thông tin kết nối (Thay đổi nếu bạn dùng port khác hoặc có mật khẩu)
     private final String hostname = "localhost";
     private final String port = "3306";
@@ -47,7 +47,7 @@ public class ConnectDB {
 
     // --- HÀM CHẠY THỬ NHANH ---
     public static void main(String[] args) {
-        ConnectDB mysql = new ConnectDB();
+        MySQLConnectDB mysql = new MySQLConnectDB();
         Connection testConn = mysql.getConnection();
         
         if (testConn != null) {
