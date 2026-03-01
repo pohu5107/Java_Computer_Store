@@ -1,2 +1,14 @@
 java_computer_store\Java_Computer_Store.class
+DAO\CustomerDAO.class
 ConnectDB\ConnectDB.class
+DAO\StaffDAO.class
+ConnectDB\testDb.class
+GUI\brands.class
+DAO\BrandDAO.class
+DAO\CategoryDAO.class
+DAO\PurchaseOrderDAO.class
+DAO\ProductDAO.class
+DAO\InvoiceDAO.class
+DAO\PromotionDAO.class
+BUS\brands.class
+DAO\SupplierDAO.class

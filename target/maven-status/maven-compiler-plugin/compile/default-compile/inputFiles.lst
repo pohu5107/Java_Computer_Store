@@ -1,2 +1,14 @@
-D:\workspace\HK8\java\Java_Computer_Store\src\main\java\ConnectDB\ConnectDB.java
-D:\workspace\HK8\java\Java_Computer_Store\src\main\java\java_computer_store\Java_Computer_Store.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\BUS\brands.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\ConnectDB\ConnectDB.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\ConnectDB\testDb.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\DAO\BrandDAO.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\DAO\CategoryDAO.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\DAO\CustomerDAO.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\DAO\InvoiceDAO.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\DAO\ProductDAO.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\DAO\PromotionDAO.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\DAO\PurchaseOrderDAO.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\DAO\StaffDAO.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\DAO\SupplierDAO.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\GUI\brands.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\java_computer_store\Java_Computer_Store.java

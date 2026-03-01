@@ -6,8 +6,8 @@ package DAO;
 
 /**
  *
- * @author Phu
+ * @author USER
  */
-public class brands {
+public class StaffDAO {
     
 }
