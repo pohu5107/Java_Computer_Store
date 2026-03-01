@@ -6,10 +6,7 @@ package DAO;
 import ConnectDB.ConnectDB;
 import java.util.ArrayList;
 import java.sql.*;
-/**
- *
- * @author USER
- */
+
 public class ProductDAO {
     private ConnectDB connectDB = new ConnectDB();
     

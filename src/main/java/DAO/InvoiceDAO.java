@@ -4,10 +4,6 @@
  */
 package DAO;
 
-/**
- *
- * @author USER
- */
 public class InvoiceDAO {
     
 }

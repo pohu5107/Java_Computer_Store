@@ -6,14 +6,10 @@ package DAO;
 import java.sql.*;
 import java.util.ArrayList;
 import ConnectDB.ConnectDB;
-/**
- *
- * @author Phu
- */
+
 public class BrandDAO {
     private ConnectDB connectDB = new ConnectDB();
 
-    // 1. Lấy toàn bộ danh sách Hãng sản xuất
     public ArrayList<Object[]> getAllBrandDAO() {
         ArrayList<Object[]> list = new ArrayList<>();
         String sql = "SELECT * FROM Brands";
@@ -37,7 +33,6 @@ public class BrandDAO {
         return list;
     }
 
-    // 2. Thêm một Hãng mới
     public boolean insertBrandDAO(String id, String name, String address, String phone) {
         String sql = "INSERT INTO Brands (BrandID, BrandName, Address, Phone) VALUES (?, ?, ?, ?)";
         try (Connection conn = connectDB.getConnection();
@@ -55,13 +50,29 @@ public class BrandDAO {
         }
     }
 
-    // 3. Xóa một Hãng theo ID
     public boolean deleteBrandDAO(String id) {
         String sql = "DELETE FROM Brands WHERE BrandID = ?";
         try (Connection conn = connectDB.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
             
             pst.setString(1, id);
+            return pst.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public boolean updateBrandDAO(String id, String name, String address, String phone) {
+        String sql = "UPDATE Brands SET BrandName = ?, Address = ?, Phone = ? WHERE BrandID = ?";
+        try (Connection conn = connectDB.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+            
+            pst.setString(1, name);
+            pst.setString(2, address);
+            pst.setString(3, phone);
+            pst.setString(4, id); // Điều kiện WHERE để biết sửa đúng cái nào
+            
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

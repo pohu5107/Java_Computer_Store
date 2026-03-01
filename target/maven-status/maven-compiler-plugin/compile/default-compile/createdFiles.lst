@@ -3,12 +3,12 @@ DAO\CustomerDAO.class
 ConnectDB\ConnectDB.class
 DAO\StaffDAO.class
 ConnectDB\testDb.class
-GUI\brands.class
 DAO\BrandDAO.class
 DAO\CategoryDAO.class
 DAO\PurchaseOrderDAO.class
 DAO\ProductDAO.class
 DAO\InvoiceDAO.class
+BUS\BrandBUS.class
 DAO\PromotionDAO.class
-BUS\brands.class
+GUI\BrandGUI.class
 DAO\SupplierDAO.class
