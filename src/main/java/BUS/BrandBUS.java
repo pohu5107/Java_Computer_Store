@@ -32,7 +32,7 @@ public class BrandBUS {
         return "Them that bai";
     }
     
-    public String deleteBrandBUS(String id){
+    public String delete(String id){
         if(id.trim().isEmpty()){
             return "ID khong co hop le";
         }
