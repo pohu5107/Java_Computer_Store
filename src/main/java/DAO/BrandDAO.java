@@ -10,7 +10,7 @@ import ConnectDB.ConnectDB;
 public class BrandDAO {
     private ConnectDB connectDB = new ConnectDB();
 
-    public ArrayList<Object[]> getAllBrandDAO() {
+    public ArrayList<Object[]> getAll() {
         ArrayList<Object[]> list = new ArrayList<>();
         String sql = "SELECT * FROM Brands";
         
@@ -33,7 +33,7 @@ public class BrandDAO {
         return list;
     }
 
-    public boolean insertBrandDAO(String id, String name, String address, String phone) {
+    public boolean insert(String id, String name, String address, String phone) {
         String sql = "INSERT INTO Brands (BrandID, BrandName, Address, Phone) VALUES (?, ?, ?, ?)";
         try (Connection conn = connectDB.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
@@ -50,7 +50,7 @@ public class BrandDAO {
         }
     }
 
-    public boolean deleteBrandDAO(String id) {
+    public boolean delete(String id) {
         String sql = "DELETE FROM Brands WHERE BrandID = ?";
         try (Connection conn = connectDB.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
@@ -63,7 +63,7 @@ public class BrandDAO {
         }
     }
     
-    public boolean updateBrandDAO(String id, String name, String address, String phone) {
+    public boolean update(String id, String name, String address, String phone) {
         String sql = "UPDATE Brands SET BrandName = ?, Address = ?, Phone = ? WHERE BrandID = ?";
         try (Connection conn = connectDB.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
@@ -73,6 +73,20 @@ public class BrandDAO {
             pst.setString(3, phone);
             pst.setString(4, id); // Điều kiện WHERE để biết sửa đúng cái nào
             
+            return pst.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public boolean updateStock(String productId, int amount) {
+        // amount > 0 là nhập thêm, amount < 0 là bán đi
+        String sql = "UPDATE Products SET Quantity = Quantity + ? WHERE ProductID = ?";
+        try (Connection conn = connectDB.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+            pst.setInt(1, amount);
+            pst.setString(2, productId);
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

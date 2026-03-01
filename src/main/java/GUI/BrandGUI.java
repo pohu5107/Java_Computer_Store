@@ -35,7 +35,7 @@ public class BrandGUI extends JFrame {
     
     private void loadData() {
         // Gọi BUS lấy dữ liệu
-        ArrayList<Object[]> list = brandBUS.getALLBrandBUS();
+        ArrayList<Object[]> list = brandBUS.getAll();
         
         // Xóa dữ liệu cũ trên Table
         model.setRowCount(0);
