@@ -13,7 +13,7 @@ import java.sql.*;
 public class ProductDAO {
     private ConnectDB connectDB = new ConnectDB();
     
-    public ArrayList<Object[]> getAll() {
+    public ArrayList<Object[]> getAllProductDAO() {
         ArrayList<Object[]> list = new ArrayList<>();
         String sql = "SELECT p.ProductID, p.ProductName, p.Quantity, p.Price, p.Unit, p.CategoryID, p.BrandID," +
                      "pd.CPU, pd.RAM, pd.VGA" +
@@ -41,7 +41,7 @@ public class ProductDAO {
         }
         return list;
     }
-    public boolean insert(String id, String name, int qty, double price, String unit, String catID, String brandID, String cpu, String ram, String vga) {   
+    public boolean insertProductDAO(String id, String name, int qty, double price, String unit, String catID, String brandID, String cpu, String ram, String vga) {   
         
         Connection conn = null;
         try{conn = connectDB.getConnection();
@@ -85,7 +85,7 @@ public class ProductDAO {
             }
         }              
     }
-    public boolean delete(String id){
+    public boolean deleteProductDAO(String id){
         String sql = "DELETE FROM Procducts WHERE PRODUCTID = ?";
         try(Connection conn = connectDB.getConnection();
             PreparedStatement pst = conn.prepareStatement(sql)){

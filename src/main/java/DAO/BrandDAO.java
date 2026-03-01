@@ -14,7 +14,7 @@ public class BrandDAO {
     private ConnectDB connectDB = new ConnectDB();
 
     // 1. Lấy toàn bộ danh sách Hãng sản xuất
-    public ArrayList<Object[]> getAll() {
+    public ArrayList<Object[]> getAllBrandDAO() {
         ArrayList<Object[]> list = new ArrayList<>();
         String sql = "SELECT * FROM Brands";
         
@@ -38,7 +38,7 @@ public class BrandDAO {
     }
 
     // 2. Thêm một Hãng mới
-    public boolean insert(String id, String name, String address, String phone) {
+    public boolean insertBrandDAO(String id, String name, String address, String phone) {
         String sql = "INSERT INTO Brands (BrandID, BrandName, Address, Phone) VALUES (?, ?, ?, ?)";
         try (Connection conn = connectDB.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
@@ -56,7 +56,7 @@ public class BrandDAO {
     }
 
     // 3. Xóa một Hãng theo ID
-    public boolean delete(String id) {
+    public boolean deleteBrandDAO(String id) {
         String sql = "DELETE FROM Brands WHERE BrandID = ?";
         try (Connection conn = connectDB.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
