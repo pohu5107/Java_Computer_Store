@@ -58,12 +58,10 @@ public class BrandBUS {
         ArrayList<Object[]> allBrands = brandDAO.getAll();
         ArrayList<Object[]> result = new ArrayList<>();
 
-        String lowerKey = keyword.toLowerCase();
-
         for (Object[] brand : allBrands) {
             
-            if (brand[0].toString().toLowerCase().contains(lowerKey) || 
-                brand[1].toString().toLowerCase().contains(lowerKey)) {
+            if (brand[0].toString().toLowerCase().contains(keyword.toLowerCase()) || 
+                brand[1].toString().toLowerCase().contains(keyword.toLowerCase())) {
                 result.add(brand);
             }
         }
