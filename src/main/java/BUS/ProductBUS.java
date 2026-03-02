@@ -48,8 +48,49 @@ public class ProductBUS {
         
         return "Cap nhat that bai";
     }
+    
     public ArrayList<Object[]> search(String keyword){
-        ArrrayList<Object[]> list = productDAO.getAll();
+        ArrayList<Object[]> allProduct = productDAO.getAll();
+        ArrayList<Object[]> result = new ArrayList();
         
+       for(Object[] product: allProduct){
+           if(product[0].toString().trim().contains(keyword) ||
+              product[1].toString().trim().contains(keyword))
+               result.add(product);
+       }
+       return result;
     }
+    
+    public ArrayList<Object[]> searchByPrice(String input){
+        ArrayList<Object[]> allProduct = productDAO.getAll();
+        ArrayList<Object[]> result = new ArrayList();
+        
+        String operator = input.trim().replaceAll("[0-9]", "");
+        String money = input.trim().replaceAll("[^0-9]", "");
+        
+        if(money.isEmpty()) return allProduct;
+        
+        double searchPrice = Double.parseDouble(money);
+        
+       for(Object[] product: allProduct){
+           Double ProductPrice = (double) product[3];
+           boolean check = false;
+           switch(operator){
+               case ">":
+                   if(ProductPrice > searchPrice) check = true;
+                   break;
+               case ">=":
+                   if(ProductPrice >= searchPrice) check = true;
+                   break;
+               case "<":
+                   if(ProductPrice < searchPrice) check = true;
+                   break;
+               case "<=":
+                   if(ProductPrice <= searchPrice) check = true;
+                   break;
+           }
+           if(check) result.add(product);
+       }
+       return result;
+    } 
 }
