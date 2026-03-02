@@ -10,7 +10,7 @@ import java.sql.*;
 public class ProductDAO {
     private ConnectDB connectDB = new ConnectDB();
     
-    public ArrayList<Object[]> getAllProductDAO() {
+    public ArrayList<Object[]> getAll() {
         ArrayList<Object[]> list = new ArrayList<>();
         String sql = "SELECT p.ProductID, p.ProductName, p.Quantity, p.Price, p.Unit, p.CategoryID, p.BrandID," +
                      "pd.CPU, pd.RAM, pd.VGA" +
@@ -38,7 +38,7 @@ public class ProductDAO {
         }
         return list;
     }
-    public boolean insertProductDAO(String id, String name, int qty, double price, String unit, String catID, String brandID, String cpu, String ram, String vga) {   
+    public boolean insert(String id, String name, int qty, double price, String unit, String catID, String brandID, String cpu, String ram, String vga) {   
         
         Connection conn = null;
         try{conn = connectDB.getConnection();
@@ -82,13 +82,26 @@ public class ProductDAO {
             }
         }              
     }
-    public boolean deleteProductDAO(String id){
+    public boolean delete(String id){
         String sql = "DELETE FROM Procducts WHERE PRODUCTID = ?";
         try(Connection conn = connectDB.getConnection();
             PreparedStatement pst = conn.prepareStatement(sql)){
             pst.setString(1, id);
             return pst.executeUpdate() > 0;
         } catch (SQLException e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean updateStock(String productId, int amount) {
+        // amount > 0 là nhập thêm, amount < 0 là bán đi
+        String sql = "UPDATE Products SET Quantity = Quantity + ? WHERE ProductID = ?";
+        try (Connection conn = connectDB.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+            pst.setInt(1, amount);
+            pst.setString(2, productId);
+            return pst.executeUpdate() > 0;
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
