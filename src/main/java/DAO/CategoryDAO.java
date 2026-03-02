@@ -11,7 +11,7 @@ public class CategoryDAO {
     private ConnectDB connectDB = new ConnectDB();
 
     // 1. Lấy toàn bộ danh sách Hãng sản xuất
-    public ArrayList<Object[]> getAllBrandDAO() {
+    public ArrayList<Object[]> getAll() {
         ArrayList<Object[]> list = new ArrayList<>();
         String sql = "SELECT * FROM Brands";
         
@@ -34,7 +34,7 @@ public class CategoryDAO {
     }
 
     // 2. Thêm một Hãng mới
-    public boolean insertCategoryDAO(String id, String name, String description) {
+    public boolean insert(String id, String name, String description) {
         String sql = "INSERT INTO Brands (CategoryID, CategoryName, Description) VALUES (?, ?, ?)";
         try (Connection conn = connectDB.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
@@ -51,7 +51,7 @@ public class CategoryDAO {
     }
 
     // 3. Xóa một Hãng theo ID
-    public boolean deleteCategoryDAO(String id) {
+    public boolean delete(String id) {
         String sql = "DELETE FROM Categories WHERE CategoryID = ?";
         try (Connection conn = connectDB.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
@@ -63,6 +63,21 @@ public class CategoryDAO {
             return false;
         }
     }
+    
+    public boolean update(String id, String name, String description){
+        String sql = "DELETE FROM Categories SET CategoryName = ?, Description = ? WHERE CategoryID = ?";
+        try (Connection conn = connectDB.getConnection();
+        PreparedStatement pst = conn.prepareStatement(sql)){
+            pst.setString(1, name);
+            pst.setString(2, description);
+            pst.setString(3, id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            
+        }
+        return false;   
+    }   
+        
 }
 
 
