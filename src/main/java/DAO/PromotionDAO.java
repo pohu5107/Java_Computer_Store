@@ -4,10 +4,6 @@
  */
 package DAO;
 
-/**
- *
- * @author Phu
- */
-public class brands {
+public class PromotionDAO {
     
 }
