@@ -28,17 +28,17 @@ public class ProductBUS {
         
         if(isDuplicate(id)) return "Loi: da co ID ton tai";
         
-        if(productDAO.insert(id, name, qty, price, unit, catID, brandID, cpu, ram, vga, mainboard)) return "Them thanh cong";
+        if(productDAO.insert(id, name, qty, price, unit, catID, brandID, cpu, ram, vga, mainboard)) return "Them san pham thanh cong";
         
-        return "Them that bai";
+        return "Them san pham that bai";
     }
     
     public String delete(String id){
         if(id.trim().isEmpty()) return "ID khong hop le";
         
-        if(productDAO.delete(id)) return "Xoa thanh cong";
+        if(productDAO.delete(id)) return "Xoa san pham thanh cong";
         
-        return "Xoa that bai";
+        return "Xoa san pham that bai";
     }
     
     public String update(String id, String name, int qty, double price, String unit, String catID, String brandID, String cpu, String ram, String vga, String mainboard){
