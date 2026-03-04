@@ -8,14 +8,12 @@ import java.util.ArrayList;
 import ConnectDB.ConnectDB;
 
 public class BrandDAO {
-    private ConnectDB connectDB = new ConnectDB();
 
     public ArrayList<Object[]> getAll() {
         ArrayList<Object[]> list = new ArrayList<>();
         String sql = "SELECT * FROM Brands";
-        
-        try (Connection conn = connectDB.getConnection();
-             Statement st = conn.createStatement();
+        Connection conn = ConnectDB.getConnection();
+        try (Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
             
             while (rs.next()) {
@@ -35,8 +33,8 @@ public class BrandDAO {
 
     public boolean insert(String id, String name, String address, String phone) {
         String sql = "INSERT INTO Brands (BrandID, BrandName, Address, Phone) VALUES (?, ?, ?, ?)";
-        try (Connection conn = connectDB.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
+        Connection conn = ConnectDB.getConnection();
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
             
             pst.setString(1, id);
             pst.setString(2, name);
@@ -52,8 +50,8 @@ public class BrandDAO {
 
     public boolean delete(String id) {
         String sql = "DELETE FROM Brands WHERE BrandID = ?";
-        try (Connection conn = connectDB.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
+        Connection conn = ConnectDB.getConnection();
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
             
             pst.setString(1, id);
             return pst.executeUpdate() > 0;
@@ -65,8 +63,8 @@ public class BrandDAO {
     
     public boolean update(String id, String name, String address, String phone) {
         String sql = "UPDATE Brands SET BrandName = ?, Address = ?, Phone = ? WHERE BrandID = ?";
-        try (Connection conn = connectDB.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
+        Connection conn = ConnectDB.getConnection();
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
             
             pst.setString(1, name);
             pst.setString(2, address);

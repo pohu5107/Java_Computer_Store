@@ -9,21 +9,20 @@ import java.util.ArrayList;
 import ConnectDB.ConnectDB;
 
 public class InvoiceDAO {
-    private ConnectDB connectDB = new ConnectDB();
 
     public ArrayList<Object[]> getAll() {
         ArrayList<Object[]> list = new ArrayList<>();
-        String sql = "SELECT * FROM Invoice";
+        String sql = "SELECT * FROM Invoices";
 
-        try (Connection conn = connectDB.getConnection();
-             Statement st = conn.createStatement();
+        Connection conn = ConnectDB.getConnection();
+        try (Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
 
             while (rs.next()) {
                 Object[] row = {
                     rs.getString("InvoiceID"),
                     rs.getString("CustomerID"),
-                    rs.getDate("InvoiceDate"),
+                    rs.getDate("CreatedDate"),
                     rs.getDouble("TotalAmount")
                 };
                 list.add(row);
@@ -34,11 +33,9 @@ public class InvoiceDAO {
         return list;
     }
 
-    public boolean insert(String id, String customerID, String staffID, Date date, double total, ArrayList<Object[]> details) {
-        Connection conn = null;
-        try {
-            conn = connectDB.getConnection();
-            conn.setAutoCommit(false);
+    public boolean insert(String id, String customerID, String staffID, double total, ArrayList<Object[]> details) {
+        Connection conn = ConnectDB.getConnection();
+        try {conn.setAutoCommit(false);
 
             String sqlInv = "INSERT INTO Invoices (InvoiceID, CustomerID, StaffID, CreatedDate, TotalAmount) VALUES (?, ?, ?, NOW(), ?)";
             PreparedStatement pstInv = conn.prepareStatement(sqlInv);
@@ -73,10 +70,9 @@ public class InvoiceDAO {
     }
 
     public boolean delete(String id) {
-        String sql = "DELETE FROM Invoice WHERE InvoiceID = ?";
-
-        try (Connection conn = connectDB.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
+        String sql = "DELETE FROM Invoices WHERE InvoiceID = ?";
+        Connection conn = ConnectDB.getConnection();
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
 
             pst.setString(1, id);
             return pst.executeUpdate() > 0;
@@ -89,10 +85,9 @@ public class InvoiceDAO {
 
     public ArrayList<Object[]> getByCustomerID(String customerID) {
         ArrayList<Object[]> list = new ArrayList<>();
-        String sql = "SELECT * FROM Invoice WHERE CustomerID = ?";
-
-        try (Connection conn = connectDB.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
+        String sql = "SELECT * FROM Invoices WHERE CustomerID = ?";
+        Connection conn = ConnectDB.getConnection();
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
 
             pst.setString(1, customerID);
             ResultSet rs = pst.executeQuery();
@@ -101,7 +96,7 @@ public class InvoiceDAO {
                 Object[] row = {
                     rs.getString("InvoiceID"),
                     rs.getString("CustomerID"),
-                    rs.getDate("InvoiceDate"),
+                    rs.getDate("CreatedDate"),
                     rs.getDouble("TotalAmount")
                 };
                 list.add(row);
@@ -119,9 +114,8 @@ public class InvoiceDAO {
                      "FROM InvoiceDetails d " +
                      "JOIN Products p ON d.ProductID = p.ProductID " +
                      "WHERE d.InvoiceID = ?";
-
-        try (Connection conn = connectDB.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
+        Connection conn = ConnectDB.getConnection();
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
             
             pst.setString(1, invoiceID);
             ResultSet rs = pst.executeQuery();

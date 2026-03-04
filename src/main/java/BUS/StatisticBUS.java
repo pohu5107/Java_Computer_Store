@@ -6,7 +6,6 @@ package BUS;
 
 import DAO.StatisticDAO;
 import java.util.ArrayList;
-import java.time.LocalDate;
 import java.time.YearMonth;
 
 public class StatisticBUS {
@@ -20,7 +19,6 @@ public class StatisticBUS {
         return new Object[]{ rev, exp, profit };
     }
 
-    // 2. Thống kê theo Tháng (Yêu cầu 12.b.i.1)
     // Người dùng chỉ cần chọn Tháng và Năm, BUS tự tính ngày đầu và cuối tháng
     public ArrayList<Object[]> getReportByMonth(int month, int year) {
         YearMonth yearMonth = YearMonth.of(year, month);
@@ -30,7 +28,7 @@ public class StatisticBUS {
         return statisticDAO.getProfitReport(fromDate, toDate);
     }
 
-    // 3. Thống kê theo Quý (Yêu cầu 12.b.i.1)
+    // Thống kê theo Quý 
     public ArrayList<Object[]> getReportByQuarter(int quarter, int year) {
         String fromDate = "";
         String toDate = "";
@@ -43,7 +41,7 @@ public class StatisticBUS {
         return statisticDAO.getProfitReport(fromDate, toDate);
     }
 
-    // 4. Tìm kiếm sản phẩm bán chạy nhất (Logic bổ sung)
+    // Tìm kiếm sản phẩm bán chạy nhất (Logic bổ sung)
     public ArrayList<Object[]> getTopSellingProducts(String fromDate, String toDate) {
         // Tận dụng hàm profit report và sắp xếp lại theo số lượng bán (QtySold)
         ArrayList<Object[]> list = statisticDAO.getProfitReport(fromDate, toDate);

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.sql.*;
 
 public class ProductDAO {
-    private ConnectDB connectDB = new ConnectDB();
     
     public ArrayList<Object[]> getAll() {
         ArrayList<Object[]> list = new ArrayList<>();
@@ -17,8 +16,8 @@ public class ProductDAO {
                      "pd.CPU, pd.RAM, pd.VGA, pd.Mainboard " +
                      "FROM Products p " +
                      "LEFT JOIN Productdetails pd ON p.ProductID = pd.ProductID";
-        try (Connection conn = connectDB.getConnection();
-             Statement st = conn.createStatement();
+        Connection conn = ConnectDB.getConnection();
+        try (Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
 
             while (rs.next()) {
@@ -44,9 +43,9 @@ public class ProductDAO {
     }
 
     public boolean insert(String id, String name, int qty, double price, String unit, String catID, String brandID, String cpu, String ram, String vga, String mainboard) {   
-        Connection conn = null;
+        Connection conn = ConnectDB.getConnection();
         try {
-            conn = connectDB.getConnection();
+            
             conn.setAutoCommit(false); 
             
             String sqlProd = "INSERT INTO Products (ProductID, ProductName, Quantity, Price, Unit, CategoryID, BrandID) VALUES(?,?,?,?,?,?,?)";
@@ -89,9 +88,9 @@ public class ProductDAO {
     }
 
     public boolean update(String id, String name, int qty, double price, String unit, String catID, String brandID, String cpu, String ram, String vga, String mainboard) {
-        Connection conn = null;
+        Connection conn = ConnectDB.getConnection();
         try {
-            conn = connectDB.getConnection();
+            
             conn.setAutoCommit(false);
 
             String sqlProd = "UPDATE Products SET ProductName = ?, Quantity = ?, Price = ?, Unit = ?, CategoryID = ?, BrandID = ? WHERE ProductID = ?";
@@ -135,8 +134,8 @@ public class ProductDAO {
 
     public boolean delete(String id) {
         String sql = "DELETE FROM Products WHERE ProductID = ?";
-        try (Connection conn = connectDB.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
+        Connection conn = ConnectDB.getConnection();
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
             pst.setString(1, id);
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {

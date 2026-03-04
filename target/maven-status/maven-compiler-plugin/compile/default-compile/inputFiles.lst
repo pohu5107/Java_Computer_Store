@@ -1,4 +1,7 @@
 D:\E\Workspace\java\Java_Computer_Store\src\main\java\BUS\BrandBUS.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\BUS\InvoiceBUS.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\BUS\ProductBUS.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\BUS\StatisticBUS.java
 D:\E\Workspace\java\Java_Computer_Store\src\main\java\ConnectDB\ConnectDB.java
 D:\E\Workspace\java\Java_Computer_Store\src\main\java\ConnectDB\testDb.java
 D:\E\Workspace\java\Java_Computer_Store\src\main\java\DAO\BrandDAO.java
@@ -9,6 +12,8 @@ D:\E\Workspace\java\Java_Computer_Store\src\main\java\DAO\ProductDAO.java
 D:\E\Workspace\java\Java_Computer_Store\src\main\java\DAO\PromotionDAO.java
 D:\E\Workspace\java\Java_Computer_Store\src\main\java\DAO\PurchaseOrderDAO.java
 D:\E\Workspace\java\Java_Computer_Store\src\main\java\DAO\StaffDAO.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\DAO\StatisticDAO.java
 D:\E\Workspace\java\Java_Computer_Store\src\main\java\DAO\SupplierDAO.java
 D:\E\Workspace\java\Java_Computer_Store\src\main\java\GUI\BrandGUI.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\GUI\InvoiceGUI.java
 D:\E\Workspace\java\Java_Computer_Store\src\main\java\java_computer_store\Java_Computer_Store.java

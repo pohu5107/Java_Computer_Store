@@ -8,15 +8,14 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class StatisticDAO {
-    private ConnectDB connectDB = new ConnectDB();
 
     // 1. Tổng Chi (Lấy từ bảng PurchaseOrders)
     public double getTotalExpenditure(String fromDate, String toDate) {
         double total = 0;
-        // Chú ý: Cột ngày của bạn là OrderDate
+        // Chú ý: Cột ngày là OrderDate
         String sql = "SELECT SUM(TotalAmount) FROM PurchaseOrders WHERE OrderDate BETWEEN ? AND ?";
-        try (Connection conn = connectDB.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
+        Connection conn = ConnectDB.getConnection();
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
             pst.setString(1, fromDate);
             pst.setString(2, toDate);
             ResultSet rs = pst.executeQuery();
@@ -28,10 +27,10 @@ public class StatisticDAO {
     // 2. Tổng Thu (Lấy từ bảng Invoices)
     public double getTotalRevenue(String fromDate, String toDate) {
         double total = 0;
-        // Cột ngày của bạn là CreatedDate
+        // Cột ngày là CreatedDate
         String sql = "SELECT SUM(TotalAmount) FROM Invoices WHERE CreatedDate BETWEEN ? AND ?";
-        try (Connection conn = connectDB.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
+        Connection conn = ConnectDB.getConnection();
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
             pst.setString(1, fromDate);
             pst.setString(2, toDate);
             ResultSet rs = pst.executeQuery();
@@ -54,8 +53,8 @@ public class StatisticDAO {
                      "WHERE i.CreatedDate BETWEEN ? AND ? " +
                      "GROUP BY p.ProductID, p.ProductName";
         
-        try (Connection conn = connectDB.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
+        Connection conn = ConnectDB.getConnection();
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
             pst.setString(1, fromDate);
             pst.setString(2, toDate);
             ResultSet rs = pst.executeQuery();

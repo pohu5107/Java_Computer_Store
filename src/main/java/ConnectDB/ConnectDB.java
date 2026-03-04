@@ -5,25 +5,23 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectDB {
-    private final String hostname = "localhost";
-    private final String port = "3306";
-    private final String database = "java_computer_store";
-    private final String user = "root";
-    private final String password = "root"; 
+    private static final String hostname = "localhost";
+    private static final String port = "3306";
+    private static final String database = "java_computer_store";
+    private static final String user = "root";
+    private static final String password = "root"; 
 
-    private final String url = "jdbc:mysql://" + hostname + ":" + port + "/" + database 
+    private static final String url = "jdbc:mysql://" + hostname + ":" + port + "/" + database 
                              + "?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC";
 
-    // Biến static để dùng chung một kết nối duy nhất cho toàn đồ án
     private static Connection conn = null;
 
-    public Connection getConnection() {
+    public static Connection getConnection() {
         try {
-            // Kiểm tra: Nếu chưa có kết nối HOẶC kết nối đã bị đóng thì mới tạo mới
             if (conn == null || conn.isClosed()) {
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 conn = DriverManager.getConnection(url, user, password);
-                System.out.println(">>> Đã mở kết nối mới tới MySQL!");
+                System.out.println(">>> Đã mở kết nối DUY NHẤT tới MySQL!");
             }
         } catch (ClassNotFoundException e) {
             System.err.println("LỖI: Không tìm thấy Driver!");
