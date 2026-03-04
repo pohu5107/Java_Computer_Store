@@ -1,41 +1,43 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package GUI;
 
 import BUS.InvoiceBUS;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Color;
 import java.awt.Font;
+import java.text.DecimalFormat;
 
 public class InvoiceGUI extends JFrame {
     private InvoiceBUS invoiceBUS = new InvoiceBUS();
+    private DecimalFormat df = new DecimalFormat("#,###");
     
-    // Components cho Bảng Hóa Đơn (Main)
     private JTable tblInvoice;
     private DefaultTableModel modelInvoice;
-    
-    // Components cho Bảng Chi Tiết (Sub)
     private JTable tblDetails;
     private DefaultTableModel modelDetails;
-    
     private JTextField txtSearch;
     private JButton btnSearch, btnDelete, btnRefresh;
 
     public InvoiceGUI() {
         initComponents();
-        loadInvoiceData(); // Tự động đổ dữ liệu khi mở giao diện
+        loadInvoiceData();
     }
 
     private void initComponents() {
         setTitle("Hệ Thống Quản Lý Hóa Đơn");
-        setSize(900, 650);
+        setSize(950, 680);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
         setLocationRelativeTo(null);
 
-        // --- KHU VỰC TÌM KIẾM ---
         JLabel lblSearch = new JLabel("Mã Hóa Đơn:");
         lblSearch.setBounds(20, 20, 100, 25);
         add(lblSearch);
@@ -52,54 +54,60 @@ public class InvoiceGUI extends JFrame {
         btnRefresh.setBounds(430, 20, 100, 25);
         add(btnRefresh);
 
-        // --- BẢNG HÓA ĐƠN (MAIN TABLE) ---
         JLabel lblMain = new JLabel("DANH SÁCH HÓA ĐƠN");
         lblMain.setBounds(20, 65, 250, 25);
         lblMain.setFont(new Font("Arial", Font.BOLD, 14));
         add(lblMain);
 
-        String[] colInv = {"Mã HĐ", "Mã KH", "Ngày Lập", "Tổng Tiền (VNĐ)"};
+        String[] colInv = {"Mã HĐ", "Mã KH", "Mã NV", "Ngày Lập", "Tổng Tiền (VNĐ)"};
         modelInvoice = new DefaultTableModel(colInv, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; // Chặn không cho sửa trực tiếp trên ô của bảng
-            }
+            @Override public boolean isCellEditable(int r, int c) { return false; }
         };
         tblInvoice = new JTable(modelInvoice);
+        tblInvoice.setRowHeight(25);
+        
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+        
         JScrollPane scrollInv = new JScrollPane(tblInvoice);
-        scrollInv.setBounds(20, 95, 840, 180);
+        scrollInv.setBounds(20, 95, 890, 180);
         add(scrollInv);
 
-        // --- BẢNG CHI TIẾT (SUB TABLE) ---
+        // Định dạng cột tiền cho bảng chính sau khi add vào ScrollPane
+        tblInvoice.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+
         JLabel lblSub = new JLabel("CHI TIẾT SẢN PHẨM TRONG HÓA ĐƠN");
-        lblSub.setBounds(20, 300, 300, 25);
+        lblSub.setBounds(20, 300, 400, 25);
         lblSub.setFont(new Font("Arial", Font.BOLD, 14));
         lblSub.setForeground(new Color(0, 102, 204));
         add(lblSub);
 
         String[] colDet = {"Mã SP", "Tên Sản Phẩm", "Số Lượng", "Đơn Giá", "Thành Tiền"};
         modelDetails = new DefaultTableModel(colDet, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
+            @Override public boolean isCellEditable(int r, int c) { return false; }
         };
         tblDetails = new JTable(modelDetails);
+        tblDetails.setRowHeight(25);
+        
         JScrollPane scrollDet = new JScrollPane(tblDetails);
-        scrollDet.setBounds(20, 330, 840, 180);
+        scrollDet.setBounds(20, 330, 890, 180);
         add(scrollDet);
+        
+        // Định dạng cột tiền cho bảng chi tiết
+        tblDetails.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+        tblDetails.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
 
-        // --- NÚT CHỨC NĂNG ---
         btnDelete = new JButton("Xóa Hóa Đơn");
-        btnDelete.setBounds(740, 530, 120, 35);
-        btnDelete.setBackground(new Color(204, 0, 0));
+        btnDelete.setBounds(790, 530, 120, 35);
+        btnDelete.setBackground(new Color(180, 0, 0)); // Màu đỏ đậm hơn
         btnDelete.setForeground(Color.WHITE);
+        btnDelete.setFont(new Font("Arial", Font.BOLD, 12));
         btnDelete.setFocusPainted(false);
+        btnDelete.setOpaque(true);
+        btnDelete.setBorderPainted(false);
         add(btnDelete);
 
-        // --- XỬ LÝ SỰ KIỆN ---
-
-        // 1. Click vào bảng trên hiện chi tiết bảng dưới
+        // Sự kiện
         tblInvoice.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -111,67 +119,78 @@ public class InvoiceGUI extends JFrame {
             }
         });
 
-        // 2. Tìm kiếm (Lọc trên ArrayList của BUS)
         btnSearch.addActionListener(e -> {
             String id = txtSearch.getText().trim();
-            if (id.isEmpty()) {
-                loadInvoiceData();
-            } else {
-                fillTable(invoiceBUS.searchByID(id), modelInvoice);
+            if (id.isEmpty()) loadInvoiceData();
+            else {
+                fillTableInvoice(invoiceBUS.searchByID(id));
                 modelDetails.setRowCount(0); 
             }
         });
 
-        // 3. Làm mới dữ liệu
         btnRefresh.addActionListener(e -> {
             txtSearch.setText("");
             loadInvoiceData();
             modelDetails.setRowCount(0);
         });
 
-        // 4. Xóa hóa đơn
         btnDelete.addActionListener(e -> {
             int row = tblInvoice.getSelectedRow();
             if (row == -1) {
-                JOptionPane.showMessageDialog(this, "Vui lòng chọn hóa đơn cần xóa!");
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn hóa đơn!");
                 return;
             }
-            
             String id = tblInvoice.getValueAt(row, 0).toString();
-            int confirm = JOptionPane.showConfirmDialog(this, 
-                    "Bạn có chắc muốn xóa hóa đơn " + id + "?", 
-                    "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
-            
+            int confirm = JOptionPane.showConfirmDialog(this, "Xóa hóa đơn " + id + "?", "Cảnh báo", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
-                String result = invoiceBUS.delete(id);
-                JOptionPane.showMessageDialog(this, result);
+                JOptionPane.showMessageDialog(this, invoiceBUS.delete(id));
                 loadInvoiceData();
                 modelDetails.setRowCount(0);
             }
         });
     }
 
-    private void fillTable(ArrayList<Object[]> list, DefaultTableModel model) {
-        model.setRowCount(0);
+    private void fillTableInvoice(ArrayList<Object[]> list) {
+        modelInvoice.setRowCount(0);
         if (list != null) {
             for (Object[] r : list) {
-                model.addRow(r);
+                Object[] rowData = new Object[5];
+                rowData[0] = r[0]; // ID
+                rowData[1] = r[1]; // CustID
+                rowData[2] = r[2]; // StaffID
+                rowData[3] = r[3]; // Date
+                try {
+                    rowData[4] = df.format(Double.parseDouble(r[4].toString()));
+                } catch (Exception e) { rowData[4] = r[4]; }
+                modelInvoice.addRow(rowData);
             }
         }
     }
 
-    private void loadInvoiceData() {
-        fillTable(invoiceBUS.getAll(), modelInvoice);
+    private void fillTableDetails(ArrayList<Object[]> list) {
+        modelDetails.setRowCount(0);
+        if (list != null) {
+            for (Object[] r : list) {
+                Object[] rowData = new Object[5];
+                rowData[0] = r[0];
+                rowData[1] = r[1];
+                rowData[2] = r[2];
+                try {
+                    rowData[3] = df.format(Double.parseDouble(r[3].toString()));
+                    rowData[4] = df.format(Double.parseDouble(r[4].toString()));
+                } catch (Exception e) {
+                    rowData[3] = r[3]; rowData[4] = r[4];
+                }
+                modelDetails.addRow(rowData);
+            }
+        }
     }
 
-    private void loadDetailsData(String id) {
-        fillTable(invoiceBUS.searchDetailByID(id), modelDetails);
-    }
+    private void loadInvoiceData() { fillTableInvoice(invoiceBUS.getAll()); }
+    private void loadDetailsData(String id) { fillTableDetails(invoiceBUS.searchDetailByID(id)); }
 
     public static void main(String[] args) {
         try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch(Exception e) {}
-        SwingUtilities.invokeLater(() -> {
-            new InvoiceGUI().setVisible(true);
-        });
+        new InvoiceGUI().setVisible(true);
     }
 }

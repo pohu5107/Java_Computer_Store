@@ -144,4 +144,23 @@ public class ProductDAO {
         }
     }
 
+    public Object[] getByID(String id) {
+        String sql = "SELECT ProductID, ProductName, Price, Quantity FROM Products WHERE ProductID = ?";
+        Connection conn = ConnectDB.getConnection();
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
+            pst.setString(1, id);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                return new Object[] {
+                    rs.getString("ProductID"),
+                    rs.getString("ProductName"),
+                    rs.getDouble("Price"),
+                    rs.getInt("Quantity")
+                };
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

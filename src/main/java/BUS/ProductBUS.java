@@ -93,4 +93,8 @@ public class ProductBUS {
        }
        return result;
     } 
+    public Object[] getByID(String id) {
+        if(id == null || id.trim().isEmpty()) return null;
+        return productDAO.getByID(id);
+    }
 }
