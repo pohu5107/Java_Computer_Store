@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.ArrayList;
 
 public class BrandBUS {
-    private BrandDAO brandDAO = new BrandDAO();
+    private BrandsDAO brandDAO = new BrandsDAO();
     
     public ArrayList<Object[]> getAll() {
         return brandDAO.getAll();
