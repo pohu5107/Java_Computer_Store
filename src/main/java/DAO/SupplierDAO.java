@@ -14,9 +14,9 @@ public class SupplierDAO {
 
     // Lấy toàn bộ dữ liệu
     public ArrayList<Object[]> getAllSupplierDAO() {
+
         ArrayList<Object[]> list = new ArrayList<>();
         String sql = "SELECT * FROM Supplier";
-
         try (Connection conn = connectDB.getConnection();
                 Statement st = conn.createStatement();
                 ResultSet rs = st.executeQuery(sql)) {
@@ -38,6 +38,7 @@ public class SupplierDAO {
 
     }
 
+
     public boolean createSupplier(String id, String supplierName, String address, String phone) {
         String sql = "INSERT INTO Supplier (SupplierID, SupplierName, Address, Phone) VALUES (?, ?, ?, ?)";
         try (Connection conn = connectDB.getConnection();
@@ -55,6 +56,7 @@ public class SupplierDAO {
 
     }
 
+
     public boolean updateSupplier(String id, String supplierName, String address, String phone) {
         String sql = "UPDATE Supplier SET SupplierName = ?, address = ?, phone = ? WHERE SupplierID = ?";
         try (Connection conn = connectDB.getConnection();
@@ -71,6 +73,7 @@ public class SupplierDAO {
             return false;
         }
     }
+
 
     public boolean deleteSupplier(String id) {
         String sql = "DELETE FROM Supplier WHERE SupplierID = ?";
