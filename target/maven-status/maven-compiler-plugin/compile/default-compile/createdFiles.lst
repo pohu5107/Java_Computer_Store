@@ -10,6 +10,7 @@ GUI\InvoiceGUI.class
 BUS\StatisticBUS.class
 DAO\ProductDAO.class
 BUS\ProductBUS.class
+GUI\BrandGUI$1.class
 GUI\InvoiceGUI$3.class
 GUI\SaleGUI$2.class
 DAO\PromotionDAO.class
@@ -20,8 +21,10 @@ ConnectDB\ConnectDB.class
 DAO\StaffDAO.class
 GUI\ProductGUI.class
 BUS\CustomerBUS.class
+GUI\BrandGUI$3.class
 GUI\InvoiceGUI$2.class
 BUS\InvoiceBUS.class
+GUI\BrandGUI$2.class
 DAO\InvoiceDAO.class
 GUI\ProductGUI$2.class
 DAO\StatisticDAO.class
