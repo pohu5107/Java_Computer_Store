@@ -32,7 +32,6 @@ public class ProductGUI extends JFrame {
         setLayout(null);
         setLocationRelativeTo(null);
 
-        // --- KHU VỰC NHẬP LIỆU ---
         JPanel pnlInput = new JPanel(null);
         pnlInput.setBorder(BorderFactory.createTitledBorder("Thông tin sản phẩm"));
         pnlInput.setBounds(20, 20, 1040, 220);
@@ -40,14 +39,17 @@ public class ProductGUI extends JFrame {
 
         addLabelTextField(pnlInput, "Mã SP:", txtID = new JTextField(), 20, 30);
         addLabelTextField(pnlInput, "Tên SP:", txtName = new JTextField(), 20, 70);
-        addLabelTextField(pnlInput, "Số lượng:", txtQty = new JTextField(), 20, 110);
-        addLabelTextField(pnlInput, "Đơn giá:", txtPrice = new JTextField(), 20, 150);
+        
+        addLabelTextField(pnlInput, "Số lượng:", txtQty = new JTextField("0"), 20, 110);
+        txtQty.setEditable(false);
+        txtQty.setBackground(new Color(240, 240, 240)); 
+        txtQty.setToolTipText("Số lượng chỉ thay đổi khi Nhập hàng hoặc Bán hàng");
 
+        addLabelTextField(pnlInput, "Đơn giá:", txtPrice = new JTextField(), 20, 150);
         addLabelTextField(pnlInput, "Đơn vị:", txtUnit = new JTextField(), 360, 30);
         addLabelTextField(pnlInput, "Mã Loại:", txtCatID = new JTextField(), 360, 70);
         addLabelTextField(pnlInput, "Mã Hiệu:", txtBrandID = new JTextField(), 360, 110);
         addLabelTextField(pnlInput, "Mainboard:", txtMainboard = new JTextField(), 360, 150);
-
         addLabelTextField(pnlInput, "CPU:", txtCPU = new JTextField(), 700, 30);
         addLabelTextField(pnlInput, "RAM:", txtRAM = new JTextField(), 700, 70);
         addLabelTextField(pnlInput, "VGA:", txtVGA = new JTextField(), 700, 110);
@@ -58,7 +60,7 @@ public class ProductGUI extends JFrame {
         add(lblS);
 
         txtSearch = new JTextField();
-        txtSearch.setToolTipText("Nhập tên hoặc giá (Ví dụ: 15000000 hoặc >5000000)");
+        txtSearch.setToolTipText("Nhập tên, id hoặc giá (Ví dụ: 15000000 hoặc >5000000)");
         txtSearch.setBounds(90, 255, 250, 25);
         add(txtSearch);
 
@@ -66,26 +68,25 @@ public class ProductGUI extends JFrame {
         btnSearch.setBounds(350, 255, 90, 25);
         add(btnSearch);
 
-        // --- NÚT BẤM CÓ MÀU (FIX LỖI KHÓ NHÌN) ---
+        // --- NÚT BẤM ---
         btnAdd = new JButton("Thêm Mới");
         btnAdd.setBounds(460, 250, 110, 35);
-        styleButton(btnAdd, new Color(40, 167, 69)); // Xanh lá
+        styleButton(btnAdd, new Color(40, 167, 69));
 
         btnUpdate = new JButton("Cập Nhật");
         btnUpdate.setBounds(580, 250, 110, 35);
-        styleButton(btnUpdate, new Color(0, 123, 255)); // Xanh dương
+        styleButton(btnUpdate, new Color(0, 123, 255));
 
         btnDelete = new JButton("Xóa SP");
         btnDelete.setBounds(700, 250, 110, 35);
-        styleButton(btnDelete, new Color(220, 53, 69)); // Đỏ
+        styleButton(btnDelete, new Color(220, 53, 69));
 
         btnRefresh = new JButton("Làm Mới");
         btnRefresh.setBounds(820, 250, 110, 35);
-        styleButton(btnRefresh, new Color(108, 117, 125)); // Xám
+        styleButton(btnRefresh, new Color(108, 117, 125));
         
         add(btnAdd); add(btnUpdate); add(btnDelete); add(btnRefresh);
 
-        // --- BẢNG DỮ LIỆU ---
         String[] columns = {"Mã SP", "Tên SP", "SL", "Giá", "Đơn vị", "Loại", "Hiệu", "CPU", "RAM", "VGA", "Main"};
         model = new DefaultTableModel(columns, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
@@ -108,7 +109,6 @@ public class ProductGUI extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int row = tblProduct.getSelectedRow();
                 if (row != -1) {
-                    // FIX LỖI NULL POINTER TẠI ĐÂY
                     txtID.setText(safeToString(model.getValueAt(row, 0)));
                     txtName.setText(safeToString(model.getValueAt(row, 1)));
                     txtQty.setText(safeToString(model.getValueAt(row, 2)));
@@ -129,12 +129,11 @@ public class ProductGUI extends JFrame {
             }
         });
 
-        // Xử lý Tìm kiếm thông minh (Fix lỗi tìm giá tuyệt đối)
         btnSearch.addActionListener(e -> {
             String keyword = txtSearch.getText().trim();
             if (keyword.isEmpty()) {
                 loadData();
-            } else if (keyword.matches("\\d+")) { // Nếu là số thuần túy
+            } else if (keyword.matches("\\d+")) {
                 fillTable(productBUS.searchByPrice("=" + keyword));
             } else if (keyword.startsWith(">") || keyword.startsWith("<") || keyword.startsWith("=")) {
                 fillTable(productBUS.searchByPrice(keyword));
@@ -146,21 +145,23 @@ public class ProductGUI extends JFrame {
         btnAdd.addActionListener(e -> {
             try {
                 String res = productBUS.add(txtID.getText(), txtName.getText(), 
-                    Integer.parseInt(txtQty.getText()), Double.parseDouble(txtPrice.getText()), 
+                    Double.parseDouble(txtPrice.getText()), 
                     txtUnit.getText(), txtCatID.getText(), txtBrandID.getText(), 
                     txtCPU.getText(), txtRAM.getText(), txtVGA.getText(), txtMainboard.getText());
                 JOptionPane.showMessageDialog(this, res);
                 loadData();
-            } catch (Exception ex) { JOptionPane.showMessageDialog(this, "Vui lòng nhập đúng định dạng số!"); }
+            } catch (Exception ex) { JOptionPane.showMessageDialog(this, "Vui lòng nhập đúng định dạng số cho Đơn giá!"); }
         });
 
         btnUpdate.addActionListener(e -> {
-            String res = productBUS.update(txtID.getText(), txtName.getText(), 
-                    Integer.parseInt(txtQty.getText()), Double.parseDouble(txtPrice.getText()), 
-                    txtUnit.getText(), txtCatID.getText(), txtBrandID.getText(), 
-                    txtCPU.getText(), txtRAM.getText(), txtVGA.getText(), txtMainboard.getText());
-            JOptionPane.showMessageDialog(this, res);
-            loadData();
+            try {
+                String res = productBUS.update(txtID.getText(), txtName.getText(), 
+                        Double.parseDouble(txtPrice.getText()), 
+                        txtUnit.getText(), txtCatID.getText(), txtBrandID.getText(), 
+                        txtCPU.getText(), txtRAM.getText(), txtVGA.getText(), txtMainboard.getText());
+                JOptionPane.showMessageDialog(this, res);
+                loadData();
+            } catch (Exception ex) { JOptionPane.showMessageDialog(this, "Vui lòng nhập đúng định dạng số!"); }
         });
 
         btnDelete.addActionListener(e -> {
@@ -210,7 +211,9 @@ public class ProductGUI extends JFrame {
     private void loadData() { fillTable(productBUS.getAll()); }
 
     private void refreshForm() {
-        txtID.setText(""); txtName.setText(""); txtQty.setText(""); txtPrice.setText("");
+        txtID.setText(""); txtName.setText(""); 
+        txtQty.setText("0");
+        txtPrice.setText("");
         txtUnit.setText(""); txtCatID.setText(""); txtBrandID.setText("");
         txtCPU.setText(""); txtRAM.setText(""); txtVGA.setText(""); txtMainboard.setText("");
         txtID.setEditable(true);
