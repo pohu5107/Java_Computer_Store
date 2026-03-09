@@ -37,33 +37,33 @@ public class CustomerBUS {
     }
     
     public String add(String id, String firstName, String lastName, String address, String phone) {
-        if (id.trim().isEmpty() || firstName.trim().isEmpty() || lastName.trim().isEmpty()) return "ID va Ten khong duoc de trong";
+        if (id.trim().isEmpty() || firstName.trim().isEmpty() || lastName.trim().isEmpty()) return "ID và Tên không được để trống";
 
-        if (isDuplicate(id)) return "Loi: he thong da co ma";
+        if (isDuplicate(id)) return "Lỗi: Hệ thống đã có mã";
 
-        if (customerDAO.insert(id, firstName, lastName, address, phone)) return "Them khach hang thanh cong";
-        return "Them khach hang that bai";
+        if (customerDAO.insert(id, firstName, lastName, address, phone)) return "Thêm thành công";
+        return "Thêm thất bại";
     }
     
     public String delete(String id){
         if(id.trim().isEmpty()){
-            return "ID khong co hop le";
+            return "ID không hợp lệ";
         }
         if(customerDAO.delete(id)){
-            return "xoa thanh cong";
+            return "Xóa thành công";
         }
-        return "Xoa that bai";
+        return "Xóa thất bại";
     }
     
     public String update(String id, String firstName, String lastName, String address, String phone) {
         if (firstName.trim().isEmpty() || lastName.trim().isEmpty()) {
-            return "Ho va Ten khong duoc de trong";
+            return "Họ và Tên khống được để trống";
         }
         
         if (customerDAO.update(id, firstName, lastName, address, phone)) {
-            return "cap nhat thanh cong";
+            return "Cập nhật thành công";
         }
-        return "cap nhat that bai";
+        return "Cập nhật thất bại";
     }
     
     public ArrayList<Object[]> search(String keyword) {

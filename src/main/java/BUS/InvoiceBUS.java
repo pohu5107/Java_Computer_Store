@@ -25,23 +25,23 @@ public class InvoiceBUS {
     }
     
     public String add(String id, String customerID, String staffID, double total, ArrayList<Object[]> details){
-        if(id.trim().isEmpty() || customerID.trim().isEmpty() || staffID.trim().isEmpty()) return "Thieu ID cua hoa don, khach hang hoac nhan vien";
+        if(id.trim().isEmpty() || customerID.trim().isEmpty() || staffID.trim().isEmpty()) return "Thiếu ID của hóa đơn, khách hàng hoặc nhân viên";
         
-        if(details == null || details.isEmpty()) return "Hoa don phai co it nhat 1 san pham";
+        if(details == null || details.isEmpty()) return "Hóa đơn phải có ít nhất 1 sản phẩm";
         
-        if(isDuplicate(id)) return "ID hoa don da ton tai";
+        if(isDuplicate(id)) return "ID đã tồn tại";
         
-        if(invoiceDAO.insert(id, customerID, staffID, total, details)) return "Them hoa don thanh cong";
+        if(invoiceDAO.insert(id, customerID, staffID, total, details)) return "Thêm thành công";
         
-        return "Them hoa don that bai";
+        return "Thêm thất bại";
     }
     
     public String delete(String id){
-        if(id.trim().isEmpty()) return "ID khong hop le";
+        if(id.trim().isEmpty()) return "ID không hợp lệ";
         
-        if(invoiceDAO.delete(id)) return "Xoa hoa don thanh cong";
+        if(invoiceDAO.delete(id)) return "Xóa thành công";
         
-        return "Xoa hoa don that bai";
+        return "Xóa thất bại";
     }
     
     public ArrayList<Object[]> searchByID(String id) {

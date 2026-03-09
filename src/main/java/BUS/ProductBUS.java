@@ -24,29 +24,29 @@ public class ProductBUS {
     }
     
     public String add(String id, String name, int qty, double price, String unit, String catID, String brandID, String cpu, String ram, String vga, String mainboard){
-        if(id.trim().isEmpty()||name.trim().isEmpty()) return "ID va Ten khong duoc de trong";
+        if(id.trim().isEmpty()||name.trim().isEmpty()) return "ID và Tên không được để trống";
         
-        if(isDuplicate(id)) return "Loi: da co ID ton tai";
+        if(isDuplicate(id)) return "Lỗi: ID đã tồn tại";
         
-        if(productDAO.insert(id, name, qty, price, unit, catID, brandID, cpu, ram, vga, mainboard)) return "Them san pham thanh cong";
+        if(productDAO.insert(id, name, qty, price, unit, catID, brandID, cpu, ram, vga, mainboard)) return "Thêm thành công";
         
-        return "Them san pham that bai";
+        return "Thêm thất bại";
     }
     
     public String delete(String id){
-        if(id.trim().isEmpty()) return "ID khong hop le";
+        if(id.trim().isEmpty()) return "ID không hợp lệ";
         
-        if(productDAO.delete(id)) return "Xoa san pham thanh cong";
+        if(productDAO.delete(id)) return "Xóa thành công";
         
-        return "Xoa san pham that bai";
+        return "Xóa thất bại";
     }
     
     public String update(String id, String name, int qty, double price, String unit, String catID, String brandID, String cpu, String ram, String vga, String mainboard){
-        if(name.trim().isEmpty()) return "Ten khong duoc de trong";
+        if(name.trim().isEmpty()) return "Tên không được để trống";
         
-        if(productDAO.update(id, name, qty, price, unit, catID, brandID, cpu, ram, vga, mainboard)) return "Cap nhat thanh cong";
+        if(productDAO.update(id, name, qty, price, unit, catID, brandID, cpu, ram, vga, mainboard)) return "Cập nhật thành công";
         
-        return "Cap nhat that bai";
+        return "Cập nhật thất bại";
     }
     
     public ArrayList<Object[]> search(String keyword){
@@ -87,6 +87,9 @@ public class ProductBUS {
                    break;
                case "<=":
                    if(ProductPrice <= searchPrice) check = true;
+                   break;
+               case "=":
+                   if(ProductPrice == searchPrice) check = true;
                    break;
            }
            if(check) result.add(product);

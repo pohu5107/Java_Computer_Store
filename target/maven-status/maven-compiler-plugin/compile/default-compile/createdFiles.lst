@@ -2,6 +2,7 @@ DAO\CustomerDAO.class
 GUI\InvoiceGUI$1.class
 GUI\SaleGUI.class
 ConnectDB\testDb.class
+GUI\ProductGUI$1.class
 DAO\BrandDAO.class
 DAO\CategoryDAO.class
 DAO\PurchaseOrderDAO.class
@@ -17,10 +18,12 @@ GUI\SaleGUI$1.class
 java_computer_store\Java_Computer_Store.class
 ConnectDB\ConnectDB.class
 DAO\StaffDAO.class
+GUI\ProductGUI.class
 BUS\CustomerBUS.class
 GUI\InvoiceGUI$2.class
 BUS\InvoiceBUS.class
 DAO\InvoiceDAO.class
+GUI\ProductGUI$2.class
 DAO\StatisticDAO.class
 BUS\BrandBUS.class
 DAO\SupplierDAO.class

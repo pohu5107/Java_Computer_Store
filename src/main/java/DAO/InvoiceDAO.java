@@ -39,7 +39,6 @@ public class InvoiceDAO {
         Connection conn = ConnectDB.getConnection();
         try {
             conn.setAutoCommit(false);
-            // Sửa lại các cột chèn vào cho khớp với DB của bạn (SubTotal tạm tính bằng Total)
             String sqlInv = "INSERT INTO Invoices (InvoiceID, StaffID, CustomerID, CreatedDate, SubTotal, TotalAmount) VALUES (?, ?, ?, NOW(), ?, ?)";
             PreparedStatement pstInv = conn.prepareStatement(sqlInv);
             pstInv.setString(1, id);
