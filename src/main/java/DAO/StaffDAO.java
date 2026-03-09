@@ -59,7 +59,7 @@ public class StaffDAO {
 
     }
 
-    public boolean update(String id, String firstName, String lastName, String gender, Date date, String phone) {
+    public boolean updateStaff(String id, String firstName, String lastName, String gender, Date date, String phone) {
         String sql = "UPDATE Staff SET FirstName = ?, LastName = ?, gender = ?, date = ?, phone = ? WHERE StaffID = ?";
         try (Connection conn = connectDB.getConnection();
                 PreparedStatement pst = conn.prepareStatement(sql)) {

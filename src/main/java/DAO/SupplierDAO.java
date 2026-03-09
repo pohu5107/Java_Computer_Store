@@ -13,7 +13,7 @@ public class SupplierDAO {
     private ConnectDB connectDB = new ConnectDB();
 
     // Lấy toàn bộ dữ liệu
-    public ArrayList<Object[]> getAllStaffDAO() {
+    public ArrayList<Object[]> getAllSupplierDAO() {
         ArrayList<Object[]> list = new ArrayList<>();
         String sql = "SELECT * FROM Supplier";
 
@@ -38,7 +38,7 @@ public class SupplierDAO {
 
     }
 
-    public boolean createStaff(String id, String supplierName, String address, String phone) {
+    public boolean createSupplier(String id, String supplierName, String address, String phone) {
         String sql = "INSERT INTO Supplier (SupplierID, SupplierName, Address, Phone) VALUES (?, ?, ?, ?)";
         try (Connection conn = connectDB.getConnection();
                 PreparedStatement pst = conn.prepareStatement(sql)) {
@@ -55,7 +55,7 @@ public class SupplierDAO {
 
     }
 
-    public boolean update(String id, String supplierName, String address, String phone) {
+    public boolean updateSupplier(String id, String supplierName, String address, String phone) {
         String sql = "UPDATE Supplier SET SupplierName = ?, address = ?, phone = ? WHERE SupplierID = ?";
         try (Connection conn = connectDB.getConnection();
                 PreparedStatement pst = conn.prepareStatement(sql)) {
@@ -72,7 +72,7 @@ public class SupplierDAO {
         }
     }
 
-    public boolean deleteStaff(String id) {
+    public boolean deleteSupplier(String id) {
         String sql = "DELETE FROM Supplier WHERE SupplierID = ?";
         try (Connection conn = connectDB.getConnection();
                 PreparedStatement pst = conn.prepareStatement(sql)) {
