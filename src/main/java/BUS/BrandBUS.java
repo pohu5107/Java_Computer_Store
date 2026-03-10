@@ -3,15 +3,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package BUS;
-import DAO.BrandsDAO;
+import DAO.BrandDAO;
 import javax.swing.table.DefaultTableModel;
-import DAO.BrandsDAO; // Gọi lớp DAO bạn vừa hoàn thành
+import DAO.BrandDAO; // Gọi lớp DAO bạn vừa hoàn thành
 import java.util.ArrayList;
 
 import java.util.ArrayList;
 
 public class BrandBUS {
-    private BrandsDAO brandDAO = new BrandsDAO();
+    private BrandDAO brandDAO = new BrandDAO();
     
     public ArrayList<Object[]> getAll() {
         return brandDAO.getAll();

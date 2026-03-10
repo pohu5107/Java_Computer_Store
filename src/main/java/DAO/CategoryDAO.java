@@ -8,14 +8,11 @@ import java.util.ArrayList;
 import ConnectDB.ConnectDB;
 
 public class CategoryDAO {
-    private ConnectDB connectDB = new ConnectDB();
-
-    // 1. Lấy toàn bộ danh sách Hãng sản xuất
     public ArrayList<Object[]> getAll() {
         ArrayList<Object[]> list = new ArrayList<>();
         String sql = "SELECT * FROM Brands";
         
-        try (Connection conn = connectDB.getConnection();
+        try (Connection conn = ConnectDB.getConnection();
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
             
@@ -36,9 +33,8 @@ public class CategoryDAO {
     // 2. Thêm một Hãng mới
     public boolean insert(String id, String name, String description) {
         String sql = "INSERT INTO Brands (CategoryID, CategoryName, Description) VALUES (?, ?, ?)";
-        try (Connection conn = connectDB.getConnection();
+        try (Connection conn = ConnectDB.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
-            
             pst.setString(1, id);
             pst.setString(2, name);
             pst.setString(3, description);
@@ -53,7 +49,7 @@ public class CategoryDAO {
     // 3. Xóa một Hãng theo ID
     public boolean delete(String id) {
         String sql = "DELETE FROM Categories WHERE CategoryID = ?";
-        try (Connection conn = connectDB.getConnection();
+        try (Connection conn = ConnectDB.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
             
             pst.setString(1, id);
@@ -66,7 +62,7 @@ public class CategoryDAO {
     
     public boolean update(String id, String name, String description){
         String sql = "DELETE FROM Categories SET CategoryName = ?, Description = ? WHERE CategoryID = ?";
-        try (Connection conn = connectDB.getConnection();
+        try (Connection conn = ConnectDB.getConnection();
         PreparedStatement pst = conn.prepareStatement(sql)){
             pst.setString(1, name);
             pst.setString(2, description);

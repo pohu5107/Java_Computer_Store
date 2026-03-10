@@ -6,18 +6,18 @@ import java.sql.SQLException;
 
 public class ConnectDB {
     // Cấu hình thông tin kết nối (Thay đổi nếu bạn dùng port khác hoặc có mật khẩu)
-    private final String hostname = "localhost";
-    private final String port = "3306";
-    private final String database = "java_computer_store";
-    private final String user = "root";
-    private final String password = "root"; // XAMPP mặc định để trống
+    private static final String hostname = "localhost";
+    private static final String port = "3306";
+    private static final String database = "java_computer_store";
+    private static final String user = "root";
+    private static final String password = "root"; // XAMPP mặc định để trống
 
-    private final String url = "jdbc:mysql://" + hostname + ":" + port + "/" + database 
+    private static final String url = "jdbc:mysql://" + hostname + ":" + port + "/" + database 
                              + "?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC";
 
-    private Connection conn = null;
+    private static Connection conn = null;
 
-    public Connection getConnection() {
+    public static Connection getConnection() {
         try {
             // Kiểm tra: Nếu chưa có kết nối HOẶC kết nối đã bị đóng thì mới tạo mới
             if (conn == null || conn.isClosed()) {
@@ -45,20 +45,20 @@ public class ConnectDB {
     }
 
     // --- HÀM CHẠY THỬ NHANH ---
-    public static void main(String[] args) {
-        ConnectDB mysql = new ConnectDB();
-        Connection testConn = mysql.getConnection();
-        
-        if (testConn != null) {
-            System.out.println("==========================================");
-            System.out.println(" Connected to: java_computer_store");
-            System.out.println("==========================================");
-            
-            // Thử đóng kết nối sau khi test 
-            mysql.closeConnection();
-        } else {
-            System.out.println(">>> KẾT NỐI THẤT BẠI!");
-        }
-    }
+//    public static void main(String[] args) {
+//        ConnectDB mysql = new ConnectDB();
+//        Connection testConn = mysql.getConnection();
+//        
+//        if (testConn != null) {
+//            System.out.println("==========================================");
+//            System.out.println(" Connected to: java_computer_store");
+//            System.out.println("==========================================");
+//            
+//            // Thử đóng kết nối sau khi test 
+//            mysql.closeConnection();
+//        } else {
+//            System.out.println(">>> KẾT NỐI THẤT BẠI!");
+//        }
+//    }
 }
 
