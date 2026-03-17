@@ -5,7 +5,6 @@
 package BUS;
 
 import DAO.CustomerDAO;
-import ConnectDB.ConnectDB;
 import java.sql.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;

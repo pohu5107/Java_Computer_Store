@@ -10,7 +10,7 @@ import java.time.YearMonth;
 public class StatisticBUS {
     private StatisticDAO statisticDAO = new StatisticDAO();
     
-    // 1. thong ke tong quan (Doanh thu, chi phi,,  loi nhuan)
+    // 1. thong ke tong quan (Doanh thu, chi phi,, loi nhuan)
     public Object[] getOverview(String fromDate, String toDate) {
         double rev  = statisticDAO.getTotalRevenue(fromDate, toDate);
         double exp = statisticDAO.getTotalExpenditure(fromDate, toDate);

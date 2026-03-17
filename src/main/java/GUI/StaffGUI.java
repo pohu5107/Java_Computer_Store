@@ -1,10 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package GUI;
 
 import BUS.StaffBUS;
+import com.toedter.calendar.JDateChooser; // Import thư viện lịch
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -12,14 +9,16 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class StaffGUI extends JFrame {
 
     private StaffBUS staffBUS = new StaffBUS();
 
-    // Các thành phần giao diện
-    private JTextField txtSearch, txtID, txtFirstName, txtLastName, txtDate, txtPhone;
+    private JTextField txtSearch, txtID, txtFirstName, txtLastName, txtPhone;
+    private JDateChooser dateChooser; // Thay thế txtDate bằng JDateChooser
     private JRadioButton radMale, radFemale;
     private ButtonGroup bgGender;
     private JTable tblStaff;
@@ -34,14 +33,11 @@ public class StaffGUI extends JFrame {
     private void initComponents() {
         setTitle("Quản Lý Nhân Viên");
         setSize(900, 600);
-        // Dùng DISPOSE_ON_CLOSE để khi tắt không bị đóng toàn bộ chương trình (nếu gọi từ Trang chủ)
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-        // ==========================================
-        // PHẦN TRÊN: SEARCH & BOX 1 (THÔNG TIN)
-        // ==========================================
+        // 1. thông tin
         JPanel pnlTop = new JPanel(new BorderLayout(5, 5));
         pnlTop.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -51,7 +47,6 @@ public class StaffGUI extends JFrame {
         txtSearch.setForeground(Color.GRAY);
         txtSearch.setText("Nhập tên hoặc mã nhân viên (VD: NV01)...");
         
-        // Tạo hiệu ứng Placeholder (Chữ mờ)
         txtSearch.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -82,7 +77,6 @@ public class StaffGUI extends JFrame {
         box1.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(Color.GRAY), "Thông tin nhân viên", TitledBorder.LEFT, TitledBorder.TOP));
 
-        // Panel chứa các trường nhập liệu
         JPanel pnlInput = new JPanel(new GridLayout(3, 4, 10, 15));
         pnlInput.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -102,7 +96,7 @@ public class StaffGUI extends JFrame {
         JPanel pnlGender = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         radMale = new JRadioButton("Nam");
         radFemale = new JRadioButton("Nữ");
-        radMale.setSelected(true); // Mặc định chọn Nam
+        radMale.setSelected(true);
         bgGender = new ButtonGroup();
         bgGender.add(radMale);
         bgGender.add(radFemale);
@@ -110,9 +104,11 @@ public class StaffGUI extends JFrame {
         pnlGender.add(radFemale);
         pnlInput.add(pnlGender);
 
-        pnlInput.add(new JLabel("Ngày sinh (yyyy-MM-dd):"));
-        txtDate = new JTextField();
-        pnlInput.add(txtDate);
+        pnlInput.add(new JLabel("Ngày sinh:"));
+
+        dateChooser = new JDateChooser();
+        dateChooser.setDateFormatString("yyyy-MM-dd"); // Quy định format hiển thị
+        pnlInput.add(dateChooser);
 
         pnlInput.add(new JLabel("Số điện thoại:"));
         txtPhone = new JTextField();
@@ -120,16 +116,14 @@ public class StaffGUI extends JFrame {
 
         box1.add(pnlInput, BorderLayout.CENTER);
 
-        // Panel chứa các nút bấm (Add/Edit/Delete) ở góc dưới phải của Box 1
         JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         btnAdd = new JButton("Thêm");
         btnUpdate = new JButton("Sửa");
         btnDelete = new JButton("Xóa");
         
-        // Làm đẹp nút bấm
-        btnAdd.setBackground(new Color(34, 139, 34)); btnAdd.setForeground(Color.black);
-        btnUpdate.setBackground(new Color(0, 102, 204)); btnUpdate.setForeground(Color.black);
-        btnDelete.setBackground(new Color(204, 0, 0)); btnDelete.setForeground(Color.black);
+        btnAdd.setBackground(new Color(34, 139, 34)); btnAdd.setForeground(Color.BLACK);
+        btnUpdate.setBackground(new Color(0, 102, 204)); btnUpdate.setForeground(Color.BLACK);
+        btnDelete.setBackground(new Color(204, 0, 0)); btnDelete.setForeground(Color.BLACK);
 
         pnlButtons.add(btnAdd);
         pnlButtons.add(btnUpdate);
@@ -140,9 +134,7 @@ public class StaffGUI extends JFrame {
         pnlTop.add(box1, BorderLayout.CENTER);
         add(pnlTop, BorderLayout.NORTH);
 
-        // ==========================================
-        // PHẦN DƯỚI: BOX 2 (BẢNG DỮ LIỆU)
-        // ==========================================
+        // 2. Bảng dữ liệu
         JPanel box2 = new JPanel(new BorderLayout());
         box2.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(Color.GRAY), "Danh sách nhân viên", TitledBorder.LEFT, TitledBorder.TOP));
@@ -151,7 +143,7 @@ public class StaffGUI extends JFrame {
         modelStaff = new DefaultTableModel(cols, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Không cho phép sửa trực tiếp trên bảng
+                return false;
             }
         };
         tblStaff = new JTable(modelStaff);
@@ -160,11 +152,8 @@ public class StaffGUI extends JFrame {
         
         add(box2, BorderLayout.CENTER);
 
-        // ==========================================
-        // BẮT SỰ KIỆN (LISTENERS)
-        // ==========================================
         
-        // Sự kiện click vào bảng để đẩy dữ liệu lên form
+        // Click vào bảng -> đẩy lên form
         tblStaff.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -178,65 +167,79 @@ public class StaffGUI extends JFrame {
                     if (gender.equalsIgnoreCase("Nam")) radMale.setSelected(true);
                     else radFemale.setSelected(true);
                     
-                    // Xử lý ngày tháng có thể bị null trong DB
+                    // Logic xử lý đẩy ngày từ JTable lên JDateChooser
                     Object dateObj = modelStaff.getValueAt(row, 4);
-                    txtDate.setText(dateObj != null ? dateObj.toString() : "");
+                    if (dateObj != null) {
+                        try {
+                            java.util.Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateObj.toString());
+                            dateChooser.setDate(date);
+                        } catch (ParseException ex) {
+                            ex.printStackTrace();
+                        }
+                    } else {
+                        dateChooser.setDate(null);
+                    }
                     
                     Object phoneObj = modelStaff.getValueAt(row, 5);
                     txtPhone.setText(phoneObj != null ? phoneObj.toString() : "");
                     
-                    txtID.setEditable(false); // Khi sửa/xóa không được sửa Mã NV
+                    txtID.setEditable(false);
                 }
             }
         });
 
-        // Nút Thêm
+        // Nút thêm
         btnAdd.addActionListener(e -> {
-            try {
-                String id = txtID.getText().trim();
-                String first = txtFirstName.getText().trim();
-                String last = txtLastName.getText().trim();
-                String gender = radMale.isSelected() ? "Nam" : "Nữ";
-                String phone = txtPhone.getText().trim();
-                Date birthDate = Date.valueOf(txtDate.getText().trim()); // Parse ngày tháng
+            String id = txtID.getText().trim();
+            String first = txtFirstName.getText().trim();
+            String last = txtLastName.getText().trim();
+            String gender = radMale.isSelected() ? "Nam" : "Nữ";
+            String phone = txtPhone.getText().trim();
+            
+            // Lấy ngày từ JDateChooser
+            java.util.Date utilDate = dateChooser.getDate();
+            if (utilDate == null) {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn ngày sinh từ lịch!");
+                return;
+            }
+            Date birthDate = new Date(utilDate.getTime()); // Ép kiểu sang java.sql.Date
 
-                String msg = staffBUS.add(id, first, last, gender, birthDate, phone);
-                JOptionPane.showMessageDialog(this, msg);
-                if (msg.contains("thành công")) {
-                    loadDataToTable();
-                    clearForm();
-                }
-            } catch (IllegalArgumentException ex) {
-                JOptionPane.showMessageDialog(this, "Lỗi: Ngày sinh phải đúng định dạng yyyy-MM-dd!");
+            String msg = staffBUS.add(id, first, last, gender, birthDate, phone);
+            JOptionPane.showMessageDialog(this, msg);
+            if (msg.contains("thành công")) {
+                loadDataToTable();
+                clearForm();
             }
         });
 
-        // Nút Sửa
+        // Nút sửa
         btnUpdate.addActionListener(e -> {
-            try {
-                String id = txtID.getText().trim();
-                if (id.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên cần sửa!");
-                    return;
-                }
-                String first = txtFirstName.getText().trim();
-                String last = txtLastName.getText().trim();
-                String gender = radMale.isSelected() ? "Nam" : "Nữ";
-                String phone = txtPhone.getText().trim();
-                Date birthDate = Date.valueOf(txtDate.getText().trim());
+            String id = txtID.getText().trim();
+            if (id.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên cần sửa!");
+                return;
+            }
+            String first = txtFirstName.getText().trim();
+            String last = txtLastName.getText().trim();
+            String gender = radMale.isSelected() ? "Nam" : "Nữ";
+            String phone = txtPhone.getText().trim();
+            
+            java.util.Date utilDate = dateChooser.getDate();
+            if (utilDate == null) {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn ngày sinh từ lịch!");
+                return;
+            }
+            Date birthDate = new Date(utilDate.getTime());
 
-                String msg = staffBUS.update(id, first, last, gender, birthDate, phone);
-                JOptionPane.showMessageDialog(this, msg);
-                if (msg.contains("thành công")) {
-                    loadDataToTable();
-                    clearForm();
-                }
-            } catch (IllegalArgumentException ex) {
-                JOptionPane.showMessageDialog(this, "Lỗi: Ngày sinh phải đúng định dạng yyyy-MM-dd!");
+            String msg = staffBUS.update(id, first, last, gender, birthDate, phone);
+            JOptionPane.showMessageDialog(this, msg);
+            if (msg.contains("thành công")) {
+                loadDataToTable();
+                clearForm();
             }
         });
 
-        // Nút Xóa
+        // Nút xóa
         btnDelete.addActionListener(e -> {
             String id = txtID.getText().trim();
             if (id.isEmpty()) {
@@ -254,7 +257,6 @@ public class StaffGUI extends JFrame {
             }
         });
 
-        // Nút Tìm Kiếm
         btnSearch.addActionListener(e -> {
             String keyword = txtSearch.getText().trim();
             if (keyword.equals("Nhập tên hoặc mã nhân viên (VD: NV01)...") || keyword.isEmpty()) {
@@ -264,14 +266,12 @@ public class StaffGUI extends JFrame {
             }
         });
 
-        // Nút Làm mới
         btnRefresh.addActionListener(e -> {
             clearForm();
             loadDataToTable();
         });
     }
 
-    // Đổ dữ liệu lên bảng
     private void fillTable(ArrayList<Object[]> list) {
         modelStaff.setRowCount(0);
         for (Object[] row : list) {
@@ -279,19 +279,17 @@ public class StaffGUI extends JFrame {
         }
     }
 
-    // Tải toàn bộ dữ liệu từ DB
     private void loadDataToTable() {
         fillTable(staffBUS.getAll());
     }
 
-    // Reset Form
     private void clearForm() {
         txtID.setText("");
         txtID.setEditable(true);
         txtFirstName.setText("");
         txtLastName.setText("");
         radMale.setSelected(true);
-        txtDate.setText("");
+        dateChooser.setDate(null); // Xóa ngày đã chọn trên lịch
         txtPhone.setText("");
         
         txtSearch.setForeground(Color.GRAY);
@@ -299,7 +297,6 @@ public class StaffGUI extends JFrame {
         tblStaff.clearSelection();
     }
 
-    // Chạy thử trực tiếp
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -307,4 +304,3 @@ public class StaffGUI extends JFrame {
         new StaffGUI().setVisible(true);
     }
 }
-

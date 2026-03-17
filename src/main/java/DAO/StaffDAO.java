@@ -16,9 +16,8 @@ public class StaffDAO {
     public ArrayList<Object[]> getAll() {
         ArrayList<Object[]> list = new ArrayList<>();
         String sql = "SELECT * FROM staff";
-
-        try (Connection conn = ConnectDB.getConnection();
-                Statement st = conn.createStatement();
+        Connection conn = ConnectDB.getConnection();
+        try ( Statement st = conn.createStatement();
                 ResultSet rs = st.executeQuery(sql)) {
             while (rs.next()) {
                 Object[] row = {
@@ -41,8 +40,8 @@ public class StaffDAO {
 
     public boolean insert(String id, String firstName, String lastName, String gender, Date birthDate, String phone) {
         String sql = "INSERT INTO Staff (StaffID, FirstName, LastName, Gender, BirthDate, Phone) VALUES (?, ?, ?, ?, ?, ?)";
-        try (Connection conn = ConnectDB.getConnection();
-                PreparedStatement pst = conn.prepareStatement(sql)) {
+        Connection conn = ConnectDB.getConnection();
+        try(PreparedStatement pst = conn.prepareStatement(sql)) {
             pst.setString(1, id);
             pst.setString(2, firstName);
             pst.setString(3, lastName);
@@ -60,8 +59,8 @@ public class StaffDAO {
 
     public boolean update(String id, String firstName, String lastName, String gender, Date birthDate, String phone) {
         String sql = "UPDATE Staff SET FirstName = ?, LastName = ?, Gender = ?, BirthDate = ?, Phone = ? WHERE StaffID = ?";
-        try (Connection conn = ConnectDB.getConnection();
-                PreparedStatement pst = conn.prepareStatement(sql)) {
+        Connection conn = ConnectDB.getConnection();
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
 
             pst.setString(1, firstName);
             pst.setString(2, lastName);
@@ -79,8 +78,8 @@ public class StaffDAO {
 
     public boolean delete(String id) {
         String sql = "DELETE FROM Staff WHERE StaffID = ?";
-        try (Connection conn = ConnectDB.getConnection();
-                PreparedStatement pst = conn.prepareStatement(sql)) {
+        Connection conn = ConnectDB.getConnection();
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
 
             pst.setString(1, id);
             return pst.executeUpdate() > 0;

@@ -11,12 +11,10 @@ import java.util.ArrayList;
 public class StaffBUS {
     private StaffDAO staffDAO = new StaffDAO();
 
-    // 1. Lấy toàn bộ danh sách nhân viên
     public ArrayList<Object[]> getAll() {
         return staffDAO.getAll();
     }
 
-    // 2. Kiểm tra trùng lặp Mã nhân viên
     public boolean isDuplicate(String id) {
         ArrayList<Object[]> list = staffDAO.getAll();
         for (Object[] row : list) {
@@ -27,8 +25,6 @@ public class StaffBUS {
         return false;
     }
 
-    // 3. Thêm Nhân viên mới
-    // LƯU Ý: Các tham số truyền vào (id, name, phone, role...) cần khớp với cấu trúc bảng Staff trong Database của bạn
     public String add(String id, String firstName, String lastName, String gender, Date birthDate, String phone) {
         if (id.trim().isEmpty() || firstName.trim().isEmpty()) {
             return "Mã, Tên không được để trống!";
@@ -38,14 +34,12 @@ public class StaffBUS {
             return "Lỗi: Mã nhân viên đã tồn tại trong hệ thống!";
         }
 
-        // Gọi hàm insert từ StaffDAO (bạn cần đảm bảo StaffDAO có hàm này với tham số tương ứng)
         if (staffDAO.insert(id, firstName, lastName, gender, birthDate, phone)) {
             return "Thêm nhân viên thành công!";
         }
         return "Thêm nhân viên thất bại!";
     }
 
-    // 4. Cập nhật thông tin Nhân viên
     public String update(String id, String firstName, String lastName, String gender, Date birthDate, String phone) {
         if (firstName.trim().isEmpty() || lastName.trim().isEmpty()) {
             return "Tên nhân viên không được để trống!";
@@ -56,7 +50,6 @@ public class StaffBUS {
         return "Cập nhật thất bại!";
     }
 
-    // 5. Xóa Nhân viên
     public String delete(String id) {
         if (id.trim().isEmpty()) {
             return "Mã nhân viên không hợp lệ!";

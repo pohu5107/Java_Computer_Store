@@ -48,7 +48,6 @@ public class CustomerDAO {
         }
     }
 
-    // 3. Xóa khách hàng theo ID
     public boolean delete(String id) {
         String sql = "DELETE FROM Customer WHERE CustomerID = ?";
         Connection conn = ConnectDB.getConnection();
@@ -79,25 +78,5 @@ public class CustomerDAO {
         }
     }
     
-//    public ArrayList<Object[]> searchByName(String keyword) {
-//        ArrayList<Object[]> list = new ArrayList<>();
-//        String sql = "SELECT * FROM Customer WHERE CustomerName LIKE ?";
-//        Connection conn = ConnectDB.getConnection();
-//        try (PreparedStatement pst = conn.prepareStatement(sql)) {
-//            pst.setString(1, "%" + keyword + "%");
-//            ResultSet rs = pst.executeQuery();
-//            while (rs.next()) {
-//                Object[] row = {
-//                    rs.getString("CustomerID"),
-//                    rs.getString("CustomerName"),
-//                    rs.getString("Address"),
-//                    rs.getString("Phone")
-//                };
-//                list.add(row);
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return list;
-//    }
+
 }

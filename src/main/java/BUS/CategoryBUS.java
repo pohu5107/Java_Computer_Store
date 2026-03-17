@@ -22,9 +22,7 @@ public class CategoryBUS {
         return false;
     }
     
-//    public void LoadCagetoryBUS() {
-//        listCategory = CategoryDAO.getAll(); // load du lieu len
-//    }
+
     
     public ArrayList<Object[]> getAll(){
         return categoryDAO.getAll();

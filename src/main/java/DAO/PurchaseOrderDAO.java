@@ -8,14 +8,17 @@ import java.util.ArrayList;
 import java.sql.*;
 
 public class PurchaseOrderDAO {
+    
+    // Đã sửa LEFT JOIN và lỗi chính tả SuppierID
     public ArrayList<Object[]> getAll(){
         ArrayList<Object[]> list = new ArrayList<>();
         String sql = "SELECT p.OrderID, p.StaffID, s.LastName AS StaffName, "+
-                "p.SuppierID, sup.SupplierName, p.OrderDate, p.TotalAmount "+
-                "FROM purchaseorsers p "+
-                "JOIN staff s ON p.StaffID = s.StaffID "+
-                "JOIN Suppliers up ON p.SupplierID = sup.SupplierID "+
+                "p.SupplierID, sup.SupplierName, p.OrderDate, p.TotalAmount "+
+                "FROM PurchaseOrders p "+
+                "LEFT JOIN Staff s ON p.StaffID = s.StaffID "+
+                "LEFT JOIN Suppliers sup ON p.SupplierID = sup.SupplierID "+
                 "ORDER BY p.OrderDate DESC";
+                
         Connection conn = ConnectDB.getConnection();
         try(PreparedStatement pst = conn.prepareStatement(sql);
                 ResultSet rs = pst.executeQuery()){
@@ -30,18 +33,21 @@ public class PurchaseOrderDAO {
                 list.add(row);
             }
         } catch (SQLException e){
+            System.out.println("Lỗi SQL tại getAll: " + e.getMessage());
             e.printStackTrace();      
         }
         return list;
     }  
     
+    // Đã sửa LEFT JOIN và PruductID
     public ArrayList<Object[]> getDetailsByOrderID(String orderID){
         ArrayList<Object[]> list = new ArrayList<>();
-        String sql = "SELECT d.ProductID,p.ProductName, d.Quantity, d.UnitPrice, "+
+        String sql = "SELECT d.ProductID, p.ProductName, d.Quantity, d.UnitPrice, "+
                 "(d.Quantity * d.UnitPrice) AS SubTotal "+
                 "FROM purchaseorderdetails d "+
-                "JOIN products p ON d.ProductID = p.PruductID "+
+                "LEFT JOIN products p ON d.ProductID = p.ProductID "+
                 "WHERE d.OrderID = ?";
+                
         Connection conn = ConnectDB.getConnection();
         try(PreparedStatement pst = conn.prepareStatement(sql)){
             pst.setString(1, orderID);
@@ -58,104 +64,86 @@ public class PurchaseOrderDAO {
                 }
             }   
         } catch (SQLException e){
+            System.out.println("Lỗi SQL tại getDetails: " + e.getMessage());
             e.printStackTrace();
         }
         return list;
     }
     
+    // Đã sửa purchaseorders, LIMIT 1 và OrderID
     public String getLastID(){
-        String sql = "SELECT OrderID FROM purchaseoders ORDER BY OrderID DESC LIMTI 1";
+        String sql = "SELECT OrderID FROM purchaseorders ORDER BY OrderID DESC LIMIT 1";
         Connection conn = ConnectDB.getConnection();
         try(PreparedStatement pst = conn.prepareStatement(sql);
                 ResultSet rs = pst.executeQuery()){
-                if(rs.next()) return rs.getString("Order");
+                if(rs.next()) return rs.getString("OrderID");
         } catch (SQLException e){
+            System.out.println("Lỗi SQL tại getLastID: " + e.getMessage());
             e.printStackTrace();
         }
         return null;
     }
+      
     
-    // them phieu nhap moi (giaodich: phiếu + chi tiết + cộng kho)
-    public boolean insert(String orderID, `````````````````````)
-    
-    
+    // 4. Lưu Phiếu + Lưu Chi Tiết + Tồn Kho (Phần này bạn làm rất chuẩn rồi)
+    public boolean insert(String orderId, String staffId, String supplierId, double totalAmount, ArrayList<Object[]> details) {
+        String sqlOrder = "INSERT INTO PurchaseOrders (OrderID, StaffID, SupplierID, TotalAmount) VALUES (?, ?, ?, ?)";
+        String sqlDetail = "INSERT INTO PurchaseOrderDetails (OrderID, ProductID, Quantity, UnitPrice) VALUES (?, ?, ?, ?)";
+        String sqlUpdateProduct = "UPDATE Products SET Quantity = Quantity + ? WHERE ProductID = ?";
 
-//
-//    // 4. Thêm Phiếu Nhập Mới (Transaction: Phiếu + Chi tiết + Cộng Kho)
-//    public boolean insert(String orderId, String staffId, String supplierId, double totalAmount, ArrayList<Object[]> details) {
-//        String sqlOrder = "INSERT INTO PurchaseOrders (OrderID, StaffID, SupplierID, TotalAmount) VALUES (?, ?, ?, ?)";
-//        String sqlDetail = "INSERT INTO PurchaseOrderDetails (OrderID, ProductID, Quantity, UnitPrice) VALUES (?, ?, ?, ?)";
-//        String sqlUpdateProduct = "UPDATE Products SET Quantity = Quantity + ? WHERE ProductID = ?";
-//
-//        Connection conn = null;
-//        try {
-//            conn = connectDB.getConnection();
-//            conn.setAutoCommit(false); // Bật chế độ Transaction
-//
-//            // Bước 1: Lưu hóa đơn tổng
-//            try (PreparedStatement pstOrder = conn.prepareStatement(sqlOrder)) {
-//                pstOrder.setString(1, orderId);
-//                pstOrder.setString(2, staffId);
-//                pstOrder.setString(3, supplierId);
-//                pstOrder.setDouble(4, totalAmount);
-//                pstOrder.executeUpdate();
-//            }
-//
-//            // Bước 2: Lưu chi tiết & Bước 3: Cộng số lượng vào kho
-//            try (PreparedStatement pstDetail = conn.prepareStatement(sqlDetail);
-//                 PreparedStatement pstUpdate = conn.prepareStatement(sqlUpdateProduct)) {
-//                
-//                for (Object[] row : details) {
-//                    String productId = row[0].toString();
-//                    int qty = Integer.parseInt(row[1].toString());
-//                    double price = Double.parseDouble(row[2].toString());
-//
-//                    // Thêm Chi tiết
-//                    pstDetail.setString(1, orderId);
-//                    pstDetail.setString(2, productId);
-//                    pstDetail.setInt(3, qty);
-//                    pstDetail.setDouble(4, price);
-//                    pstDetail.executeUpdate();
-//
-//                    // Cộng Kho
-//                    pstUpdate.setInt(1, qty);
-//                    pstUpdate.setString(2, productId);
-//                    pstUpdate.executeUpdate();
-//                }
-//            }
-//
-//            conn.commit(); // Xác nhận nếu mọi thứ đều suôn sẻ
-//            return true;
-//
-//        } catch (SQLException e) {
-//            try {
-//                if (conn != null) conn.rollback(); // Hủy bỏ toàn bộ nếu có lỗi
-//            } catch (SQLException ex) { ex.printStackTrace(); }
-//            e.printStackTrace();
-//            return false;
-//        } finally {
-//            try {
-//                if (conn != null) {
-//                    conn.setAutoCommit(true);
-//                    conn.close();
-//                }
-//            } catch (SQLException e) { e.printStackTrace(); }
-//        }
-//    }
-//}
-//    
-//    
-//    
-//    
-//    
-//    
-//    
-//    
-//    
-//    
-    
-    
-    
-    
-    
+        Connection conn = ConnectDB.getConnection();
+        try {
+            conn.setAutoCommit(false); 
+
+            // 1. Lưu thông tin chung của Phiếu Nhập
+            try (PreparedStatement pstOrder = conn.prepareStatement(sqlOrder)) {
+                pstOrder.setString(1, orderId);
+                pstOrder.setString(2, staffId);
+                pstOrder.setString(3, supplierId);
+                pstOrder.setDouble(4, totalAmount);
+                pstOrder.executeUpdate();
+            }
+
+            // 2+3  Lưu từng dòng chi tiết và cộng vào Kho
+            try (PreparedStatement pstDetail = conn.prepareStatement(sqlDetail);
+                 PreparedStatement pstUpdate = conn.prepareStatement(sqlUpdateProduct)) {
+                
+                for (Object[] row : details) {
+                    String productId = row[0].toString();
+                    int qty = Integer.parseInt(row[1].toString());
+                    double price = Double.parseDouble(row[2].toString());
+
+                    // Thêm vào bảng Detail
+                    pstDetail.setString(1, orderId);
+                    pstDetail.setString(2, productId);
+                    pstDetail.setInt(3, qty);
+                    pstDetail.setDouble(4, price);
+                    pstDetail.executeUpdate();
+
+                    // Cộng số lượng vào bảng Products
+                    pstUpdate.setInt(1, qty);
+                    pstUpdate.setString(2, productId);
+                    pstUpdate.executeUpdate();
+                }
+            }
+
+            // Xác nhận lưu toàn bộ
+            conn.commit(); 
+            return true;
+
+        } catch (SQLException e) {
+            try {
+                if (conn != null) conn.rollback(); 
+            } catch (SQLException ex) { ex.printStackTrace(); }
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                }
+            } catch (SQLException e) { e.printStackTrace(); }
+        }
+    }
 }

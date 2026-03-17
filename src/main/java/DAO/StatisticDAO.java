@@ -72,10 +72,5 @@ public class StatisticDAO {
                     e.printStackTrace();}
             return list;
         } 
-        
-  
-    
-    
-    
     
 }

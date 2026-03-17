@@ -31,9 +31,8 @@ public class InvoiceDAO {
     }
 
     public boolean insert(String id, String customerID, String staffID, double total, ArrayList<Object[]> details) {
-        Connection conn = null;
+        Connection conn = ConnectDB.getConnection();
         try {
-            conn = ConnectDB.getConnection();
             conn.setAutoCommit(false);
 
             String sqlInv = "INSERT INTO Invoices (InvoiceID, CustomerID, StaffID, CreatedDate, SubTotalDate, TotalAmount) VALUES (?, ?, ?, NOW(), ?, ?)";

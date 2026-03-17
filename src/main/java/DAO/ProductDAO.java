@@ -157,20 +157,6 @@ public class ProductDAO {
                 }
          return null;
     }
-    
-    
-//        public boolean updateStock(String productId, int amount) {
-//        // amount > 0 là nhập thêm, amount < 0 là bán đi
-//        String sql = "UPDATE Products SET Quantity = Quantity + ? WHERE ProductID = ?";
-//        try (Connection conn = ConnectDB.getConnection();
-//             PreparedStatement pst = conn.prepareStatement(sql)) {
-//            pst.setInt(1, amount);
-//            pst.setString(2, productId);
-//            return pst.executeUpdate() > 0;
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-          
-        
-    }
+
+
+}
