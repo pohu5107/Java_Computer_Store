@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package GUI;
 
 import BUS.ProductBUS;
@@ -10,11 +6,12 @@ import DAO.InvoiceDAO;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.DecimalFormat;
 
-public class SaleGUI extends JFrame {
+public class SaleGUI extends JPanel {
     private ProductBUS prodBUS = new ProductBUS();
     private InvoiceBUS invBUS = new InvoiceBUS();
     private InvoiceDAO invDAO = new InvoiceDAO();
@@ -24,97 +21,130 @@ public class SaleGUI extends JFrame {
     private DefaultTableModel modelCart;
     private JLabel lblTotal;
     private double totalAmount = 0;
-    private DecimalFormat df = new DecimalFormat("#,###"); // Dùng chung định dạng tiền
+    private DecimalFormat df = new DecimalFormat("#,###");
 
     public SaleGUI() {
+        setLayout(new BorderLayout(10, 10));
+        setPreferredSize(new Dimension(950, 650)); 
+        setBackground(new Color(240, 242, 245));
+
         initComponents();
         autoGenerateID();
+        setupEvents();
     }
 
     private void initComponents() {
-        setTitle("Hệ Thống Bán Hàng Chuyên Nghiệp");
-        setSize(1000, 650);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setLayout(new BorderLayout(10, 10));
-        setLocationRelativeTo(null);
+        // --- PHẦN BÊN TRÁI: GIỎ HÀNG ---
+        JPanel pnlLeft = new JPanel(new BorderLayout(0, 10));
+        pnlLeft.setOpaque(false);
+        pnlLeft.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 0));
 
-        // --- PANEL TRÊN ---
-        JPanel pnlTop = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        pnlTop.setBorder(BorderFactory.createTitledBorder("Nhập Sản Phẩm"));
+        // Nhập sản phẩm nhanh
+        JPanel pnlInput = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
+        pnlInput.setBackground(Color.WHITE);
+        pnlInput.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220)));
         
-        pnlTop.add(new JLabel("Mã SP:"));
-        txtProdID = new JTextField(10);
-        pnlTop.add(txtProdID);
+        pnlInput.add(new JLabel("Mã Sản Phẩm:"));
+        txtProdID = new JTextField(12);
+        txtProdID.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        pnlInput.add(txtProdID);
         
-        pnlTop.add(new JLabel("Số lượng:"));
-        txtQty = new JTextField(5);
-        txtQty.setText("1");
-        pnlTop.add(txtQty);
+        pnlInput.add(new JLabel("Số lượng:"));
+        txtQty = new JTextField("1", 5);
+        txtQty.setHorizontalAlignment(JTextField.CENTER);
+        pnlInput.add(txtQty);
         
-        JButton btnAdd = new JButton("Thêm vào giỏ (Enter)");
-        btnAdd.setBackground(new Color(0, 102, 204));
-        btnAdd.setForeground(Color.WHITE);
-        btnAdd.setFocusPainted(false);
-        btnAdd.setOpaque(true);
-        btnAdd.setFont(new Font("Arial", Font.BOLD, 12));
-        pnlTop.add(btnAdd);
+        JButton btnAdd = new JButton("THÊM VÀO GIỎ");
+        styleButton(btnAdd, new Color(0, 123, 255), Color.WHITE);
+        pnlInput.add(btnAdd);
         
-        JButton btnRemove = new JButton("Xóa món đã chọn");
-        btnRemove.setBackground(new Color(204, 0, 0));
-        btnRemove.setForeground(Color.WHITE);
-        btnRemove.setFocusPainted(false);
-        btnRemove.setOpaque(true);
-        btnRemove.setFont(new Font("Arial", Font.BOLD, 12));
-        pnlTop.add(btnRemove);
+        JButton btnRemove = new JButton("XÓA DÒNG");
+        styleButton(btnRemove, new Color(220, 53, 69), Color.WHITE);
+        pnlInput.add(btnRemove);
 
-        add(pnlTop, BorderLayout.NORTH);
+        pnlLeft.add(pnlInput, BorderLayout.NORTH);
 
-        // --- PANEL GIỮA ---
-        String[] cols = {"Mã SP", "Tên SP", "Số lượng", "Đơn giá", "Thành tiền"};
+        // Bảng giỏ hàng
+        String[] cols = {"Mã SP", "Tên Sản Phẩm", "Số lượng", "Đơn giá", "Thành tiền"};
         modelCart = new DefaultTableModel(cols, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
         tblCart = new JTable(modelCart);
-        tblCart.setRowHeight(30);
-        add(new JScrollPane(tblCart), BorderLayout.CENTER);
+        tblCart.setRowHeight(35);
+        tblCart.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        
+        // Căn lề phải cho cột số và tiền
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+        tblCart.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+        tblCart.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+        tblCart.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
 
-        // --- PANEL PHẢI ---
+        JScrollPane scroll = new JScrollPane(tblCart);
+        scroll.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220)));
+        pnlLeft.add(scroll, BorderLayout.CENTER);
+
+        add(pnlLeft, BorderLayout.CENTER);
+
+        // --- PHẦN BÊN PHẢI: THÔNG TIN THANH TOÁN ---
         JPanel pnlRight = new JPanel();
         pnlRight.setPreferredSize(new Dimension(320, 0));
         pnlRight.setLayout(new BoxLayout(pnlRight, BoxLayout.Y_AXIS));
-        pnlRight.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        pnlRight.setBackground(Color.WHITE);
+        pnlRight.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 1, 0, 0, Color.LIGHT_GRAY),
+            BorderFactory.createEmptyBorder(20, 20, 20, 20)
+        ));
 
-        pnlRight.add(new JLabel("Mã Hóa Đơn (Tự động):"));
-        txtInvID = new JTextField(); pnlRight.add(txtInvID);
-        pnlRight.add(new JLabel("Mã Khách Hàng:"));
-        txtCustID = new JTextField(); pnlRight.add(txtCustID);
-        pnlRight.add(new JLabel("Mã Nhân Viên:"));
-        txtStaffID = new JTextField(); pnlRight.add(txtStaffID);
+        JLabel lblInfoTitle = new JLabel("THÔNG TIN HÓA ĐƠN");
+        lblInfoTitle.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        lblInfoTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        pnlRight.add(lblInfoTitle);
+        pnlRight.add(Box.createVerticalStrut(20));
+
+        pnlRight.add(createInputLabel("Mã Hóa Đơn:"));
+        txtInvID = new JTextField(); 
+        styleTextField(txtInvID);
+        pnlRight.add(txtInvID);
         
-        pnlRight.add(Box.createVerticalStrut(30));
+        pnlRight.add(Box.createVerticalStrut(10));
+        pnlRight.add(createInputLabel("Mã Khách Hàng:"));
+        txtCustID = new JTextField(); 
+        styleTextField(txtCustID);
+        pnlRight.add(txtCustID);
+        
+        pnlRight.add(Box.createVerticalStrut(10));
+        pnlRight.add(createInputLabel("Mã Nhân Viên:"));
+        txtStaffID = new JTextField(); 
+        styleTextField(txtStaffID);
+        pnlRight.add(txtStaffID);
+        
+        pnlRight.add(Box.createVerticalGlue());
+
         lblTotal = new JLabel("TỔNG: 0 VNĐ");
-        lblTotal.setFont(new Font("Arial", Font.BOLD, 24));
-        lblTotal.setForeground(new Color(204, 0, 0));
+        lblTotal.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        lblTotal.setForeground(new Color(220, 53, 69));
         lblTotal.setAlignmentX(Component.CENTER_ALIGNMENT);
         pnlRight.add(lblTotal);
 
         pnlRight.add(Box.createVerticalStrut(20));
-        JButton btnPay = new JButton("THANH TOÁN");
-        btnPay.setMaximumSize(new Dimension(320, 70));
-        btnPay.setBackground(new Color(34, 139, 34));
-        btnPay.setForeground(Color.WHITE);
-        btnPay.setFont(new Font("Arial", Font.BOLD, 18));
-        btnPay.setFocusPainted(false);
-        btnPay.setOpaque(true);
+        
+        JButton btnPay = new JButton("THANH TOÁN (F9)");
+        btnPay.setMaximumSize(new Dimension(300, 60));
+        styleButton(btnPay, new Color(40, 167, 69), Color.WHITE);
+        btnPay.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        btnPay.setAlignmentX(Component.CENTER_ALIGNMENT);
         pnlRight.add(btnPay);
         
         add(pnlRight, BorderLayout.EAST);
 
-        // --- SỰ KIỆN ---
+        // Đưa các sự kiện vào hàm setup
         btnAdd.addActionListener(e -> addToCart());
         btnRemove.addActionListener(e -> removeFromCart());
         btnPay.addActionListener(e -> processPayment());
+    }
 
+    private void setupEvents() {
         KeyAdapter enterKey = new KeyAdapter() {
             @Override public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) addToCart();
@@ -124,6 +154,29 @@ public class SaleGUI extends JFrame {
         txtQty.addKeyListener(enterKey);
     }
 
+    private JLabel createInputLabel(String text) {
+        JLabel lbl = new JLabel(text);
+        lbl.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
+        return lbl;
+    }
+
+    private void styleTextField(JTextField tf) {
+        tf.setMaximumSize(new Dimension(300, 35));
+        tf.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        tf.setAlignmentX(Component.LEFT_ALIGNMENT);
+    }
+
+    private void styleButton(JButton btn, Color bg, Color fg) {
+        btn.setBackground(bg);
+        btn.setForeground(fg);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn.setOpaque(true);
+        btn.setBorderPainted(false);
+    }
+
     private void addToCart() {
         String pId = txtProdID.getText().trim();
         String qtyStr = txtQty.getText().trim();
@@ -131,65 +184,60 @@ public class SaleGUI extends JFrame {
 
         try {
             int buyQty = Integer.parseInt(qtyStr);
+            if(buyQty <= 0) return;
+
             Object[] p = prodBUS.getByID(pId); 
             if (p == null) {
                 JOptionPane.showMessageDialog(this, "Sản phẩm không tồn tại!");
                 return;
             }
 
-            double price = Double.parseDouble(p[2].toString());
-            int stock = Integer.parseInt(p[3].toString());
+            double price = Double.parseDouble(p[3].toString()); // Thường index 3 là giá bán
+            int stock = Integer.parseInt(p[2].toString());   // Thường index 2 là số lượng tồn
 
-            if(buyQty > stock) {
-                JOptionPane.showMessageDialog(this, "Kho không đủ!");
-                return;
-            }
-
-            // Xử lý cộng dồn nếu SP đã có trong giỏ
+            // Kiểm tra giỏ hàng hiện tại
+            int currentInCart = 0;
+            int existingRow = -1;
             for (int i = 0; i < modelCart.getRowCount(); i++) {
                 if (modelCart.getValueAt(i, 0).toString().equals(pId)) {
-                    int oldQty = Integer.parseInt(modelCart.getValueAt(i, 2).toString());
-                    int newQty = oldQty + buyQty;
-
-                    if(newQty > stock) {
-                        JOptionPane.showMessageDialog(this, "Tổng số lượng vượt quá tồn kho!");
-                        return;
-                    }
-
-                    modelCart.setValueAt(newQty, i, 2);
-                    modelCart.setValueAt(df.format(newQty * price), i, 4); // Cập nhật chuỗi có định dạng
-                    updateTotal();
-                    resetInput();
-                    return;
+                    currentInCart = Integer.parseInt(modelCart.getValueAt(i, 2).toString());
+                    existingRow = i;
+                    break;
                 }
             }
 
-            // Thêm mới vào giỏ
-            modelCart.addRow(new Object[]{pId, p[1], buyQty, df.format(price), df.format(buyQty * price)});
+            if(buyQty + currentInCart > stock) {
+                JOptionPane.showMessageDialog(this, "Kho không đủ! (Tồn: " + stock + ")");
+                return;
+            }
+
+            if (existingRow != -1) {
+                int newQty = currentInCart + buyQty;
+                modelCart.setValueAt(newQty, existingRow, 2);
+                modelCart.setValueAt(df.format(newQty * price), existingRow, 4);
+            } else {
+                modelCart.addRow(new Object[]{pId, p[1], buyQty, df.format(price), df.format(buyQty * price)});
+            }
+            
             updateTotal();
             resetInput();
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Số lượng phải là số nguyên!");
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập số lượng hợp lệ!");
         }
     }
-    
+
     private void autoGenerateID() {
         String lastID = invDAO.getLastID();
         if (lastID == null || lastID.isEmpty()) {
             txtInvID.setText("HD001");
         } else {
-            String prefix = lastID.replaceAll("[0-9]", "");
-            String numberStr = lastID.replaceAll("[^0-9]", "");
-            int nextNumber = Integer.parseInt(numberStr) + 1;
-            String nextID = prefix + String.format("%0" + numberStr.length() + "d", nextNumber);
-            txtInvID.setText(nextID);
+            int num = Integer.parseInt(lastID.substring(2)) + 1;
+            txtInvID.setText(String.format("HD%03d", num));
         }
         txtInvID.setEditable(false);
-        txtInvID.setBackground(new Color(235, 235, 235));
+        txtInvID.setBackground(new Color(245, 245, 245));
     }
-    
+
     private void removeFromCart() {
         int row = tblCart.getSelectedRow();
         if (row != -1) {
@@ -201,8 +249,8 @@ public class SaleGUI extends JFrame {
     private void updateTotal() {
         totalAmount = 0;
         for (int i = 0; i < modelCart.getRowCount(); i++) {
-            String subTotalStr = modelCart.getValueAt(i, 4).toString().replace(",", "");
-            totalAmount += Double.parseDouble(subTotalStr);
+            String val = modelCart.getValueAt(i, 4).toString().replace(",", "");
+            totalAmount += Double.parseDouble(val);
         }
         lblTotal.setText("TỔNG: " + df.format(totalAmount) + " VNĐ");
     }
@@ -214,39 +262,33 @@ public class SaleGUI extends JFrame {
     }
 
     private void processPayment() {
-        String invId = txtInvID.getText().trim();
-        String custId = txtCustID.getText().trim();
-        String staffId = txtStaffID.getText().trim();
-
-        if (custId.isEmpty() || staffId.isEmpty() || modelCart.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập Mã KH, Mã NV và chọn SP!");
+        if (modelCart.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Giỏ hàng đang trống!");
+            return;
+        }
+        if (txtCustID.getText().isEmpty() || txtStaffID.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập Mã KH và Mã NV!");
             return;
         }
 
         ArrayList<Object[]> details = new ArrayList<>();
         for (int i = 0; i < modelCart.getRowCount(); i++) {
-            // Khi gửi dữ liệu xuống BUS, hãy loại bỏ dấu phẩy để BUS tính toán đúng
-            String priceStr = modelCart.getValueAt(i, 3).toString().replace(",", "");
             details.add(new Object[]{ 
                 modelCart.getValueAt(i, 0), 
-                modelCart.getValueAt(i, 1), 
                 modelCart.getValueAt(i, 2), 
-                priceStr // Gửi số thuần túy
+                modelCart.getValueAt(i, 3).toString().replace(",", "")
             });
         }
 
-        String msg = invBUS.add(invId, custId, staffId, totalAmount, details);
+        String msg = invBUS.add(txtInvID.getText(), txtCustID.getText(), txtStaffID.getText(), totalAmount, details);
         if(msg.contains("thành công")) {
-            JOptionPane.showMessageDialog(this, "Thanh toán thành công: " + invId);
+            JOptionPane.showMessageDialog(this, "Thanh toán thành công!");
             modelCart.setRowCount(0);
             updateTotal();
             autoGenerateID();
+            txtCustID.setText("");
         } else {
             JOptionPane.showMessageDialog(this, msg);
         }
-    }
-
-    public static void main(String[] args) {
-        new SaleGUI().setVisible(true);
     }
 }

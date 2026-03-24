@@ -6,62 +6,104 @@ package GUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class MainGUI extends JFrame {
-    private JPanel pnlContent; // Panel chính chứa các giao diện con
+
+    private JPanel pnlSidebar;
+    private JPanel pnlContent;
     private CardLayout cardLayout;
+
+    private final Color COLOR_PRIMARY = new Color(0, 102, 204);
+    private final Color COLOR_SIDEBAR = new Color(43, 48, 59);
 
     public MainGUI() {
         initComponents();
     }
 
     private void initComponents() {
-        setTitle("HỆ THỐNG QUẢN LÝ MÁY TÍNH 2026");
-        setSize(1200, 800);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setTitle("HỆ THỐNG QUẢN LÝ CỬA HÀNG MÁY TÍNH");
+        setSize(1200, 750);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
 
-        // 1. THANH MENU BÊN TRÁI (SIDEBAR)
-        JPanel pnlSidebar = new JPanel();
-        pnlSidebar.setLayout(new BoxLayout(pnlSidebar, BoxLayout.Y_AXIS));
-        pnlSidebar.setBackground(new Color(45, 52, 54)); // Màu tối sang trọng
-        pnlSidebar.setPreferredSize(new Dimension(200, 800));
+        // --- SIDEBAR (THANH MENU BÊN TRÁI) ---
+        pnlSidebar = new JPanel();
+        pnlSidebar.setBackground(COLOR_SIDEBAR);
+        pnlSidebar.setPreferredSize(new Dimension(220, 0));
+        pnlSidebar.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 5));
 
-        // 2. VÙNG HIỂN THỊ NỘI DUNG (DÙNG CARDLAYOUT)
+        JLabel lblLogo = new JLabel("CỬA HÀNG MÁY TÍNH");
+        lblLogo.setForeground(Color.WHITE);
+        lblLogo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        lblLogo.setBorder(BorderFactory.createEmptyBorder(20, 10, 30, 10));
+        pnlSidebar.add(lblLogo);
+
         cardLayout = new CardLayout();
         pnlContent = new JPanel(cardLayout);
 
-        // THÊM CÁC GUI CON VÀO CARDLAYOUT
-        pnlContent.add(new BrandGUI(), "Brand");
-        // pnlContent.add(new ProductGUI(), "Product");
-        pnlContent.add(new StatisticGUI(), "Statistic");
+        pnlContent.add(new ProductGUI(), "Sản phẩm");
+        pnlContent.add(new BrandGUI(), "Thương hiệu");
+        pnlContent.add(new CategoryGUI(), "Danh mục");
+        pnlContent.add(new SaleGUI(), "Bán hàng");
+        pnlContent.add(new InvoiceGUI(), "Hóa đơn");
+        pnlContent.add(new PurchaseOrderGUI(), "Nhập kho");
+        pnlContent.add(new StaffGUI(), "Nhân viên");
+        pnlContent.add(new StatisticGUI(), "Thống kê");
 
-        // 3. TẠO CÁC NÚT MENU
-        addMenuButton(pnlSidebar, "Quản Lý Thương Hiệu", "Brand");
-        addMenuButton(pnlSidebar, "Quản Lý Sản Phẩm", "Product");
-        addMenuButton(pnlSidebar, "Thống Kê Doanh Thu", "Statistic");
+        // --- TẠO CÁC NÚT MENU ---
+        createMenuButton("Sản phẩm", e -> showCard("Sản phẩm"));
+        createMenuButton("Thương hiệu", e -> showCard("Thương hiệu"));
+        createMenuButton("Danh mục", e -> showCard("Danh mục"));
+        createMenuButton("Bán hàng", e -> showCard("Bán hàng"));
+        createMenuButton("Hóa đơn", e -> showCard("Hóa đơn"));
+        createMenuButton("Nhập kho", e -> showCard("Nhập kho"));
+        createMenuButton("Nhân viên", e -> showCard("Nhân viên"));
+        createMenuButton("Thống kê", e -> showCard("Thống kê"));
 
-        // Gắn vào Frame chính
         add(pnlSidebar, BorderLayout.WEST);
         add(pnlContent, BorderLayout.CENTER);
     }
 
-    private void addMenuButton(JPanel sidebar, String text, String cardName) {
+    private void createMenuButton(String text, ActionListener listener) {
         JButton btn = new JButton(text);
-        btn.setMaximumSize(new Dimension(200, 50));
+        btn.setPreferredSize(new Dimension(220, 50));
+        btn.setBackground(COLOR_SIDEBAR);
+        btn.setForeground(new Color(200, 200, 200));
+        btn.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         btn.setFocusPainted(false);
-        btn.setBackground(new Color(45, 52, 54));
-        btn.setForeground(Color.WHITE);
-        btn.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
-        
-        // Sự kiện chuyển đổi giao diện
-        btn.addActionListener(e -> cardLayout.show(pnlContent, cardName));
-        
-        sidebar.add(btn);
+        btn.setBorderPainted(false);
+        btn.setHorizontalAlignment(SwingConstants.LEFT);
+        btn.setMargin(new Insets(0, 20, 0, 0));
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btn.setBackground(new Color(60, 68, 83));
+                btn.setForeground(Color.WHITE);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btn.setBackground(COLOR_SIDEBAR);
+                btn.setForeground(new Color(200, 200, 200));
+            }
+        });
+
+        btn.addActionListener(listener);
+        pnlSidebar.add(btn);
+    }
+
+    private void showCard(String cardName) {
+        cardLayout.show(pnlContent, cardName);
     }
 
     public static void main(String[] args) {
-        try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch(Exception e) {}
-        SwingUtilities.invokeLater(() -> new MainGUI().setVisible(true));
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {}
+
+        SwingUtilities.invokeLater(() -> {
+            new MainGUI().setVisible(true);
+        });
     }
 }
