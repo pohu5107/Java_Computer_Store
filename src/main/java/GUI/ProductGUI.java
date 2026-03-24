@@ -140,7 +140,7 @@ public class ProductGUI extends JFrame {
             } else {
                 fillTable(productBUS.search(keyword));
             }
-        });
+        }); 
 
         btnAdd.addActionListener(e -> {
             try {
