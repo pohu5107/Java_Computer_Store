@@ -22,22 +22,20 @@ public class CategoryBUS {
         return false;
     }
     
-
-    
     public ArrayList<Object[]> getAll(){
         return categoryDAO.getAll();
     }
     
     public String add(String id, String name, String description){
         if (id.trim().isEmpty() || name.trim().isEmpty()){
-            return "ID and name cannot be empty!";
+            return "Mã và tên không được để trống";
         }
         if (isDuplicate(id)){
-            return "Loi: he thong da co danh muc nay!";
+            return "Loi: Hệ thống đã có danh mục này";
         }
         if (categoryDAO.insert(id, name, description)){
-            return "them danh muc thanh con!";
-        } return "them danh muc that bai!";
+            return "Thêm danh mục thành công";
+        } return "Thêm danh mục thất bại";
     }
     
     public String delete(String id){
@@ -45,18 +43,18 @@ public class CategoryBUS {
             return "ID khong hop le";
         } 
         if (categoryDAO.delete(id)){
-            return "xoa danh muc thanh cong";
-        } return "Xoa that bai!";  
+            return "Xóa danh mục thành công";
+        } return "Xóa danh mục thất bại";  
     }
     
     public String update (String id, String name, String description){
         if(name.trim().isEmpty()){
-            return "Ten danh muc khong duoc de trong!";
+            return "Tên danh mục không được để trống";
         }
         if(categoryDAO.update(id, name, description)){
-            return "Cap nhat thanh cong";
+            return "Cập nhật thành công";
         }
-        return "cap nhat that bai!";
+        return "Cập nhật thất bại";
     }
     
     public ArrayList<Object[]> search(String keyword){
@@ -72,6 +70,4 @@ public class CategoryBUS {
         return result;
     }
 
-}
-
-
+}   

@@ -18,7 +18,7 @@ public class StaffGUI extends JFrame {
     private StaffBUS staffBUS = new StaffBUS();
 
     private JTextField txtSearch, txtID, txtFirstName, txtLastName, txtPhone;
-    private JDateChooser dateChooser; // Thay thế txtDate bằng JDateChooser
+    private JDateChooser dateChooser; 
     private JRadioButton radMale, radFemale;
     private ButtonGroup bgGender;
     private JTable tblStaff;
@@ -37,11 +37,9 @@ public class StaffGUI extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-        // 1. thông tin
         JPanel pnlTop = new JPanel(new BorderLayout(5, 5));
         pnlTop.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // 1. Panel Search (Bên ngoài Box 1)
         JPanel pnlSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
         txtSearch = new JTextField(30);
         txtSearch.setForeground(Color.GRAY);
@@ -72,7 +70,6 @@ public class StaffGUI extends JFrame {
         
         pnlTop.add(pnlSearch, BorderLayout.NORTH);
 
-        // 2. Box 1: Điền thông tin
         JPanel box1 = new JPanel(new BorderLayout());
         box1.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(Color.GRAY), "Thông tin nhân viên", TitledBorder.LEFT, TitledBorder.TOP));
@@ -107,7 +104,7 @@ public class StaffGUI extends JFrame {
         pnlInput.add(new JLabel("Ngày sinh:"));
 
         dateChooser = new JDateChooser();
-        dateChooser.setDateFormatString("yyyy-MM-dd"); // Quy định format hiển thị
+        dateChooser.setDateFormatString("yyyy-MM-dd"); 
         pnlInput.add(dateChooser);
 
         pnlInput.add(new JLabel("Số điện thoại:"));
@@ -134,7 +131,6 @@ public class StaffGUI extends JFrame {
         pnlTop.add(box1, BorderLayout.CENTER);
         add(pnlTop, BorderLayout.NORTH);
 
-        // 2. Bảng dữ liệu
         JPanel box2 = new JPanel(new BorderLayout());
         box2.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(Color.GRAY), "Danh sách nhân viên", TitledBorder.LEFT, TitledBorder.TOP));
@@ -152,7 +148,6 @@ public class StaffGUI extends JFrame {
         
         add(box2, BorderLayout.CENTER);
 
-        
         // Click vào bảng -> đẩy lên form
         tblStaff.addMouseListener(new MouseAdapter() {
             @Override

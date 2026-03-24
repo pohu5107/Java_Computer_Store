@@ -21,17 +21,15 @@ public class PurchaseOrderBUS {
         return orderDAO.getDetailsByOrderID(orderId);
     }
 
-    //  Tự động sinh mã Phiếu Nhập mới
+    //  tự động sinh mã phiếu nhập mới
     public String generateNextID() {
         String lastID = orderDAO.getLastID();
-        
         if (lastID == null || lastID.isEmpty()) {
             return "PN001"; 
         }
-        
         try {
-            String prefix = lastID.replaceAll("[0-9]", ""); // Lấy chữ (VD: "PN")
-            String numberStr = lastID.replaceAll("[^0-9]", ""); // Lấy số (VD: "005")
+            String prefix = lastID.replaceAll("[0-9]", ""); // Lấy chữ (VD: PN)
+            String numberStr = lastID.replaceAll("[^0-9]", ""); // Lấy số (VD: 005)
             
             int nextNumber = Integer.parseInt(numberStr) + 1;
             
@@ -44,23 +42,21 @@ public class PurchaseOrderBUS {
 
     public String add(String staffId, String supplierId, double totalAmount, ArrayList<Object[]> details) {
         if (staffId == null || staffId.trim().isEmpty() || supplierId == null || supplierId.trim().isEmpty()) {
-            return "Lỗi: Vui lòng chọn Nhân viên và Nhà cung cấp!";
+            return "Lỗi: Vui lòng chọn nhân viên và nhà cung cấp";
         }
         
         if (details == null || details.isEmpty()) {
-            return "Lỗi: Phiếu nhập phải có ít nhất 1 mặt hàng!";
+            return "Lỗi: Phiếu nhập phải có ít nhất 1 mặt hàng";
         }
         
         if (totalAmount <= 0) {
-            return "Lỗi: Tổng tiền phiếu nhập không hợp lệ!";
-        }
-
-        String newOrderID = generateNextID();
-
-        if (orderDAO.insert(newOrderID, staffId, supplierId, totalAmount, details)) {
-            return "Tạo phiếu nhập thành công! Mã phiếu: " + newOrderID;
+            return "Lỗi: Tổng tiền phiếu nhập không hợp lệ";
         }
         
-        return "Lỗi hệ thống: Không thể lưu phiếu nhập và cập nhật kho!";
+        String newOrderID = generateNextID();
+        if (orderDAO.insert(newOrderID, staffId, supplierId, totalAmount, details)) {
+            return "Tạo phiếu nhập thành công. Mã phiếu nhập : " + newOrderID;
+        }
+        return "Lỗi: Không thể lưu phiếu nhập";
     }
 }

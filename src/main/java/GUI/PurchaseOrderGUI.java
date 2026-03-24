@@ -55,11 +55,10 @@ public class PurchaseOrderGUI extends JFrame {
 
         add(pnlTop, BorderLayout.NORTH);
 
-        // 2 BẢNG 
         JPanel pnlCenter = new JPanel(new GridLayout(2, 1, 0, 10));
         pnlCenter.setBorder(BorderFactory.createEmptyBorder(0, 15, 15, 15));
 
-        // 1. Bảng Phiếu Nhập (Master)
+        // Bảng phiếu nhập
         JPanel pnlMaster = new JPanel(new BorderLayout());
         pnlMaster.setBorder(BorderFactory.createTitledBorder("Danh sách Phiếu Nhập"));
         
@@ -71,7 +70,7 @@ public class PurchaseOrderGUI extends JFrame {
         tblOrder.setRowHeight(25);
         pnlMaster.add(new JScrollPane(tblOrder), BorderLayout.CENTER);
 
-        // 2. Bảng Chi tiết (Detail)
+        // Bảng chi tiết
         JPanel pnlDetail = new JPanel(new BorderLayout());
         pnlDetail.setBorder(BorderFactory.createTitledBorder("Chi tiết Sản Phẩm trong Phiếu"));
         
@@ -83,7 +82,6 @@ public class PurchaseOrderGUI extends JFrame {
         tblDetails.setRowHeight(25);
         pnlDetail.add(new JScrollPane(tblDetails), BorderLayout.CENTER);
 
-        // Canh lề phải cho các cột tiền
         DefaultTableCellRenderer rightRender = new DefaultTableCellRenderer();
         rightRender.setHorizontalAlignment(JLabel.RIGHT);
         tblOrder.getColumnModel().getColumn(4).setCellRenderer(rightRender);
@@ -92,7 +90,6 @@ public class PurchaseOrderGUI extends JFrame {
 
         pnlCenter.add(pnlMaster);
         pnlCenter.add(pnlDetail);
-        
         add(pnlCenter, BorderLayout.CENTER);
 
         // SỰ KIỆN BẢNG CHÍNH
@@ -115,7 +112,7 @@ public class PurchaseOrderGUI extends JFrame {
         btnCreate.addActionListener(e -> {
             DialogCreateOrder dialog = new DialogCreateOrder(this);
             dialog.setVisible(true);
-            loadOrderData(); // Tự động load lại sau khi đóng cửa sổ popup
+            loadOrderData(); 
             modelDetails.setRowCount(0);
         });
     }
@@ -173,7 +170,6 @@ public class PurchaseOrderGUI extends JFrame {
             setLocationRelativeTo(parent);
             setLayout(new BorderLayout());
 
-            //  Panel Thông tin chung (Bảng PurchaseOrders) 
             JPanel pnlInfo = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
             pnlInfo.setBorder(BorderFactory.createTitledBorder("Thông tin Phiếu Nhập (PurchaseOrders)"));
             
@@ -185,7 +181,6 @@ public class PurchaseOrderGUI extends JFrame {
             
             add(pnlInfo, BorderLayout.NORTH);
 
-            //  Panel Giỏ hàng (Bảng PurchaseOrderDetails) 
             JPanel pnlCenter = new JPanel(new BorderLayout());
             
             JPanel pnlInputProd = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
@@ -219,7 +214,7 @@ public class PurchaseOrderGUI extends JFrame {
             
             add(pnlCenter, BorderLayout.CENTER);
 
-            //  Panel Tổng tiền + Lưu 
+            //  Panel tổng tiền + Lưu 
             JPanel pnlBottom = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 15));
             lblTotal = new JLabel("TỔNG TIỀN (TotalAmount): 0 VNĐ");
             lblTotal.setFont(new Font("Arial", Font.BOLD, 18));
@@ -246,7 +241,6 @@ public class PurchaseOrderGUI extends JFrame {
                 String qtyStr = txtQty.getText().trim();
                 String priceStr = txtPrice.getText().trim();
                 
-                // Kiểm tra xem người dùng đã nhập thật hay vẫn đang là chữ mờ
                 if (pID.isEmpty() || pID.equals(PH_PROD) || 
                     qtyStr.isEmpty() || qtyStr.equals(PH_QTY) || 
                     priceStr.isEmpty() || priceStr.equals(PH_PRICE)) {
@@ -314,7 +308,6 @@ public class PurchaseOrderGUI extends JFrame {
                 String staff = txtStaff.getText().trim();
                 String supplier = txtSupplier.getText().trim();
                 
-                // Kiểm tra xem người dùng đã nhập thật hay vẫn là chữ mờ
                 if (staff.isEmpty() || staff.equals(PH_STAFF) || supplier.isEmpty() || supplier.equals(PH_SUPP)) {
                     JOptionPane.showMessageDialog(this, "Vui lòng điền đúng Mã Nhân Viên và Mã Nhà Cung Cấp!");
                     return;
@@ -337,7 +330,7 @@ public class PurchaseOrderGUI extends JFrame {
                 JOptionPane.showMessageDialog(this, msg);
                 
                 if (msg.contains("thành công")) {
-                    this.dispose(); // Đóng cửa sổ
+                    this.dispose(); 
                 }
             });
         }
@@ -351,7 +344,6 @@ public class PurchaseOrderGUI extends JFrame {
             lblTotal.setText("TỔNG TIỀN (TotalAmount): " + df.format(totalAmount) + " VNĐ");
         }
 
-        //   TẠO HIỆU ỨNG CHỮ MỜ (PLACEHOLDER) 
         private void setupPlaceholder(JTextField textField, String placeholder) {
             if (textField.getText().isEmpty()) {
                 textField.setText(placeholder);

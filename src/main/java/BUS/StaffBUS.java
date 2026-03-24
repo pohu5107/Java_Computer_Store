@@ -31,7 +31,7 @@ public class StaffBUS {
         }
 
         if (isDuplicate(id)) {
-            return "Lỗi: Mã nhân viên đã tồn tại trong hệ thống!";
+            return "Lỗi: Mã nhân viên đã tồn tại trong hệ thống";
         }
 
         if (staffDAO.insert(id, firstName, lastName, gender, birthDate, phone)) {

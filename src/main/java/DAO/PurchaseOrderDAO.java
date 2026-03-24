@@ -64,7 +64,6 @@ public class PurchaseOrderDAO {
                 }
             }   
         } catch (SQLException e){
-            System.out.println("Lỗi SQL tại getDetails: " + e.getMessage());
             e.printStackTrace();
         }
         return list;
@@ -85,16 +84,16 @@ public class PurchaseOrderDAO {
     }
       
     
-    // 4. Lưu Phiếu + Lưu Chi Tiết + Tồn Kho (Phần này bạn làm rất chuẩn rồi)
+    // 4. Lưu Phiếu + Lưu Chi Tiết + Tồn Kho 
     public boolean insert(String orderId, String staffId, String supplierId, double totalAmount, ArrayList<Object[]> details) {
         String sqlOrder = "INSERT INTO PurchaseOrders (OrderID, StaffID, SupplierID, TotalAmount) VALUES (?, ?, ?, ?)";
         String sqlDetail = "INSERT INTO PurchaseOrderDetails (OrderID, ProductID, Quantity, UnitPrice) VALUES (?, ?, ?, ?)";
         String sqlUpdateProduct = "UPDATE Products SET Quantity = Quantity + ? WHERE ProductID = ?";
 
         Connection conn = ConnectDB.getConnection();
+        if(conn == null) { return false; }
         try {
             conn.setAutoCommit(false); 
-
             // 1. Lưu thông tin chung của Phiếu Nhập
             try (PreparedStatement pstOrder = conn.prepareStatement(sqlOrder)) {
                 pstOrder.setString(1, orderId);
@@ -103,47 +102,37 @@ public class PurchaseOrderDAO {
                 pstOrder.setDouble(4, totalAmount);
                 pstOrder.executeUpdate();
             }
-
             // 2+3  Lưu từng dòng chi tiết và cộng vào Kho
             try (PreparedStatement pstDetail = conn.prepareStatement(sqlDetail);
                  PreparedStatement pstUpdate = conn.prepareStatement(sqlUpdateProduct)) {
-                
                 for (Object[] row : details) {
                     String productId = row[0].toString();
                     int qty = Integer.parseInt(row[1].toString());
                     double price = Double.parseDouble(row[2].toString());
-
                     // Thêm vào bảng Detail
                     pstDetail.setString(1, orderId);
                     pstDetail.setString(2, productId);
                     pstDetail.setInt(3, qty);
                     pstDetail.setDouble(4, price);
                     pstDetail.executeUpdate();
-
                     // Cộng số lượng vào bảng Products
                     pstUpdate.setInt(1, qty);
                     pstUpdate.setString(2, productId);
                     pstUpdate.executeUpdate();
                 }
             }
-
             // Xác nhận lưu toàn bộ
             conn.commit(); 
             return true;
-
         } catch (SQLException e) {
-            try {
-                if (conn != null) conn.rollback(); 
-            } catch (SQLException ex) { ex.printStackTrace(); }
-            e.printStackTrace();
+            e.printStackTrace(); 
+            try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
             return false;
         } finally {
-            try {
-                if (conn != null) {
-                    conn.setAutoCommit(true);
+            try {   conn.setAutoCommit(true);
                     conn.close();
-                }
-            } catch (SQLException e) { e.printStackTrace(); }
+            } catch (Exception e) { e.printStackTrace(); }
         }
     }
+    
 }

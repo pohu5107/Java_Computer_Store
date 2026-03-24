@@ -64,26 +64,12 @@ public class CategoryDAO {
             pst.setString(1, name);
             pst.setString(2, description);
             pst.setString(3, id);
+            return pst.executeUpdate()>0;
         } catch (SQLException e) {
             e.printStackTrace();
-            
+            return false;   
+
         }
-        return false;   
     }   
         
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

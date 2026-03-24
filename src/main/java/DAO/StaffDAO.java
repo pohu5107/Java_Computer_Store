@@ -17,8 +17,8 @@ public class StaffDAO {
         ArrayList<Object[]> list = new ArrayList<>();
         String sql = "SELECT * FROM staff";
         Connection conn = ConnectDB.getConnection();
-        try ( Statement st = conn.createStatement();
-                ResultSet rs = st.executeQuery(sql)) {
+        try ( PreparedStatement pst = conn.prepareStatement(sql);
+                ResultSet rs = pst.executeQuery()) {
             while (rs.next()) {
                 Object[] row = {
                         rs.getString("StaffID"),

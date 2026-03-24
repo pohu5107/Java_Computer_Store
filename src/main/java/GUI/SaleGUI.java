@@ -34,8 +34,7 @@ public class SaleGUI extends JFrame {
     private void initComponents() {
         setTitle("Hệ Thống Bán Hàng Chuyên Nghiệp");
         setSize(1000, 650);
-//        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
         setLocationRelativeTo(null);
 

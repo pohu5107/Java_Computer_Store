@@ -5,7 +5,7 @@
 package BUS;
 import DAO.BrandDAO;
 import javax.swing.table.DefaultTableModel;
-import DAO.BrandDAO; // Gọi lớp DAO bạn vừa hoàn thành
+import DAO.BrandDAO; 
 import java.util.ArrayList;
 
 import java.util.ArrayList;
@@ -30,31 +30,31 @@ public class BrandBUS {
     public String add(String id, String name, String address, String phone) {
         if (id.trim().isEmpty() || name.trim().isEmpty()) return "ID va Ten khong duoc de trong";
 
-        if (isDuplicate(id)) return "Loi: he thong da co ma";
+        if (isDuplicate(id)) return "Loi: Hệ thống đã có mã này";
 
-        if (brandDAO.insert(id, name, address, phone)) return "Them thanh cong";
+        if (brandDAO.insert(id, name, address, phone)) return "Thêm thành công";
         return "Them that bai";
     }
     
     public String delete(String id){
         if(id.trim().isEmpty()){
-            return "ID khong co hop le";
+            return "ID không hợp lệ";
         }
         if(brandDAO.delete(id)){
-            return "xoa thanh cong";
+            return "Xóa thành công";
         }
-        return "Xoa that bai";
+        return "Xóa thất bại";
     }
     
     public String update(String id, String name, String address, String phone) {
         if (name.trim().isEmpty()) {
-            return "Ten hang khong duoc de trong";
+            return "Tên hãng không được để trống";
         }
         
         if (brandDAO.update(id, name, address, phone)) {
-            return "cap nhat thanh cong";
+            return "cập nhật thành công";
         }
-        return "cap nhat that bai";
+        return "Cập nhật thất bại";
     }
     
     // search theo id hoac ten
