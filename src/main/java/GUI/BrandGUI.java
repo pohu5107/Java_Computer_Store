@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class BrandGUI extends JFrame {
+public class BrandGUI extends JPanel {
     private BrandBUS brandBUS = new BrandBUS();
     private JTable tblBrand;
     private DefaultTableModel model;
@@ -21,14 +21,9 @@ public class BrandGUI extends JFrame {
     }
 
     private void initComponents() {
-        setTitle("Quản Lý Thương Hiệu - Hệ Thống Máy Tính");
-        setSize(950, 650);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
-        setLocationRelativeTo(null);
-        
-        // Màu nền nhẹ cho toàn bộ cửa sổ để làm nổi bật các panel trắng
-        getContentPane().setBackground(new Color(240, 242, 245));
+        setPreferredSize(new Dimension(950, 650));
+        this.setBackground(new Color(240, 242, 245));
 
         // --- KHU VỰC NHẬP LIỆU ---
         JPanel pnlInput = new JPanel(null);

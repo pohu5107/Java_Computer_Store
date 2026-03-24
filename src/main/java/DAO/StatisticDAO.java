@@ -39,19 +39,17 @@ public class StatisticDAO {
         return total;
     }
 
-    // Lợi nhuận = (Số lượng bán * Giá bán) - (Số lượng bán * Giá nhập trung bình)
     public ArrayList<Object[]> getProfitReport(String fromDate, String toDate) {
-        ArrayList<Object[]> list = new ArrayList<>();
-        // Câu SQL này lấy doanh thu từng món và trừ đi vốn nhập tương ứng
-        String sql = "SELECT p.ProductID, p.ProductName, " +
-                     "SUM(id.Quantity) as QtySold, " +
-                     "SUM(id.SubTotal) as Revenue, " +
-                     "SUM(id.Quantity * (SELECT AVG(UnitPrice) FROM PurchaseOrderDetails WHERE ProductID = p.ProductID)) as EstCost " +
-                     "FROM InvoiceDetails id " +
-                     "JOIN Products p ON id.ProductID = p.ProductID " +
-                     "JOIN Invoices i ON id.InvoiceID = i.InvoiceID " +
-                     "WHERE i.CreatedDate BETWEEN ? AND ? " +
-                     "GROUP BY p.ProductID, p.ProductName";
+    ArrayList<Object[]> list = new ArrayList<>();
+    String sql = "SELECT p.ProductID, p.ProductName, " +
+                 "SUM(id.Quantity) as QtySold, " +
+                 "SUM(id.SubTotal) as Revenue, " +
+                 "SUM(id.Quantity * (SELECT AVG(UnitPrice) FROM PurchaseOrderDetails WHERE ProductID = p.ProductID)) as CostOfGoodsSold " +
+                 "FROM InvoiceDetails id " +
+                 "JOIN Products p ON id.ProductID = p.ProductID " +
+                 "JOIN Invoices i ON id.InvoiceID = i.InvoiceID " +
+                 "WHERE i.CreatedDate BETWEEN ? AND ? " +
+                 "GROUP BY p.ProductID, p.ProductName";
         
         Connection conn = ConnectDB.getConnection();
         try (PreparedStatement pst = conn.prepareStatement(sql)) {
@@ -60,7 +58,7 @@ public class StatisticDAO {
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 double rev = rs.getDouble("Revenue");
-                double cost = rs.getDouble("EstCost");
+                double cost = rs.getDouble("CostOfGoodsSold");
                 double profit = rev - cost;
                 list.add(new Object[]{
                     rs.getString("ProductID"),
