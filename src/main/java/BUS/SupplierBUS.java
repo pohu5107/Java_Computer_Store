@@ -29,20 +29,21 @@ public class SupplierBUS {
         return false;
     }
     
-    public String addSupplier(String id, String supplierName, String address, String phone) {
+    public String addSupplier(String id, String supplierName, String phone) {
         if (id.trim().isEmpty() || supplierName.trim().isEmpty()) return "ID và Tên không được để trống";
 
         if (isDuplicate(id)) return "Lỗi: Hệ thống đã có mã";
 
+        if (supplierDAO.createSupplier(id, supplierName, phone)) return "Thêm thành công";
         return "Thêm thất bại";
     }
     
-    public String updateSupplier(String id, String supplierName, String address, String phone) {
+    public String updateSupplier(String id, String supplierName, String phone) {
         if (supplierName.trim().isEmpty()) {
             return "Tên không được để trống";
         }
         
-        if (supplierDAO.updateSupplier(id, supplierName, address, phone)) {
+        if (supplierDAO.updateSupplier(id, supplierName, phone)) {
             return "Cập nhật thành công";
         }
         return "Cập nhật thất bại";
