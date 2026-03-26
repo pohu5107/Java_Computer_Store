@@ -37,7 +37,7 @@ public class ProductDAO {
             PreparedStatement pstProd = conn.prepareStatement(sqlProd);
             pstProd.setString(1, id);
             pstProd.setString(2, name);
-            pstProd.setInt(3, qty); // Thường truyền vào 0 từ BUS
+            pstProd.setInt(3, qty);
             pstProd.setDouble(4, price);
             pstProd.setString(5, unit);
             pstProd.setString(6, catID);
@@ -63,7 +63,6 @@ public class ProductDAO {
         }                
     }
 
-    // --- SỬA ĐỔI: Loại bỏ Quantity khỏi hàm update thông tin sản phẩm ---
     public boolean update(String id, String name, double price, String unit, String catID, String brandID, String cpu, String ram, String vga, String mainboard) {
         Connection conn = ConnectDB.getConnection();
         try {

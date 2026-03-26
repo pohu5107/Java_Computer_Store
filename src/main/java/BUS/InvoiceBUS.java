@@ -15,25 +15,27 @@ public class InvoiceBUS {
     }
     
     public boolean isDuplicate(String id) {
+        String searchId = id.trim();
         ArrayList<Object[]> list = invoiceDAO.getAll();
         for (Object[] row : list) {
-            if (row[0].toString().equalsIgnoreCase(id)) {
+            if (row[0].toString().trim().equalsIgnoreCase(searchId)) {
                 return true;
             }
         }
         return false;
     }
-    
+
     public String add(String id, String customerID, String staffID, double total, ArrayList<Object[]> details){
-        if(id.trim().isEmpty() || customerID.trim().isEmpty() || staffID.trim().isEmpty()) return "Thiếu ID của hóa đơn, khách hàng hoặc nhân viên";
-        
-        if(details == null || details.isEmpty()) return "Hóa đơn phải có ít nhất 1 sản phẩm";
-        
-        if(isDuplicate(id)) return "ID đã tồn tại";
-        
-        if(invoiceDAO.insert(id, customerID, staffID, total, details)) return "Thêm thành công";
-        
-        return "Thêm thất bại";
+        id = id.trim();
+        if(id.isEmpty() || customerID.trim().isEmpty() || staffID.trim().isEmpty()) 
+            return "Thiếu ID của hóa đơn, khách hàng hoặc nhân viên";
+        if(details == null || details.isEmpty()) 
+            return "Hóa đơn phải có ít nhất 1 sản phẩm";
+        if(isDuplicate(id)) return "ID " + id + " đã tồn tại trong hệ thống!";
+        if(invoiceDAO.insert(id, customerID, staffID, total, details)) 
+            return "Thêm thành công";
+
+        return "Thêm thất bại";
     }
     
     public String delete(String id){

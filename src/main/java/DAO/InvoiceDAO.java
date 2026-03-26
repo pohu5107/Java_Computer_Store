@@ -39,8 +39,7 @@ public class InvoiceDAO {
         Connection conn = ConnectDB.getConnection();
         try {
             conn.setAutoCommit(false);
-            String sqlInv = "INSERT INTO Invoices (InvoiceID, StaffID, CustomerID, CreatedDate, SubTotal, TotalAmount) VALUES (?, ?, ?, NOW(), ?, ?)";
-            PreparedStatement pstInv = conn.prepareStatement(sqlInv);
+            String sqlInv = "INSERT INTO Invoices (InvoiceID, StaffID, CustomerID, CreatedDate, SubTotal, TotalAmount) VALUES (?, ?, ?, NOW(), ?, ?)";            PreparedStatement pstInv = conn.prepareStatement(sqlInv);
             pstInv.setString(1, id);
             pstInv.setString(2, staffID);
             pstInv.setString(3, customerID);
@@ -54,8 +53,8 @@ public class InvoiceDAO {
             for (Object[] row : details) {
                 pstDet.setString(1, id);
                 pstDet.setString(2, row[0].toString());
-                pstDet.setInt(3, Integer.parseInt(row[2].toString()));
-                pstDet.setDouble(4, Double.parseDouble(row[3].toString()));
+                pstDet.setInt(3, Integer.parseInt(row[1].toString()));
+                pstDet.setDouble(4, Double.parseDouble(row[2].toString()));
                 pstDet.addBatch();
             }
             pstDet.executeBatch();
@@ -140,11 +139,13 @@ public class InvoiceDAO {
     }
 
     public String getLastID() {
-        String sql = "SELECT InvoiceID FROM Invoices ORDER BY InvoiceID DESC LIMIT 1";
+        String sql = "SELECT InvoiceID FROM Invoices ORDER BY LENGTH(InvoiceID) DESC, InvoiceID DESC LIMIT 1";
         Connection conn = ConnectDB.getConnection();
         try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery(sql)) {
             if (rs.next()) return rs.getString("InvoiceID");
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { 
+            e.printStackTrace(); 
+        }
         return null;
     }
 }

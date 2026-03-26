@@ -18,19 +18,16 @@ public class ProductBUS {
         return false;
     }
 
-    // Thêm mới mặc định số lượng là 0
     public String add(String id, String name, double price, String unit, String catID, String brandID, String cpu, String ram, String vga, String mainboard) {
         if (id.trim().isEmpty() || name.trim().isEmpty()) return "ID và Tên không được để trống";
         if (isDuplicate(id)) return "Lỗi: ID đã tồn tại";
 
-        // Mặc định truyền số lượng 0 khi tạo mới
         if (productDAO.insert(id, name, 0, price, unit, catID, brandID, cpu, ram, vga, mainboard)) {
             return "Thêm thành công";
         }
         return "Thêm thất bại";
     }
 
-    // Cập nhật thông tin (Đã bỏ tham số qty)
     public String update(String id, String name, double price, String unit, String catID, String brandID, String cpu, String ram, String vga, String mainboard) {
         if (name.trim().isEmpty()) return "Tên không được để trống";
         
