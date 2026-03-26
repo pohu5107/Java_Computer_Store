@@ -1,114 +1,135 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package GUI;
+
+import BUS.InvoiceBUS;
 import java.util.ArrayList;
-import java.text.DecimalFormat;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import BUS.InvoiceBUS;
+import java.awt.*;
+import java.text.DecimalFormat;
 
-public class InvoiceGUI extends JFrame {
-
+public class InvoiceGUI extends JPanel {
     private InvoiceBUS invoiceBUS = new InvoiceBUS();
     private DecimalFormat df = new DecimalFormat("#,###");
     
-    private JTable tblInvoice;
-    private DefaultTableModel modelInvoice;
-    private JTable tblDetails;
-    private DefaultTableModel modelDetails;
+    private JTable tblInvoice, tblDetails;
+    private DefaultTableModel modelInvoice, modelDetails;
     private JTextField txtSearch;
     private JButton btnSearch, btnDelete, btnRefresh;
-    
+
     public InvoiceGUI() {
+        setLayout(new BorderLayout(0, 10)); 
+        setPreferredSize(new Dimension(950, 650)); 
+        setBackground(new Color(240, 242, 245));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
         initComponents();
         loadInvoiceData();
+        setupEvents();
     }
 
     private void initComponents() {
-
-        setTitle("Quản Lý Hóa Đơn - Java Computer Store");
-        setSize(950, 640);
-//        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(null);
-
-        JLabel lblSearch = new JLabel("Ma Hoa Don");
-        lblSearch.setBounds(20, 20, 100, 25);
-        add(lblSearch);
+        // --- PHẦN NORTH: TÌM KIẾM ---
+        JPanel pnlNorth = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
+        pnlNorth.setBackground(Color.WHITE); // Đặt nền trắng cho thanh tìm kiếm
+        pnlNorth.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220)));
         
-        txtSearch = new JTextField();
-        txtSearch.setBounds(110, 20, 200, 25);
-        add(txtSearch);
-        
+        JLabel lblSearch = new JLabel("Mã Hóa Đơn:");
+        lblSearch.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        pnlNorth.add(lblSearch);
+
+        txtSearch = new JTextField(20);
+        txtSearch.setPreferredSize(new Dimension(200, 35)); // Tăng chiều cao ô nhập
+        pnlNorth.add(txtSearch);
+
         btnSearch = new JButton("Tìm Kiếm");
-        btnSearch.setBounds(320, 20, 100, 25);
-        add(btnSearch);
+        styleButton(btnSearch, new Color(0, 123, 255));
+        btnSearch.setPreferredSize(new Dimension(120, 35)); // Fix kích thước hiển thị đủ chữ
+        pnlNorth.add(btnSearch);
 
         btnRefresh = new JButton("Làm Mới");
-        btnRefresh.setBounds(430, 20, 100, 25);
-        add(btnRefresh);
+        styleButton(btnRefresh, new Color(108, 117, 125));
+        btnRefresh.setPreferredSize(new Dimension(120, 35)); // Fix kích thước hiển thị đủ chữ
+        pnlNorth.add(btnRefresh);
 
-        JLabel lblMain = new JLabel("DANH SÁCH HÓA ĐƠN");
-        lblMain.setBounds(20, 65, 250, 25);
-        lblMain.setFont(new Font("Arial", Font.BOLD, 14));
-        add(lblMain);
-        
-String[] colInv = {"Mã HĐ", "Mã KH", "Mã NV", "Ngày Lập", "Tổng Tiền (VNĐ)"};
+        add(pnlNorth, BorderLayout.NORTH);
+
+        // --- PHẦN CENTER: BẢNG DỮ LIỆU ---
+        JPanel pnlCenter = new JPanel(new GridLayout(2, 1, 0, 10));
+        pnlCenter.setOpaque(false);
+
+        // 1. Bảng Hóa Đơn
+        JPanel pnlInvoiceTable = new JPanel(new BorderLayout());
+        pnlInvoiceTable.setOpaque(false);
+        JLabel lblMain = new JLabel(" DANH SÁCH HÓA ĐƠN");
+        lblMain.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblMain.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        pnlInvoiceTable.add(lblMain, BorderLayout.NORTH);
+
+        String[] colInv = {"Mã HĐ", "Mã KH", "Mã NV", "Ngày Lập", "Tổng Tiền (VNĐ)"};
         modelInvoice = new DefaultTableModel(colInv, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
         tblInvoice = new JTable(modelInvoice);
-        tblInvoice.setRowHeight(25);
-        
-        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
-        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+        tblInvoice.setRowHeight(30);
         
         JScrollPane scrollInv = new JScrollPane(tblInvoice);
-        scrollInv.setBounds(20, 95, 890, 180);
-        add(scrollInv);
+        pnlInvoiceTable.add(scrollInv, BorderLayout.CENTER);
+        pnlCenter.add(pnlInvoiceTable);
 
-        // Định dạng cột tiền cho bảng chính sau khi add vào ScrollPane
-        tblInvoice.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
-
-        JLabel lblSub = new JLabel("CHI TIẾT SẢN PHẨM TRONG HÓA ĐƠN");
-        lblSub.setBounds(20, 300, 400, 25);
-        lblSub.setFont(new Font("Arial", Font.BOLD, 14));
+        // 2. Bảng Chi Tiết
+        JPanel pnlDetailTable = new JPanel(new BorderLayout());
+        pnlDetailTable.setOpaque(false);
+        JLabel lblSub = new JLabel(" CHI TIẾT SẢN PHẨM TRONG HÓA ĐƠN");
+        lblSub.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblSub.setForeground(new Color(0, 102, 204));
-        add(lblSub);
+        lblSub.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        pnlDetailTable.add(lblSub, BorderLayout.NORTH);
 
         String[] colDet = {"Mã SP", "Tên Sản Phẩm", "Số Lượng", "Đơn Giá", "Thành Tiền"};
         modelDetails = new DefaultTableModel(colDet, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
         tblDetails = new JTable(modelDetails);
-        tblDetails.setRowHeight(25);
+        tblDetails.setRowHeight(30);
         
         JScrollPane scrollDet = new JScrollPane(tblDetails);
-        scrollDet.setBounds(20, 330, 890, 180);
-        add(scrollDet);
+        pnlDetailTable.add(scrollDet, BorderLayout.CENTER);
+        pnlCenter.add(pnlDetailTable);
+
+        add(pnlCenter, BorderLayout.CENTER);
+
+        // --- PHẦN SOUTH: NÚT XÓA ---
+        JPanel pnlSouth = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
+        pnlSouth.setOpaque(false);
+        btnDelete = new JButton("Xóa Hóa Đơn");
+        styleButton(btnDelete, new Color(220, 53, 69));
+        btnDelete.setPreferredSize(new Dimension(140, 40));
+        pnlSouth.add(btnDelete);
         
-        // Định dạng cột tiền cho bảng chi tiết
+        add(pnlSouth, BorderLayout.SOUTH);
+
+        // Căn lề phải cho cột tiền
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+        tblInvoice.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
         tblDetails.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
         tblDetails.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+    }
 
-        btnDelete = new JButton("Xóa Hóa Đơn");
-        btnDelete.setBounds(790, 530, 120, 35);
-        btnDelete.setBackground(new Color(180, 0, 0)); // Màu đỏ đậm hơn
-        btnDelete.setForeground(Color.WHITE);
-        btnDelete.setFont(new Font("Arial", Font.BOLD, 12));
-        btnDelete.setFocusPainted(false);
-        btnDelete.setOpaque(true);
-        btnDelete.setBorderPainted(false);
-        add(btnDelete);
+    private void styleButton(JButton btn, Color bgColor) {
+        btn.setBackground(bgColor);
+        btn.setForeground(Color.WHITE);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false); // Tắt viền mặc định của Windows
+        btn.setOpaque(true);         // Quan trọng: Để màu nền hiển thị rõ
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    }
 
-        // Sự kiện
+    private void setupEvents() {
         tblInvoice.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -150,18 +171,13 @@ String[] colInv = {"Mã HĐ", "Mã KH", "Mã NV", "Ngày Lập", "Tổng Tiền 
             }
         });
     }
-        
-    
 
     private void fillTableInvoice(ArrayList<Object[]> list) {
         modelInvoice.setRowCount(0);
         if (list != null) {
             for (Object[] r : list) {
                 Object[] rowData = new Object[5];
-                rowData[0] = r[0]; // ID
-                rowData[1] = r[1]; // CustID
-                rowData[2] = r[2]; // StaffID
-                rowData[3] = r[3]; // Date
+                rowData[0] = r[0]; rowData[1] = r[1]; rowData[2] = r[2]; rowData[3] = r[3];
                 try {
                     rowData[4] = df.format(Double.parseDouble(r[4].toString()));
                 } catch (Exception e) { rowData[4] = r[4]; }
@@ -170,15 +186,12 @@ String[] colInv = {"Mã HĐ", "Mã KH", "Mã NV", "Ngày Lập", "Tổng Tiền 
         }
     }
 
-    
     private void fillTableDetails(ArrayList<Object[]> list) {
         modelDetails.setRowCount(0);
         if (list != null) {
             for (Object[] r : list) {
                 Object[] rowData = new Object[5];
-                rowData[0] = r[0];
-                rowData[1] = r[1];
-                rowData[2] = r[2];
+                rowData[0] = r[0]; rowData[1] = r[1]; rowData[2] = r[2];
                 try {
                     rowData[3] = df.format(Double.parseDouble(r[3].toString()));
                     rowData[4] = df.format(Double.parseDouble(r[4].toString()));
@@ -189,13 +202,7 @@ String[] colInv = {"Mã HĐ", "Mã KH", "Mã NV", "Ngày Lập", "Tổng Tiền 
             }
         }
     }
-        
 
     private void loadInvoiceData() { fillTableInvoice(invoiceBUS.getAll()); }
     private void loadDetailsData(String id) { fillTableDetails(invoiceBUS.searchDetailByID(id)); }
-
-    public static void main(String[] args) {
-        try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch(Exception e) {}
-        new InvoiceGUI().setVisible(true);
-    }
 }

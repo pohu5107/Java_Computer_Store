@@ -1,15 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package GUI;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class MainDashboardGUI extends JFrame {
+public class MainGUI extends JFrame {
 
-    public MainDashboardGUI() {
+    public MainGUI() {
         initComponents();
     }
 
@@ -68,6 +65,6 @@ public class MainDashboardGUI extends JFrame {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {}
         
-        new MainDashboardGUI().setVisible(true);
+        new MainGUI().setVisible(true);
     }
 }

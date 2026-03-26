@@ -1,8 +1,5 @@
 package DAO;
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 import java.sql.*;
 import java.util.ArrayList;
 import ConnectDB.ConnectDB;
@@ -12,9 +9,8 @@ public class CategoryDAO {
         ArrayList<Object[]> list = new ArrayList<>();
         String sql = "SELECT * FROM Categories";
         Connection conn = ConnectDB.getConnection();
-        try (Statement st = conn.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
-            
+        try (PreparedStatement pst = conn.prepareStatement(sql);
+             ResultSet rs = pst.executeQuery()) {
             while (rs.next()) {
                 Object[] row = {
                     rs.getString("CategoryID"),

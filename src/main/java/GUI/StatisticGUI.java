@@ -1,18 +1,15 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package GUI;
 
 import BUS.StatisticBUS;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 
-public class StatisticGUI extends JFrame {
+public class StatisticGUI extends JPanel {
     private StatisticBUS statisticBUS = new StatisticBUS();
     private DecimalFormat df = new DecimalFormat("#,### VNĐ");
 
@@ -23,80 +20,94 @@ public class StatisticGUI extends JFrame {
     private JButton btnViewMonth, btnViewQuarter, btnRefresh;
 
     public StatisticGUI() {
+        setLayout(new BorderLayout(10, 15));
+        setPreferredSize(new Dimension(950, 650)); 
+        setBackground(new Color(240, 242, 245));
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
         initComponents();
-        loadOverview(LocalDate.now().withDayOfMonth(1).toString(), LocalDate.now().toString());
+        updateOverviewByMonth(LocalDate.now().getMonthValue(), LocalDate.now().getYear());
     }
 
     private void initComponents() {
-        setTitle("Hệ Thống Thống Kê Doanh Thu & Lợi Nhuận");
-        setSize(1100, 750);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setLayout(null);
-        setLocationRelativeTo(null);
-        getContentPane().setBackground(new Color(240, 242, 245));
-
-        // --- 1. DASHBOARD CARDS (HIỂN THỊ TỔNG QUAN) ---
-        JPanel pnlCards = new JPanel(null);
+        // --- 1. DASHBOARD CARDS ---
+        JPanel pnlCards = new JPanel(new GridLayout(1, 3, 20, 0));
         pnlCards.setOpaque(false);
-        pnlCards.setBounds(20, 20, 1045, 120);
-        add(pnlCards);
+        pnlCards.setPreferredSize(new Dimension(0, 120));
 
-        lblRevenue = createCard(pnlCards, "TỔNG DOANH THU", new Color(40, 167, 69), 0); // Xanh lá
-        lblExpenditure = createCard(pnlCards, "TỔNG CHI PHÍ", new Color(220, 53, 69), 355); // Đỏ
-        lblProfit = createCard(pnlCards, "LỢI NHUẬN", new Color(0, 123, 255), 710); // Xanh dương
+        lblRevenue = createCard(pnlCards, "TỔNG DOANH THU", new Color(40, 167, 69)); 
+        lblExpenditure = createCard(pnlCards, "TỔNG CHI PHÍ (NHẬP)", new Color(220, 53, 69)); 
+        lblProfit = createCard(pnlCards, "LỢI NHUẬN THUẦN", new Color(0, 123, 255)); 
 
-        // --- 2. BỘ LỌC THỐNG KÊ ---
-        JPanel pnlFilter = new JPanel(null);
+        // --- 2. CENTER PANEL ---
+        JPanel pnlCenter = new JPanel(new BorderLayout(0, 15));
+        pnlCenter.setOpaque(false);
+
+        // Bộ lọc thống kê - Đã điều chỉnh Layout và kích thước để không bị dấu "..."
+        JPanel pnlFilter = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
         pnlFilter.setBackground(Color.WHITE);
-        pnlFilter.setBorder(BorderFactory.createTitledBorder("Bộ lọc thống kê"));
-        pnlFilter.setBounds(20, 150, 1045, 80);
-        add(pnlFilter);
-
-        // Lọc theo tháng
+        pnlFilter.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220)));
+        
+        // Nhóm lọc tháng
         pnlFilter.add(new JLabel("Tháng:"));
         cbMonth = new JComboBox<>(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"});
-        cbMonth.setBounds(70, 30, 60, 25);
+        cbMonth.setSelectedItem(String.valueOf(LocalDate.now().getMonthValue()));
+        cbMonth.setPreferredSize(new Dimension(70, 30)); // Tăng độ rộng
         pnlFilter.add(cbMonth);
 
         pnlFilter.add(new JLabel("Năm:"));
         cbYear = new JComboBox<>(new String[]{"2023", "2024", "2025", "2026"});
         cbYear.setSelectedItem("2026");
-        cbYear.setBounds(180, 30, 80, 25);
+        cbYear.setPreferredSize(new Dimension(90, 30)); // Tăng độ rộng
         pnlFilter.add(cbYear);
 
-        btnViewMonth = new JButton("Xem theo Tháng");
-        btnViewMonth.setBounds(270, 25, 140, 35);
+        btnViewMonth = new JButton("Lọc theo Tháng");
         styleButton(btnViewMonth, new Color(108, 117, 125));
+        btnViewMonth.setPreferredSize(new Dimension(150, 35)); // Tăng độ rộng nút
         pnlFilter.add(btnViewMonth);
 
-        // Lọc theo quý
+        // Vạch ngăn cách
+        JSeparator sep = new JSeparator(JSeparator.VERTICAL);
+        sep.setPreferredSize(new Dimension(2, 30));
+        pnlFilter.add(sep);
+
+        // Nhóm lọc quý
         pnlFilter.add(new JLabel("Quý:"));
         cbQuarter = new JComboBox<>(new String[]{"1", "2", "3", "4"});
-        cbQuarter.setBounds(550, 30, 60, 25);
+        cbQuarter.setPreferredSize(new Dimension(70, 30));
         pnlFilter.add(cbQuarter);
 
-        btnViewQuarter = new JButton("Xem theo Quý");
-        btnViewQuarter.setBounds(630, 25, 140, 35);
+        btnViewQuarter = new JButton("Lọc theo Quý");
         styleButton(btnViewQuarter, new Color(108, 117, 125));
+        btnViewQuarter.setPreferredSize(new Dimension(150, 35));
         pnlFilter.add(btnViewQuarter);
 
         btnRefresh = new JButton("Làm Mới");
-        btnRefresh.setBounds(900, 25, 120, 35);
         styleButton(btnRefresh, new Color(40, 167, 69));
+        btnRefresh.setPreferredSize(new Dimension(120, 35));
         pnlFilter.add(btnRefresh);
 
-        // --- 3. BẢNG CHI TIẾT ---
+        // Bảng chi tiết
         String[] columns = {"Mã SP", "Tên Sản Phẩm", "Số Lượng Bán", "Doanh Thu", "Lợi Nhuận Dự Tính"};
         model = new DefaultTableModel(columns, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
         tblReport = new JTable(model);
-        tblReport.setRowHeight(30);
-        tblReport.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+        tblReport.setRowHeight(35);
+        tblReport.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
+        
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+        for(int i=2; i<=4; i++) tblReport.getColumnModel().getColumn(i).setCellRenderer(rightRenderer);
 
         JScrollPane scroll = new JScrollPane(tblReport);
-        scroll.setBounds(20, 250, 1045, 430);
-        add(scroll);
+        scroll.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220)));
+        
+        pnlCenter.add(pnlFilter, BorderLayout.NORTH);
+        pnlCenter.add(scroll, BorderLayout.CENTER);
+
+        add(pnlCards, BorderLayout.NORTH);
+        add(pnlCenter, BorderLayout.CENTER);
 
         // --- SỰ KIỆN ---
         btnViewMonth.addActionListener(e -> {
@@ -110,31 +121,33 @@ public class StatisticGUI extends JFrame {
             int q = Integer.parseInt(cbQuarter.getSelectedItem().toString());
             int y = Integer.parseInt(cbYear.getSelectedItem().toString());
             fillTable(statisticBUS.getReportByQuarter(q, y));
-            // Cần tính overview cho quý (fromDate, toDate tương ứng logic BUS)
             updateOverviewByQuarter(q, y);
         });
 
         btnRefresh.addActionListener(e -> {
-            loadOverview("2023-01-01", "2026-12-31");
             model.setRowCount(0);
+            updateOverviewByMonth(LocalDate.now().getMonthValue(), LocalDate.now().getYear());
         });
     }
 
-    private JLabel createCard(JPanel parent, String title, Color color, int x) {
-        JPanel card = new JPanel(null);
+    private JLabel createCard(JPanel parent, String title, Color color) {
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(color);
-        card.setBounds(x, 0, 330, 110);
+        card.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
         
         JLabel lblTitle = new JLabel(title);
-        lblTitle.setForeground(Color.WHITE);
-        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        lblTitle.setBounds(20, 15, 200, 25);
-        card.add(lblTitle);
-
+        lblTitle.setForeground(new Color(255, 255, 255, 200));
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        lblTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
         JLabel lblValue = new JLabel("0 VNĐ");
         lblValue.setForeground(Color.WHITE);
         lblValue.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        lblValue.setBounds(20, 50, 300, 40);
+        lblValue.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        card.add(lblTitle);
+        card.add(Box.createVerticalStrut(10));
         card.add(lblValue);
 
         parent.add(card);
@@ -147,13 +160,16 @@ public class StatisticGUI extends JFrame {
         btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
         btn.setFocusPainted(false);
         btn.setBorderPainted(false);
-        btn.setContentAreaFilled(false); // Tắt render mặc định
-        btn.setOpaque(true);             // Ép màu nền
+        btn.setOpaque(true);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
     private void fillTable(ArrayList<Object[]> list) {
         model.setRowCount(0);
+        if (list == null || list.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Không có dữ liệu trong khoảng thời gian này!");
+            return;
+        }
         for (Object[] row : list) {
             model.addRow(new Object[]{
                 row[0], row[1], row[2], 
@@ -163,30 +179,30 @@ public class StatisticGUI extends JFrame {
         }
     }
 
-    private void loadOverview(String from, String to) {
-        Object[] data = statisticBUS.getOverview(from, to);
-        lblRevenue.setText(df.format(data[0]));
-        lblExpenditure.setText(df.format(data[1]));
-        lblProfit.setText(df.format(data[2]));
-    }
-
     private void updateOverviewByMonth(int m, int y) {
         String from = y + "-" + (m < 10 ? "0" + m : m) + "-01";
         LocalDate end = java.time.YearMonth.of(y, m).atEndOfMonth();
-        loadOverview(from, end.toString());
+        Object[] data = statisticBUS.getOverview(from, end.toString());
+        displayOverview(data);
     }
 
     private void updateOverviewByQuarter(int q, int y) {
         String from = "", to = "";
-        if(q == 1) { from = y+"-01-01"; to = y+"-03-31"; }
-        else if(q == 2) { from = y+"-04-01"; to = y+"-06-30"; }
-        else if(q == 3) { from = y+"-07-01"; to = y+"-09-30"; }
-        else { from = y+"-10-01"; to = y+"-12-31"; }
-        loadOverview(from, to);
+        switch (q) {
+            case 1 -> { from = y+"-01-01"; to = y+"-03-31"; }
+            case 2 -> { from = y+"-04-01"; to = y+"-06-30"; }
+            case 3 -> { from = y+"-07-01"; to = y+"-09-30"; }
+            case 4 -> { from = y+"-10-01"; to = y+"-12-31"; }
+        }
+        Object[] data = statisticBUS.getOverview(from, to);
+        displayOverview(data);
     }
 
-    public static void main(String[] args) {
-        try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch(Exception e) {}
-        SwingUtilities.invokeLater(() -> new StatisticGUI().setVisible(true));
+    private void displayOverview(Object[] data) {
+        if(data != null && data.length >= 3) {
+            lblRevenue.setText(df.format(data[0]));
+            lblExpenditure.setText(df.format(data[1]));
+            lblProfit.setText(df.format(data[2]));
+        }
     }
 }
