@@ -1,7 +1,9 @@
 F:\Workspace\Java_Computer_Store\src\main\java\BUS\BrandBUS.java
+F:\Workspace\Java_Computer_Store\src\main\java\BUS\CategoryBUS.java
 F:\Workspace\Java_Computer_Store\src\main\java\BUS\CustomerBUS.java
 F:\Workspace\Java_Computer_Store\src\main\java\BUS\InvoiceBUS.java
 F:\Workspace\Java_Computer_Store\src\main\java\BUS\ProductBUS.java
+F:\Workspace\Java_Computer_Store\src\main\java\BUS\PurchaseOrderBUS.java
 F:\Workspace\Java_Computer_Store\src\main\java\BUS\StaffBUS.java
 F:\Workspace\Java_Computer_Store\src\main\java\BUS\StatisticBUS.java
 F:\Workspace\Java_Computer_Store\src\main\java\BUS\SupplierBUS.java
@@ -18,8 +20,13 @@ F:\Workspace\Java_Computer_Store\src\main\java\DAO\StaffDAO.java
 F:\Workspace\Java_Computer_Store\src\main\java\DAO\StatisticDAO.java
 F:\Workspace\Java_Computer_Store\src\main\java\DAO\SupplierDAO.java
 F:\Workspace\Java_Computer_Store\src\main\java\GUI\BrandGUI.java
+F:\Workspace\Java_Computer_Store\src\main\java\GUI\CategoryGUI.java
 F:\Workspace\Java_Computer_Store\src\main\java\GUI\InvoiceGUI.java
+F:\Workspace\Java_Computer_Store\src\main\java\GUI\MainGUI.java
 F:\Workspace\Java_Computer_Store\src\main\java\GUI\ProductGUI.java
+F:\Workspace\Java_Computer_Store\src\main\java\GUI\PurchaseOrderGUI.java
 F:\Workspace\Java_Computer_Store\src\main\java\GUI\SaleGUI.java
+F:\Workspace\Java_Computer_Store\src\main\java\GUI\StaffGUI.java
+F:\Workspace\Java_Computer_Store\src\main\java\GUI\StatisticGUI.java
 F:\Workspace\Java_Computer_Store\src\main\java\GUI\SupplierGUI.java
 F:\Workspace\Java_Computer_Store\src\main\java\java_computer_store\Java_Computer_Store.java

@@ -13,10 +13,16 @@ public class StatisticBUS {
 
     // 1. Thống kê tổng quan (Doanh thu, Chi phí, Lợi nhuận)
     public Object[] getOverview(String fromDate, String toDate) {
-        double rev = statisticDAO.getTotalRevenue(fromDate, toDate);
-        double exp = statisticDAO.getTotalExpenditure(fromDate, toDate);
-        double profit = rev - exp;
-        return new Object[]{ rev, exp, profit };
+        ArrayList<Object[]> details = statisticDAO.getProfitReport(fromDate, toDate);
+        double totalRev = 0;
+        double totalProfit = 0;
+        double totalCost = 0;
+        for (Object[] row : details) {
+            totalRev += (double) row[3];    // Cột Revenue
+            totalProfit += (double) row[4]; // Cột Profit
+        }
+        totalCost = totalRev - totalProfit; 
+        return new Object[]{ totalRev, totalCost, totalProfit };
     }
 
     // Người dùng chỉ cần chọn Tháng và Năm, BUS tự tính ngày đầu và cuối tháng
