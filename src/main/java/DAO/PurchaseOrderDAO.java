@@ -88,7 +88,7 @@ public class PurchaseOrderDAO {
     public boolean insert(String orderId, String staffId, String supplierId, double totalAmount, ArrayList<Object[]> details) {
         String sqlOrder = "INSERT INTO PurchaseOrders (OrderID, StaffID, SupplierID, TotalAmount) VALUES (?, ?, ?, ?)";
         String sqlDetail = "INSERT INTO PurchaseOrderDetails (OrderID, ProductID, Quantity, UnitPrice) VALUES (?, ?, ?, ?)";
-        String sqlUpdateProduct = "UPDATE Products SET Quantity = Quantity + ? WHERE ProductID = ?";
+//        String sqlUpdateProduct = "UPDATE Products SET Quantity = Quantity + ? WHERE ProductID = ?";
 
         Connection conn = ConnectDB.getConnection();
         if(conn == null) { return false; }
@@ -104,7 +104,8 @@ public class PurchaseOrderDAO {
             }
             // 2+3  Lưu từng dòng chi tiết và cộng vào Kho
             try (PreparedStatement pstDetail = conn.prepareStatement(sqlDetail);
-                 PreparedStatement pstUpdate = conn.prepareStatement(sqlUpdateProduct)) {
+//                 PreparedStatement pstUpdate = conn.prepareStatement(sqlUpdateProduct)
+                    ) {
                 for (Object[] row : details) {
                     String productId = row[0].toString();
                     int qty = Integer.parseInt(row[1].toString());
@@ -116,9 +117,9 @@ public class PurchaseOrderDAO {
                     pstDetail.setDouble(4, price);
                     pstDetail.executeUpdate();
                     // Cộng số lượng vào bảng Products
-                    pstUpdate.setInt(1, qty);
-                    pstUpdate.setString(2, productId);
-                    pstUpdate.executeUpdate();
+//                    pstUpdate.setInt(1, qty);
+//                    pstUpdate.setString(2, productId);
+//                    pstUpdate.executeUpdate();
                 }
             }
             // Xác nhận lưu toàn bộ

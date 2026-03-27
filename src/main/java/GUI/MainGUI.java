@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package GUI;
 
 import javax.swing.*;
@@ -50,6 +46,7 @@ public class MainGUI extends JFrame {
         pnlContent.add(new InvoiceGUI(), "Hóa đơn");
         pnlContent.add(new PurchaseOrderGUI(), "Nhập kho");
         pnlContent.add(new StaffGUI(), "Nhân viên");
+        pnlContent.add(new PromotionGUI(), "Khuyến mãi");
         pnlContent.add(new StatisticGUI(), "Thống kê");
 
         // --- TẠO CÁC NÚT MENU ---
@@ -59,7 +56,8 @@ public class MainGUI extends JFrame {
         createMenuButton("Bán hàng", e -> showCard("Bán hàng"));
         createMenuButton("Hóa đơn", e -> showCard("Hóa đơn"));
         createMenuButton("Nhập kho", e -> showCard("Nhập kho"));
-        createMenuButton("Nhân viên", e -> showCard("Nhân viên"));
+        createMenuButton("Nhân viên", e -> showCard("Nhân viên"));        
+        createMenuButton("Khuyến mãi", e -> showCard("Khuyến mãi"));
         createMenuButton("Thống kê", e -> showCard("Thống kê"));
 
         add(pnlSidebar, BorderLayout.WEST);
@@ -96,7 +94,7 @@ public class MainGUI extends JFrame {
     private void showCard(String cardName) {
         cardLayout.show(pnlContent, cardName);
     }
-
+   
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
