@@ -43,7 +43,6 @@ public class ProductBUS {
         return "Xóa thất bại";
     }
 
-    // Hàm gọi từ ImportGUI
     public boolean updateStock(String id, int amount) {
         return productDAO.updateQuantity(id, amount);
     }

@@ -16,26 +16,24 @@ public class PurchaseOrderBUS {
 
     public ArrayList<Object[]> getDetailsByOrderID(String orderId) {
         if (orderId == null || orderId.trim().isEmpty()) {
-            return new ArrayList<>(); // Trả về mảng rỗng nếu mã không hợp lệ
+            return new ArrayList<>(); 
         }
         return orderDAO.getDetailsByOrderID(orderId);
     }
 
-    //  tự động sinh mã phiếu nhập mới
     public String generateNextID() {
         String lastID = orderDAO.getLastID();
         if (lastID == null || lastID.isEmpty()) {
             return "PN001"; 
         }
         try {
-            String prefix = lastID.replaceAll("[0-9]", ""); // Lấy chữ (VD: PN)
-            String numberStr = lastID.replaceAll("[^0-9]", ""); // Lấy số (VD: 005)
+            String prefix = lastID.replaceAll("[0-9]", ""); 
+            String numberStr = lastID.replaceAll("[^0-9]", ""); 
             
             int nextNumber = Integer.parseInt(numberStr) + 1;
             
             return prefix + String.format("%0" + numberStr.length() + "d", nextNumber);
         } catch (Exception e) {
-            // Đề phòng trường hợp mã cũ trong DB bị sai định dạng chuẩn
             return "PN_NEW"; 
         }
     }

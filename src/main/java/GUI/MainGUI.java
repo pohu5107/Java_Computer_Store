@@ -24,7 +24,6 @@ public class MainGUI extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // --- SIDEBAR (THANH MENU BÊN TRÁI) ---
         pnlSidebar = new JPanel();
         pnlSidebar.setBackground(COLOR_SIDEBAR);
         pnlSidebar.setPreferredSize(new Dimension(220, 0));
@@ -49,7 +48,6 @@ public class MainGUI extends JFrame {
         pnlContent.add(new PromotionGUI(), "Khuyến mãi");
         pnlContent.add(new StatisticGUI(), "Thống kê");
 
-        // --- TẠO CÁC NÚT MENU ---
         createMenuButton("Sản phẩm", e -> showCard("Sản phẩm"));
         createMenuButton("Thương hiệu", e -> showCard("Thương hiệu"));
         createMenuButton("Danh mục", e -> showCard("Danh mục"));

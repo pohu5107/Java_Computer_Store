@@ -69,7 +69,7 @@ public class BrandDAO {
             pst.setString(1, name);
             pst.setString(2, address);
             pst.setString(3, phone);
-            pst.setString(4, id); // Điều kiện WHERE để biết sửa đúng cái nào
+            pst.setString(4, id); 
             
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {

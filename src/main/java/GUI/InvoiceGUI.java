@@ -31,9 +31,8 @@ public class InvoiceGUI extends JPanel {
     }
 
     private void initComponents() {
-        // --- PHẦN NORTH: TÌM KIẾM ---
         JPanel pnlNorth = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
-        pnlNorth.setBackground(Color.WHITE); // Đặt nền trắng cho thanh tìm kiếm
+        pnlNorth.setBackground(Color.WHITE); 
         pnlNorth.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220)));
         
         JLabel lblSearch = new JLabel("Mã Hóa Đơn:");
@@ -41,26 +40,24 @@ public class InvoiceGUI extends JPanel {
         pnlNorth.add(lblSearch);
 
         txtSearch = new JTextField(20);
-        txtSearch.setPreferredSize(new Dimension(200, 35)); // Tăng chiều cao ô nhập
+        txtSearch.setPreferredSize(new Dimension(200, 35)); 
         pnlNorth.add(txtSearch);
 
         btnSearch = new JButton("Tìm Kiếm");
         styleButton(btnSearch, new Color(0, 123, 255));
-        btnSearch.setPreferredSize(new Dimension(120, 35)); // Fix kích thước hiển thị đủ chữ
+        btnSearch.setPreferredSize(new Dimension(120, 35)); 
         pnlNorth.add(btnSearch);
 
         btnRefresh = new JButton("Làm Mới");
         styleButton(btnRefresh, new Color(108, 117, 125));
-        btnRefresh.setPreferredSize(new Dimension(120, 35)); // Fix kích thước hiển thị đủ chữ
+        btnRefresh.setPreferredSize(new Dimension(120, 35)); 
         pnlNorth.add(btnRefresh);
 
         add(pnlNorth, BorderLayout.NORTH);
 
-        // --- PHẦN CENTER: BẢNG DỮ LIỆU ---
         JPanel pnlCenter = new JPanel(new GridLayout(2, 1, 0, 10));
         pnlCenter.setOpaque(false);
 
-        // 1. Bảng Hóa Đơn
         JPanel pnlInvoiceTable = new JPanel(new BorderLayout());
         pnlInvoiceTable.setOpaque(false);
         JLabel lblMain = new JLabel(" DANH SÁCH HÓA ĐƠN");
@@ -79,7 +76,6 @@ public class InvoiceGUI extends JPanel {
         pnlInvoiceTable.add(scrollInv, BorderLayout.CENTER);
         pnlCenter.add(pnlInvoiceTable);
 
-        // 2. Bảng Chi Tiết
         JPanel pnlDetailTable = new JPanel(new BorderLayout());
         pnlDetailTable.setOpaque(false);
         JLabel lblSub = new JLabel(" CHI TIẾT SẢN PHẨM TRONG HÓA ĐƠN");
@@ -101,7 +97,6 @@ public class InvoiceGUI extends JPanel {
 
         add(pnlCenter, BorderLayout.CENTER);
 
-        // --- PHẦN SOUTH: NÚT XÓA ---
         JPanel pnlSouth = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
         pnlSouth.setOpaque(false);
         btnDelete = new JButton("Xóa Hóa Đơn");
@@ -111,7 +106,6 @@ public class InvoiceGUI extends JPanel {
         
         add(pnlSouth, BorderLayout.SOUTH);
 
-        // Căn lề phải cho cột tiền
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
         rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
         tblInvoice.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
@@ -124,8 +118,8 @@ public class InvoiceGUI extends JPanel {
         btn.setForeground(Color.WHITE);
         btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
         btn.setFocusPainted(false);
-        btn.setBorderPainted(false); // Tắt viền mặc định của Windows
-        btn.setOpaque(true);         // Quan trọng: Để màu nền hiển thị rõ
+        btn.setBorderPainted(false); 
+        btn.setOpaque(true);         
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 

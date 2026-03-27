@@ -1,7 +1,7 @@
 package GUI;
 
 import BUS.PromotionBUS;
-import com.toedter.calendar.JDateChooser; // Import thư viện lịch
+import com.toedter.calendar.JDateChooser;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -33,7 +33,6 @@ public class PromotionGUI extends JPanel {
     }
 
     private void initComponents() {
-        // --- PHẦN TRÊN: THANH CÔNG CỤ ---
         JPanel pnlNorth = new JPanel(null);
         pnlNorth.setPreferredSize(new Dimension(950, 60));
         pnlNorth.setOpaque(false);
@@ -53,19 +52,15 @@ public class PromotionGUI extends JPanel {
 
         btnAdd = new JButton("Thêm Mới");
         btnAdd.setBounds(435, 10, 110, 35);
-//        styleButton(btnAdd, new Color(40, 167, 69), Color.WHITE);
 
         btnUpdate = new JButton("Cập Nhật");
         btnUpdate.setBounds(555, 10, 110, 35);
-//        styleButton(btnUpdate, new Color(0, 123, 255), Color.WHITE);
 
         btnDelete = new JButton("Xóa KM");
         btnDelete.setBounds(675, 10, 110, 35);
-//        styleButton(btnDelete, new Color(220, 53, 69), Color.WHITE);
 
         btnRefresh = new JButton("Làm Mới");
         btnRefresh.setBounds(795, 10, 110, 35);
-//        styleButton(btnRefresh, new Color(108, 117, 125), Color.WHITE);
 
         pnlNorth.add(btnAdd); 
         pnlNorth.add(btnUpdate); 
@@ -74,7 +69,6 @@ public class PromotionGUI extends JPanel {
         
         add(pnlNorth, BorderLayout.NORTH);
 
-        // --- PHẦN CENTER: BẢNG DỮ LIỆU ---
         String[] columns = {"Mã KM", "Tên KM", "Ngày bắt đầu", "Ngày kết thúc", "Trạng thái"};
         model = new DefaultTableModel(columns, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }

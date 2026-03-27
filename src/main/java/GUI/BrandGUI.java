@@ -22,12 +22,12 @@ public class BrandGUI extends JPanel {
 
         initComponents();
         loadData();      
-        setupEvents(); // Lỗi "cannot find symbol" đã được giải quyết bằng cách định nghĩa hàm bên dưới
+        setupEvents();
     }
 
     private void initComponents() {
         JPanel pnlNorth = new JPanel(null);
-        pnlNorth.setPreferredSize(new Dimension(950, 220)); // Tăng nhẹ chiều cao để không cấn nút
+        pnlNorth.setPreferredSize(new Dimension(950, 220)); 
         pnlNorth.setOpaque(false);
 
         JPanel pnlInput = new JPanel(null);
@@ -41,7 +41,6 @@ public class BrandGUI extends JPanel {
         addLabelTextField(pnlInput, "Số ĐT:", txtPhone = new JTextField(), 450, 75);
         pnlNorth.add(pnlInput);
 
-        // --- KHU VỰC TÌM KIẾM ---
         JLabel lblS = new JLabel("Tìm kiếm:");
         lblS.setBounds(30, 160, 70, 30);
         pnlNorth.add(lblS);
@@ -55,7 +54,6 @@ public class BrandGUI extends JPanel {
         styleButton(btnSearch, new Color(240, 240, 240), Color.BLACK);
         pnlNorth.add(btnSearch);
 
-        // --- CÁC NÚT CHỨC NĂNG (Fix lỗi hiển thị trắng xóa) ---
         btnAdd = new JButton("Thêm Mới");
         btnAdd.setBounds(435, 155, 110, 40);
         styleButton(btnAdd, new Color(40, 167, 69), Color.WHITE);
@@ -130,14 +128,13 @@ public class BrandGUI extends JPanel {
         btnRefresh.addActionListener(e -> { refreshForm(); loadData(); });
     }
 
-    // Hàm styleButton quan trọng để fix lỗi màu trắng và mất chữ
     private void styleButton(JButton btn, Color bgColor, Color fgColor) {
         btn.setBackground(bgColor);
         btn.setForeground(fgColor);
-        btn.setFont(new Font("Segoe UI", Font.BOLD, 13)); // Tăng font size một chút cho rõ
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btn.setFocusPainted(false);
-        btn.setBorderPainted(false); // Xóa viền mặc định của Windows
-        btn.setOpaque(true);         // Ép hiển thị màu nền
+        btn.setBorderPainted(false); 
+        btn.setOpaque(true);     
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 

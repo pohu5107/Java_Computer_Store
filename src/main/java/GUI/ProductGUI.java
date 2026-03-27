@@ -31,7 +31,6 @@ public class ProductGUI extends JPanel {
     }
 
     private void initComponents() {
-        // --- PHẦN TRÊN: NHẬP LIỆU ---
         JPanel pnlNorth = new JPanel(null);
         pnlNorth.setPreferredSize(new Dimension(950, 280));
         pnlNorth.setOpaque(false);
@@ -41,7 +40,6 @@ public class ProductGUI extends JPanel {
         pnlInput.setBackground(Color.WHITE);
         pnlInput.setBounds(20, 10, 910, 210);
         
-        // Cột 1: Cơ bản
         addLabelTextField(pnlInput, "Mã SP:", txtID = new JTextField(), 20, 30);
         addLabelTextField(pnlInput, "Tên SP:", txtName = new JTextField(), 20, 70);
         addLabelTextField(pnlInput, "Số lượng:", txtQty = new JTextField("0"), 20, 110);
@@ -49,19 +47,16 @@ public class ProductGUI extends JPanel {
         txtQty.setBackground(new Color(245, 245, 245));
         addLabelTextField(pnlInput, "Đơn giá:", txtPrice = new JTextField(), 20, 150);
 
-        // Cột 2: Phân loại
         addLabelTextField(pnlInput, "Đơn vị:", txtUnit = new JTextField(), 320, 30);
         addLabelTextField(pnlInput, "Mã Loại:", txtCatID = new JTextField(), 320, 70);
         addLabelTextField(pnlInput, "Mã Hiệu:", txtBrandID = new JTextField(), 320, 110);
         addLabelTextField(pnlInput, "Mainboard:", txtMainboard = new JTextField(), 320, 150);
 
-        // Cột 3: Cấu hình
         addLabelTextField(pnlInput, "CPU:", txtCPU = new JTextField(), 620, 30);
         addLabelTextField(pnlInput, "RAM:", txtRAM = new JTextField(), 620, 70);
         addLabelTextField(pnlInput, "VGA:", txtVGA = new JTextField(), 620, 110);
         pnlNorth.add(pnlInput);
 
-        // --- THANH CÔNG CỤ (TÌM KIẾM + NÚT) ---
         JLabel lblS = new JLabel("Tìm kiếm:");
         lblS.setBounds(30, 235, 70, 25);
         pnlNorth.add(lblS);
@@ -94,7 +89,6 @@ public class ProductGUI extends JPanel {
         pnlNorth.add(btnAdd); pnlNorth.add(btnUpdate); pnlNorth.add(btnDelete); pnlNorth.add(btnRefresh);
         add(pnlNorth, BorderLayout.NORTH);
 
-        // --- PHẦN CENTER: BẢNG DỮ LIỆU ---
         String[] columns = {"Mã SP", "Tên SP", "SL", "Giá", "Đơn vị", "Loại", "Hiệu", "CPU", "RAM", "VGA", "Main"};
         model = new DefaultTableModel(columns, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }

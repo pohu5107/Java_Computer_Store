@@ -12,7 +12,6 @@ public class CategoryGUI extends JPanel {
 
     private CategoryBUS categoryBUS = new CategoryBUS();
 
-    // Các thành phần giao diện
     private JTextField txtSearch, txtID, txtName, txtDescription;
     private JTable tblCategory;
     private DefaultTableModel modelCategory;
@@ -30,12 +29,10 @@ public class CategoryGUI extends JPanel {
     }
 
     private void initComponents() { 
-        // Panel phía trên chứa Tìm kiếm và Nhập liệu
         JPanel pnlTop = new JPanel(new BorderLayout(5, 5));
         pnlTop.setOpaque(false);
         pnlTop.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // 1. Thanh tìm kiếm - Chỉnh lại để không bị khuất chữ
         JPanel pnlSearch = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
         pnlSearch.setBackground(Color.WHITE);
         pnlSearch.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220)));
@@ -47,18 +44,17 @@ public class CategoryGUI extends JPanel {
         
         btnSearch = new JButton("Tìm Kiếm");
         styleButton(btnSearch, new Color(0, 123, 255));
-        btnSearch.setPreferredSize(new Dimension(120, 35)); // Đảm bảo đủ rộng
+        btnSearch.setPreferredSize(new Dimension(120, 35)); 
 
         btnRefresh = new JButton("Làm Mới");
         styleButton(btnRefresh, new Color(108, 117, 125));
-        btnRefresh.setPreferredSize(new Dimension(120, 35)); // Đảm bảo đủ rộng
+        btnRefresh.setPreferredSize(new Dimension(120, 35)); 
 
         pnlSearch.add(txtSearch);
         pnlSearch.add(btnSearch);
         pnlSearch.add(btnRefresh);
         pnlTop.add(pnlSearch, BorderLayout.NORTH);
 
-        // 2. Khu vực nhập liệu
         JPanel box1 = new JPanel(new BorderLayout());
         box1.setBackground(Color.WHITE);
         box1.setBorder(BorderFactory.createTitledBorder(
@@ -81,7 +77,6 @@ public class CategoryGUI extends JPanel {
 
         box1.add(pnlInput, BorderLayout.CENTER);
 
-        // 3. Cụm nút bấm - Tăng kích thước để hiện đủ chữ "Thêm", "Sửa", "Xóa"
         JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
         pnlButtons.setOpaque(false);
         
@@ -89,11 +84,10 @@ public class CategoryGUI extends JPanel {
         btnUpdate = new JButton("Sửa");
         btnDelete = new JButton("Xóa");
         
-        styleButton(btnAdd, new Color(40, 167, 69));  // Xanh lá (Success)
-        styleButton(btnUpdate, new Color(0, 123, 255)); // Xanh dương (Primary)
-        styleButton(btnDelete, new Color(220, 53, 69));  // Đỏ (Danger)
+        styleButton(btnAdd, new Color(40, 167, 69)); 
+        styleButton(btnUpdate, new Color(0, 123, 255)); 
+        styleButton(btnDelete, new Color(220, 53, 69)); 
 
-        // Đặt kích thước cố định cho các nút chức năng chính
         Dimension btnSize = new Dimension(110, 40);
         btnAdd.setPreferredSize(btnSize);
         btnUpdate.setPreferredSize(btnSize);
@@ -107,7 +101,6 @@ public class CategoryGUI extends JPanel {
         pnlTop.add(box1, BorderLayout.CENTER);
         add(pnlTop, BorderLayout.NORTH);
 
-        // --- PHẦN GIỮA: BẢNG DỮ LIỆU ---
         JPanel box2 = new JPanel(new BorderLayout());
         box2.setBackground(Color.WHITE);
         box2.setBorder(BorderFactory.createTitledBorder(
@@ -128,19 +121,17 @@ public class CategoryGUI extends JPanel {
         add(box2, BorderLayout.CENTER);
     }
 
-    // Hàm style nút bấm giúp nút hiển thị rõ màu và không bị mất chữ
     private void styleButton(JButton btn, Color color) {
         btn.setBackground(color);
         btn.setForeground(Color.WHITE);
         btn.setFocusPainted(false);
-        btn.setBorderPainted(false); // Xóa viền mặc định
-        btn.setOpaque(true);         // Ép hiển thị màu nền
+        btn.setBorderPainted(false); 
+        btn.setOpaque(true);      
         btn.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
     private void setupEvents() {
-        // Placeholder cho thanh tìm kiếm
         txtSearch.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -158,7 +149,6 @@ public class CategoryGUI extends JPanel {
             }
         });
 
-        // Click bảng -> Đổ dữ liệu lên form
         tblCategory.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -173,7 +163,6 @@ public class CategoryGUI extends JPanel {
             }
         });
 
-        // Nút Thêm
         btnAdd.addActionListener(e -> {
             String id = txtID.getText().trim();
             String name = txtName.getText().trim();
@@ -190,7 +179,6 @@ public class CategoryGUI extends JPanel {
             }
         });
 
-        // Nút Sửa
         btnUpdate.addActionListener(e -> {
             String id = txtID.getText().trim();
             if (id.isEmpty()) { JOptionPane.showMessageDialog(this, "Vui lòng chọn danh mục!"); return; }
@@ -204,7 +192,6 @@ public class CategoryGUI extends JPanel {
             }
         });
 
-        // Nút Xóa
         btnDelete.addActionListener(e -> {
             String id = txtID.getText().trim();
             if (id.isEmpty()) { JOptionPane.showMessageDialog(this, "Vui lòng chọn danh mục!"); return; }
@@ -219,7 +206,6 @@ public class CategoryGUI extends JPanel {
             }
         });
 
-        // Nút Tìm kiếm
         btnSearch.addActionListener(e -> {
             String keyword = txtSearch.getText().trim();
             if (keyword.equals("Nhập tên hoặc mã danh mục (VD: LPT)...") || keyword.isEmpty()) {
@@ -229,7 +215,6 @@ public class CategoryGUI extends JPanel {
             }
         });
 
-        // Nút Làm mới
         btnRefresh.addActionListener(e -> { clearForm(); loadData(); });
     }
 

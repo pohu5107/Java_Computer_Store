@@ -63,7 +63,7 @@ public class StaffDAO {
             pst.setString(3, gender);
             pst.setDate(4, birthDate);
             pst.setString(5, phone);
-            pst.setString(6, id); // Điều kiện WHERE để biết sửa đúng cái nào
+            pst.setString(6, id);
 
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {

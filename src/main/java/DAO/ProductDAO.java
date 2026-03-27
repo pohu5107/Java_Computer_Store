@@ -96,7 +96,6 @@ public class ProductDAO {
         }
     }
 
-    // --- HÀM MỚI: Cập nhật số lượng (Dùng cho Bán hàng / Nhập hàng) ---
     public boolean updateQuantity(String id, int qtyChange) {
         String sql = "UPDATE Products SET Quantity = Quantity + ? WHERE ProductID = ?";
         try (Connection conn = ConnectDB.getConnection();

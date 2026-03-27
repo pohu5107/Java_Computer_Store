@@ -9,10 +9,8 @@ import java.util.ArrayList;
 
 public class StatisticDAO {
 
-    // 1. Tổng Chi (Lấy từ bảng PurchaseOrders)
     public double getTotalExpenditure(String fromDate, String toDate) {
         double total = 0;
-        // Chú ý: Cột ngày là OrderDate
         String sql = "SELECT SUM(TotalAmount) FROM PurchaseOrders WHERE OrderDate BETWEEN ? AND ?";
         Connection conn = ConnectDB.getConnection();
         try (PreparedStatement pst = conn.prepareStatement(sql)) {
@@ -24,10 +22,8 @@ public class StatisticDAO {
         return total;
     }
 
-    // 2. Tổng Thu (Lấy từ bảng Invoices)
     public double getTotalRevenue(String fromDate, String toDate) {
         double total = 0;
-        // Cột ngày là CreatedDate
         String sql = "SELECT SUM(TotalAmount) FROM Invoices WHERE CreatedDate BETWEEN ? AND ?";
         Connection conn = ConnectDB.getConnection();
         try (PreparedStatement pst = conn.prepareStatement(sql)) {
@@ -64,8 +60,8 @@ public class StatisticDAO {
                     rs.getString("ProductID"),
                     rs.getString("ProductName"),
                     rs.getInt("QtySold"),
-                    rev, // Doanh thu
-                    profit // Lợi nhuận
+                    rev, 
+                    profit 
                 });
             }
         } catch (SQLException e) { e.printStackTrace(); }

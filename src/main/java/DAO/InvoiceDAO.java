@@ -12,7 +12,6 @@ public class InvoiceDAO {
 
     public ArrayList<Object[]> getAll() {
         ArrayList<Object[]> list = new ArrayList<>();
-        // Lấy đúng các cột quan trọng theo thứ tự DB của bạn
         String sql = "SELECT InvoiceID, StaffID, CustomerID, CreatedDate, TotalAmount FROM Invoices";
 
         Connection conn = ConnectDB.getConnection();
@@ -21,11 +20,11 @@ public class InvoiceDAO {
 
             while (rs.next()) {
                 Object[] row = {
-                    rs.getString("InvoiceID"),      // index 0
-                    rs.getString("CustomerID"),     // index 1
-                    rs.getString("StaffID"),        // index 2
-                    rs.getString("CreatedDate"),     // index 3
-                    rs.getDouble("TotalAmount")     // index 4
+                    rs.getString("InvoiceID"),      
+                    rs.getString("CustomerID"),     
+                    rs.getString("StaffID"),        
+                    rs.getString("CreatedDate"),   
+                    rs.getDouble("TotalAmount")    
                 };
                 list.add(row);
             }
@@ -71,7 +70,6 @@ public class InvoiceDAO {
     }
 
     public boolean delete(String id) {
-        // Vì có khóa ngoại, bạn nên xóa chi tiết trước nếu DB chưa cài ON DELETE CASCADE
         String sqlDet = "DELETE FROM InvoiceDetails WHERE InvoiceID = ?";
         String sqlInv = "DELETE FROM Invoices WHERE InvoiceID = ?";
         Connection conn = ConnectDB.getConnection();

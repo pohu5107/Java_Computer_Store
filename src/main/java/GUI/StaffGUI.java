@@ -34,12 +34,10 @@ public class StaffGUI extends JPanel {
     }
 
     private void initComponents() {
-        // --- PHẦN TRÊN (NORTH): TÌM KIẾM VÀ NHẬP LIỆU ---
         JPanel pnlNorth = new JPanel(new BorderLayout(10, 10));
         pnlNorth.setOpaque(false);
         pnlNorth.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
 
-        // Thanh tìm kiếm
         JPanel pnlSearch = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         pnlSearch.setOpaque(false);
         
@@ -59,7 +57,6 @@ public class StaffGUI extends JPanel {
         pnlSearch.add(btnRefresh);
         pnlNorth.add(pnlSearch, BorderLayout.NORTH);
 
-        // Form nhập liệu
         JPanel pnlInputWrap = new JPanel(new BorderLayout());
         pnlInputWrap.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(new Color(200, 200, 200)), 
@@ -99,7 +96,6 @@ public class StaffGUI extends JPanel {
 
         pnlInputWrap.add(pnlFields, BorderLayout.CENTER);
 
-        // Nút chức năng (Add/Update/Delete)
         JPanel pnlAction = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
         pnlAction.setOpaque(false);
         
@@ -120,7 +116,6 @@ public class StaffGUI extends JPanel {
         pnlNorth.add(pnlInputWrap, BorderLayout.CENTER);
         add(pnlNorth, BorderLayout.NORTH);
 
-        // --- PHẦN GIỮA (CENTER): BẢNG DANH SÁCH ---
         JPanel pnlTable = new JPanel(new BorderLayout());
         pnlTable.setOpaque(false);
         pnlTable.setBorder(BorderFactory.createEmptyBorder(0, 20, 20, 20));
@@ -152,7 +147,6 @@ public class StaffGUI extends JPanel {
     }
 
     private void setupEvents() {
-        // Xử lý Placeholder cho ô tìm kiếm
         txtSearch.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -170,7 +164,6 @@ public class StaffGUI extends JPanel {
             }
         });
 
-        // Click bảng để đổ dữ liệu lên form
         tblStaff.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

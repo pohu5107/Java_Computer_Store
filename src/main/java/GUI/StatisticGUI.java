@@ -30,7 +30,6 @@ public class StatisticGUI extends JPanel {
     }
 
     private void initComponents() {
-        // --- 1. DASHBOARD CARDS ---
         JPanel pnlCards = new JPanel(new GridLayout(1, 3, 20, 0));
         pnlCards.setOpaque(false);
         pnlCards.setPreferredSize(new Dimension(0, 120));
@@ -39,39 +38,34 @@ public class StatisticGUI extends JPanel {
         lblExpenditure = createCard(pnlCards, "TỔNG CHI PHÍ (NHẬP)", new Color(220, 53, 69)); 
         lblProfit = createCard(pnlCards, "LỢI NHUẬN THUẦN", new Color(0, 123, 255)); 
 
-        // --- 2. CENTER PANEL ---
         JPanel pnlCenter = new JPanel(new BorderLayout(0, 15));
         pnlCenter.setOpaque(false);
 
-        // Bộ lọc thống kê - Đã điều chỉnh Layout và kích thước để không bị dấu "..."
         JPanel pnlFilter = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
         pnlFilter.setBackground(Color.WHITE);
         pnlFilter.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220)));
         
-        // Nhóm lọc tháng
         pnlFilter.add(new JLabel("Tháng:"));
         cbMonth = new JComboBox<>(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"});
         cbMonth.setSelectedItem(String.valueOf(LocalDate.now().getMonthValue()));
-        cbMonth.setPreferredSize(new Dimension(70, 30)); // Tăng độ rộng
+        cbMonth.setPreferredSize(new Dimension(70, 30)); 
         pnlFilter.add(cbMonth);
 
         pnlFilter.add(new JLabel("Năm:"));
         cbYear = new JComboBox<>(new String[]{"2023", "2024", "2025", "2026"});
         cbYear.setSelectedItem("2026");
-        cbYear.setPreferredSize(new Dimension(90, 30)); // Tăng độ rộng
+        cbYear.setPreferredSize(new Dimension(90, 30));
         pnlFilter.add(cbYear);
 
         btnViewMonth = new JButton("Lọc theo Tháng");
         styleButton(btnViewMonth, new Color(108, 117, 125));
-        btnViewMonth.setPreferredSize(new Dimension(150, 35)); // Tăng độ rộng nút
+        btnViewMonth.setPreferredSize(new Dimension(150, 35)); 
         pnlFilter.add(btnViewMonth);
 
-        // Vạch ngăn cách
         JSeparator sep = new JSeparator(JSeparator.VERTICAL);
         sep.setPreferredSize(new Dimension(2, 30));
         pnlFilter.add(sep);
 
-        // Nhóm lọc quý
         pnlFilter.add(new JLabel("Quý:"));
         cbQuarter = new JComboBox<>(new String[]{"1", "2", "3", "4"});
         cbQuarter.setPreferredSize(new Dimension(70, 30));
@@ -87,7 +81,6 @@ public class StatisticGUI extends JPanel {
         btnRefresh.setPreferredSize(new Dimension(120, 35));
         pnlFilter.add(btnRefresh);
 
-        // Bảng chi tiết
         String[] columns = {"Mã SP", "Tên Sản Phẩm", "Số Lượng Bán", "Doanh Thu", "Lợi Nhuận Dự Tính"};
         model = new DefaultTableModel(columns, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
@@ -109,7 +102,7 @@ public class StatisticGUI extends JPanel {
         add(pnlCards, BorderLayout.NORTH);
         add(pnlCenter, BorderLayout.CENTER);
 
-        // --- SỰ KIỆN ---
+        
         btnViewMonth.addActionListener(e -> {
             int m = Integer.parseInt(cbMonth.getSelectedItem().toString());
             int y = Integer.parseInt(cbYear.getSelectedItem().toString());

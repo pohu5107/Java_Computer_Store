@@ -60,7 +60,6 @@ public class StaffBUS {
         return "Xóa nhân viên thất bại!";
     }
 
-    // 6. Tìm kiếm Nhân viên (Theo Mã hoặc Tên)
     public ArrayList<Object[]> search(String keyword) {
         ArrayList<Object[]> allStaff = staffDAO.getAll();
         ArrayList<Object[]> result = new ArrayList<>();

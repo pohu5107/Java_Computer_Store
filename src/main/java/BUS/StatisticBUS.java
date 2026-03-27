@@ -34,7 +34,6 @@ public class StatisticBUS {
         return statisticDAO.getProfitReport(fromDate, toDate);
     }
 
-    // Thống kê theo Quý 
     public ArrayList<Object[]> getReportByQuarter(int quarter, int year) {
         String fromDate = "";
         String toDate = "";
@@ -48,10 +47,10 @@ public class StatisticBUS {
     }
 
     // Tìm kiếm sản phẩm bán chạy nhất (Logic bổ sung)
-    public ArrayList<Object[]> getTopSellingProducts(String fromDate, String toDate) {
-        // Tận dụng hàm profit report và sắp xếp lại theo số lượng bán (QtySold)
-        ArrayList<Object[]> list = statisticDAO.getProfitReport(fromDate, toDate);
-        list.sort((o1, o2) -> Integer.compare((int)o2[2], (int)o1[2])); // Giảm dần
-        return list;
-    }
+//    public ArrayList<Object[]> getTopSellingProducts(String fromDate, String toDate) {
+//        // Tận dụng hàm profit report và sắp xếp lại theo số lượng bán (QtySold)
+//        ArrayList<Object[]> list = statisticDAO.getProfitReport(fromDate, toDate);
+//        list.sort((o1, o2) -> Integer.compare((int)o2[2], (int)o1[2])); // Giảm dần
+//        return list;
+//    }
 }

@@ -33,7 +33,6 @@ public class PurchaseOrderGUI extends JPanel {
     }
 
     private void initComponents() {
-        // --- PHẦN NORTH: HEADER & NÚT BẤM ---
         JPanel pnlTop = new JPanel(new BorderLayout());
         pnlTop.setOpaque(false);
         pnlTop.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
@@ -58,12 +57,10 @@ public class PurchaseOrderGUI extends JPanel {
 
         add(pnlTop, BorderLayout.NORTH);
 
-        // --- PHẦN CENTER: 2 BẢNG ---
         JPanel pnlCenter = new JPanel(new GridLayout(2, 1, 0, 15));
         pnlCenter.setOpaque(false);
         pnlCenter.setBorder(BorderFactory.createEmptyBorder(0, 20, 15, 20));
 
-        // Bảng phiếu nhập chính
         JPanel pnlMaster = new JPanel(new BorderLayout());
         pnlMaster.setBorder(BorderFactory.createTitledBorder("Danh sách Phiếu Nhập"));
         
@@ -75,7 +72,6 @@ public class PurchaseOrderGUI extends JPanel {
         tblOrder.setRowHeight(30);
         pnlMaster.add(new JScrollPane(tblOrder), BorderLayout.CENTER);
 
-        // Bảng chi tiết
         JPanel pnlDetail = new JPanel(new BorderLayout());
         pnlDetail.setBorder(BorderFactory.createTitledBorder("Chi tiết Sản Phẩm trong Phiếu"));
         
@@ -87,7 +83,6 @@ public class PurchaseOrderGUI extends JPanel {
         tblDetails.setRowHeight(30);
         pnlDetail.add(new JScrollPane(tblDetails), BorderLayout.CENTER);
 
-        // Căn lề phải cho cột tiền
         DefaultTableCellRenderer rightRender = new DefaultTableCellRenderer();
         rightRender.setHorizontalAlignment(JLabel.RIGHT);
         tblOrder.getColumnModel().getColumn(4).setCellRenderer(rightRender);
@@ -163,7 +158,6 @@ public class PurchaseOrderGUI extends JPanel {
         btn.setBorderPainted(false);
     }
 
-    // --- CỬA SỔ TẠO PHIẾU NHẬP ---
     class DialogCreateOrder extends JDialog {
         private ProductBUS productBUS = new ProductBUS();
         private JTextField txtStaff, txtSupplier, txtProdID, txtQty, txtPrice;
@@ -180,14 +174,12 @@ public class PurchaseOrderGUI extends JPanel {
             setLocationRelativeTo(parent);
             setLayout(new BorderLayout(10, 10));
 
-            // North: Info
             JPanel pnlNorth = new JPanel(new GridLayout(1, 2, 20, 0));
             pnlNorth.setBorder(BorderFactory.createTitledBorder("Thông tin chung"));
             pnlNorth.add(createInputGroup("Mã Nhân Viên:", txtStaff = new JTextField()));
             pnlNorth.add(createInputGroup("Mã Nhà Cung Cấp:", txtSupplier = new JTextField()));
             add(pnlNorth, BorderLayout.NORTH);
 
-            // Center: Cart
             JPanel pnlCenter = new JPanel(new BorderLayout(0, 10));
             pnlCenter.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -218,7 +210,6 @@ public class PurchaseOrderGUI extends JPanel {
             pnlCenter.add(new JScrollPane(tblCart), BorderLayout.CENTER);
             add(pnlCenter, BorderLayout.CENTER);
 
-            // South: Total & Save
             JPanel pnlSouth = new JPanel(new BorderLayout());
             pnlSouth.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
             lblTotal = new JLabel("TỔNG TIỀN: 0 VNĐ");
@@ -232,7 +223,6 @@ public class PurchaseOrderGUI extends JPanel {
             pnlSouth.add(btnSave, BorderLayout.EAST);
             add(pnlSouth, BorderLayout.SOUTH);
 
-            // Event logic giữ nguyên như cũ của bạn
             btnAddCart.addActionListener(e -> {
                 try {
                     String pID = txtProdID.getText().trim();
