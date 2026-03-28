@@ -5,11 +5,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectDB {
-    private static final String hostname = "localhost";
+    private static final String hostname = "127.0.0.1";
     private static final String port = "3306";
     private static final String database = "java_computer_store";
     private static final String user = "root";
-    private static final String password = "root"; 
+    private static final String password = "123456789"; 
 
     private static final String url = "jdbc:mysql://" + hostname + ":" + port + "/" + database 
                              + "?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC";

@@ -7,6 +7,24 @@ import java.util.ArrayList;
 
 public class PromotionDAO {
 
+    public PromotionDAO() {
+        ensureDescriptionColumnExists();
+    }
+
+    private void ensureDescriptionColumnExists() {
+        String sql = "ALTER TABLE promotioncampaigns ADD COLUMN IF NOT EXISTS Description TEXT";
+        try (Connection conn = ConnectDB.getConnection();
+             Statement st = conn.createStatement()) {
+            st.executeUpdate(sql);
+        } catch (SQLException e) {
+            // IF NOT EXISTS might not be supported in some MySQL versions, 
+            // but we can catch the error if column already exists
+            if (!e.getMessage().contains("Duplicate column name")) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     // 1. Lấy tất cả danh sách khuyến mãi
     public ArrayList<Object[]> getAll() {
         ArrayList<Object[]> list = new ArrayList<>();
@@ -26,7 +44,8 @@ public class PromotionDAO {
                     rs.getDouble("MaxDiscount"),
                     rs.getDate("StartDate"),
                     rs.getDate("EndDate"),
-                    rs.getString("Status")
+                    rs.getString("Status"),
+                    rs.getString("Description")
                 };
                 list.add(row);
             }
@@ -56,7 +75,8 @@ public class PromotionDAO {
                     rs.getDouble("MaxDiscount"),
                     rs.getDate("StartDate"),
                     rs.getDate("EndDate"),
-                    rs.getString("Status")
+                    rs.getString("Status"),
+                    rs.getString("Description")
                 };
                 list.add(row);
             }
@@ -67,8 +87,8 @@ public class PromotionDAO {
     }
 
     // 3. Thêm mới khuyến mãi
-    public boolean insert(String id, String name, String type, String productID, Double discountPercent, Double minAmount, Double maxDiscount, Date startDate, Date endDate) {
-        String sql = "INSERT INTO promotioncampaigns (PromotionID, PromotionName, Type, ProductID, DiscountPercent, MinAmount, MaxDiscount, StartDate, EndDate, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public boolean insert(String id, String name, String type, String productID, Double discountPercent, Double minAmount, Double maxDiscount, Date startDate, Date endDate, String description) {
+        String sql = "INSERT INTO promotioncampaigns (PromotionID, PromotionName, Type, ProductID, DiscountPercent, MinAmount, MaxDiscount, StartDate, EndDate, Status, Description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = ConnectDB.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
@@ -92,9 +112,9 @@ public class PromotionDAO {
             pst.setDate(8, startDate);
             pst.setDate(9, endDate);
             
-            // Tự động xét trạng thái dựa trên ngày hiện tại và ngày kết thúc
             String status = LocalDate.now().isAfter(endDate.toLocalDate()) ? "Kết thúc" : "Đang diễn ra";
             pst.setString(10, status);
+            pst.setString(11, description);
             
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -104,8 +124,8 @@ public class PromotionDAO {
     }
 
     // 4. Cập nhật khuyến mãi
-    public boolean update(String id, String name, String type, String productID, Double discountPercent, Double minAmount, Double maxDiscount, Date startDate, Date endDate) {
-        String sql = "UPDATE promotioncampaigns SET PromotionName = ?, Type = ?, ProductID = ?, DiscountPercent = ?, MinAmount = ?, MaxDiscount = ?, StartDate = ?, EndDate = ?, Status = ? WHERE PromotionID = ?";
+    public boolean update(String id, String name, String type, String productID, Double discountPercent, Double minAmount, Double maxDiscount, Date startDate, Date endDate, String description) {
+        String sql = "UPDATE promotioncampaigns SET PromotionName = ?, Type = ?, ProductID = ?, DiscountPercent = ?, MinAmount = ?, MaxDiscount = ?, StartDate = ?, EndDate = ?, Status = ?, Description = ? WHERE PromotionID = ?";
         
         try (Connection conn = ConnectDB.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
@@ -130,7 +150,8 @@ public class PromotionDAO {
             
             String status = LocalDate.now().isAfter(endDate.toLocalDate()) ? "Kết thúc" : "Đang diễn ra";
             pst.setString(9, status);
-            pst.setString(10, id);
+            pst.setString(10, description);
+            pst.setString(11, id);
             
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -141,7 +162,7 @@ public class PromotionDAO {
 
     // 5. Xóa khuyến mãi
     public boolean delete(String id) {
-        String sql = "DELETE FROM Promotions WHERE PromotionID = ?";
+        String sql = "DELETE FROM promotioncampaigns WHERE PromotionID = ?";
         
         try (Connection conn = ConnectDB.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
@@ -172,7 +193,8 @@ public class PromotionDAO {
                         rs.getDouble("MaxDiscount"),
                         rs.getDate("StartDate"),
                         rs.getDate("EndDate"),
-                        rs.getString("Status")
+                        rs.getString("Status"),
+                        rs.getString("Description")
                     };
                 }
             }
@@ -192,4 +214,4 @@ public class PromotionDAO {
             e.printStackTrace();
         }
     }
-}
+}

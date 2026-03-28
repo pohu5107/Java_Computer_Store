@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Date;
@@ -17,13 +15,14 @@ public class PromotionGUI extends JPanel {
     private PromotionBUS promotionBUS = new PromotionBUS();
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    private JTable tblPromotion;
-    private DefaultTableModel model;
+    private JTabbedPane tabbedPane;
+    private JTable tblGeneral, tblProduct, tblPrice;
+    private DefaultTableModel modelGeneral, modelProduct, modelPrice;
     private JTextField txtSearch;
     private JButton btnAdd, btnUpdate, btnDelete, btnRefresh, btnSearch;
 
     public PromotionGUI() {
-        setLayout(new BorderLayout(0, 10));
+        setLayout(new BorderLayout(10, 10));
         setPreferredSize(new Dimension(950, 650));
         setBackground(new Color(240, 242, 245));
 
@@ -33,66 +32,85 @@ public class PromotionGUI extends JPanel {
     }
 
     private void initComponents() {
-        JPanel pnlNorth = new JPanel(null);
-        pnlNorth.setPreferredSize(new Dimension(950, 60));
+        // TOP PANEL: Search and Common Actions
+        JPanel pnlNorth = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
         pnlNorth.setOpaque(false);
 
-        JLabel lblS = new JLabel("Tìm kiếm:");
-        lblS.setBounds(30, 15, 70, 25);
-        pnlNorth.add(lblS);
-
-        txtSearch = new JTextField();
-        txtSearch.setBounds(100, 15, 200, 25);
+        pnlNorth.add(new JLabel("Tìm kiếm:"));
+        txtSearch = new JTextField(20);
         pnlNorth.add(txtSearch);
 
         btnSearch = new JButton("Tìm Kiếm");
-        btnSearch.setBounds(310, 15, 90, 25);
         styleButton(btnSearch, new Color(240, 240, 240), Color.BLACK);
         pnlNorth.add(btnSearch);
 
         btnAdd = new JButton("Thêm Mới");
-        btnAdd.setBounds(435, 10, 110, 35);
-
         btnUpdate = new JButton("Cập Nhật");
-        btnUpdate.setBounds(555, 10, 110, 35);
-
         btnDelete = new JButton("Xóa KM");
-        btnDelete.setBounds(675, 10, 110, 35);
-
         btnRefresh = new JButton("Làm Mới");
-        btnRefresh.setBounds(795, 10, 110, 35);
 
-        pnlNorth.add(btnAdd); 
-        pnlNorth.add(btnUpdate); 
-        pnlNorth.add(btnDelete); 
+        pnlNorth.add(btnAdd);
+        pnlNorth.add(btnUpdate);
+        pnlNorth.add(btnDelete);
         pnlNorth.add(btnRefresh);
-        
+
         add(pnlNorth, BorderLayout.NORTH);
 
-        String[] columns = {"Mã KM", "Tên KM", "Ngày bắt đầu", "Ngày kết thúc", "Trạng thái"};
-        model = new DefaultTableModel(columns, 0) {
+        // TABBED PANE
+        tabbedPane = new JTabbedPane();
+        tabbedPane.setFont(new Font("Segoe UI", Font.BOLD, 13));
+
+        // Tab 1: Khuyến mãi chung
+        modelGeneral = new DefaultTableModel(new String[]{"Mã KM", "Tên KM", "Mô tả", "Ngày bắt đầu", "Ngày kết thúc", "Trạng thái"}, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
-        tblPromotion = new JTable(model);
-        tblPromotion.setRowHeight(25);
-        tblPromotion.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tblPromotion.getTableHeader().setReorderingAllowed(false);
+        tblGeneral = createTable(modelGeneral);
+        tabbedPane.addTab("Khuyến mãi chung", new JScrollPane(tblGeneral));
 
-        JScrollPane scrollPane = new JScrollPane(tblPromotion);
-        scrollPane.setBorder(BorderFactory.createTitledBorder("Danh sách khuyến mãi đang diễn ra"));
-        add(scrollPane, BorderLayout.CENTER);
+        // Tab 2: Khuyến mãi theo sản phẩm
+        modelProduct = new DefaultTableModel(new String[]{"Mã KM", "Tên KM", "Mã sản phẩm", "Mô tả", "Ngày bắt đầu", "Ngày kết thúc", "Trạng thái"}, 0) {
+            @Override public boolean isCellEditable(int r, int c) { return false; }
+        };
+        tblProduct = createTable(modelProduct);
+        tabbedPane.addTab("Khuyến mãi theo sản phẩm", new JScrollPane(tblProduct));
+
+        // Tab 3: Khuyến mãi theo giá tiền
+        modelPrice = new DefaultTableModel(new String[]{"Mã KM", "Tên KM", "Điều kiện (>=)", "% Giảm", "Ngày bắt đầu", "Ngày kết thúc", "Trạng thái"}, 0) {
+            @Override public boolean isCellEditable(int r, int c) { return false; }
+        };
+        tblPrice = createTable(modelPrice);
+        tabbedPane.addTab("Khuyến mãi theo giá tiền", new JScrollPane(tblPrice));
+
+        add(tabbedPane, BorderLayout.CENTER);
+    }
+
+    private JTable createTable(DefaultTableModel model) {
+        JTable table = new JTable(model);
+        table.setRowHeight(30);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.getTableHeader().setReorderingAllowed(false);
+        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
+        return table;
     }
 
     private void loadData() {
-        model.setRowCount(0);
-        ArrayList<Object[]> list = promotionBUS.getActive();
+        modelGeneral.setRowCount(0);
+        modelProduct.setRowCount(0);
+        modelPrice.setRowCount(0);
+
+        ArrayList<Object[]> list = promotionBUS.getAll();
         for (Object[] row : list) {
-            model.addRow(new Object[]{
-                row[0], row[1],
-                sdf.format((Date)row[7]), // StartDate nằm ở index 7 trong getActive()
-                sdf.format((Date)row[8]), // EndDate nằm ở index 8
-                row[9]                    // Status nằm ở index 9
-            });
+            String type = (String) row[2];
+            String startDate = (row[7] != null) ? sdf.format((Date) row[7]) : "";
+            String endDate = (row[8] != null) ? sdf.format((Date) row[8]) : "";
+
+            if ("General".equals(type)) {
+                modelGeneral.addRow(new Object[]{row[0], row[1], row[10], startDate, endDate, row[9]});
+            } else if ("Product".equals(type)) {
+                modelProduct.addRow(new Object[]{row[0], row[1], row[3], row[10], startDate, endDate, row[9]});
+            } else if ("Price".equals(type)) {
+                modelPrice.addRow(new Object[]{row[0], row[1], row[5], row[4], startDate, endDate, row[9]});
+            }
         }
     }
 
@@ -104,20 +122,22 @@ public class PromotionGUI extends JPanel {
 
         btnSearch.addActionListener(e -> {
             String keyword = txtSearch.getText().trim();
-            if (keyword.isEmpty()) {
-                loadData();
-            } else {
-                model.setRowCount(0);
-                ArrayList<Object[]> list = promotionBUS.search(keyword);
-                for (Object[] row : list) {
-                    if ("Đang diễn ra".equals(row[9])) {
-                        model.addRow(new Object[]{
-                            row[0], row[1],
-                            sdf.format((Date)row[7]),
-                            sdf.format((Date)row[8]),
-                            row[9]
-                        });
-                    }
+            modelGeneral.setRowCount(0);
+            modelProduct.setRowCount(0);
+            modelPrice.setRowCount(0);
+
+            ArrayList<Object[]> list = promotionBUS.search(keyword);
+            for (Object[] row : list) {
+                String type = (String) row[2];
+                String startDate = (row[7] != null) ? sdf.format((Date) row[7]) : "";
+                String endDate = (row[8] != null) ? sdf.format((Date) row[8]) : "";
+
+                if ("General".equals(type)) {
+                    modelGeneral.addRow(new Object[]{row[0], row[1], row[10], startDate, endDate, row[9]});
+                } else if ("Product".equals(type)) {
+                    modelProduct.addRow(new Object[]{row[0], row[1], row[3], row[10], startDate, endDate, row[9]});
+                } else if ("Price".equals(type)) {
+                    modelPrice.addRow(new Object[]{row[0], row[1], row[5], row[4], startDate, endDate, row[9]});
                 }
             }
         });
@@ -125,22 +145,24 @@ public class PromotionGUI extends JPanel {
         btnAdd.addActionListener(e -> showAddDialog());
 
         btnUpdate.addActionListener(e -> {
-            int selectedRow = tblPromotion.getSelectedRow();
+            JTable currentTable = getCurrentTable();
+            int selectedRow = currentTable.getSelectedRow();
             if (selectedRow == -1) {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn một khuyến mãi để cập nhật!");
                 return;
             }
-            String id = (String) model.getValueAt(selectedRow, 0);
+            String id = (String) currentTable.getValueAt(selectedRow, 0);
             showUpdateDialog(id);
         });
 
         btnDelete.addActionListener(e -> {
-            int selectedRow = tblPromotion.getSelectedRow();
+            JTable currentTable = getCurrentTable();
+            int selectedRow = currentTable.getSelectedRow();
             if (selectedRow == -1) {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn một khuyến mãi để xóa!");
                 return;
             }
-            String id = (String) model.getValueAt(selectedRow, 0);
+            String id = (String) currentTable.getValueAt(selectedRow, 0);
             int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc muốn xóa khuyến mãi " + id + "?", "Xác nhận", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 String result = promotionBUS.delete(id);
@@ -149,28 +171,35 @@ public class PromotionGUI extends JPanel {
             }
         });
 
-        // Click đúp để sửa
-        tblPromotion.addMouseListener(new MouseAdapter() {
+        MouseAdapter doubleClickEvent = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    int selectedRow = tblPromotion.getSelectedRow();
+                    JTable table = (JTable) e.getSource();
+                    int selectedRow = table.getSelectedRow();
                     if (selectedRow != -1) {
-                        String id = (String) model.getValueAt(selectedRow, 0);
+                        String id = (String) table.getValueAt(selectedRow, 0);
                         showUpdateDialog(id);
                     }
                 }
             }
-        });
+        };
+        tblGeneral.addMouseListener(doubleClickEvent);
+        tblProduct.addMouseListener(doubleClickEvent);
+        tblPrice.addMouseListener(doubleClickEvent);
     }
 
-    // ==========================================
-    // DIALOG THÊM MỚI KHUYẾN MÃI
-    // ==========================================
+    private JTable getCurrentTable() {
+        int index = tabbedPane.getSelectedIndex();
+        if (index == 0) return tblGeneral;
+        if (index == 1) return tblProduct;
+        return tblPrice;
+    }
+
     private void showAddDialog() {
-        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm khuyến mãi", true);
+        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm khuyến mãi mới", true);
         dialog.setLayout(new BorderLayout());
-        dialog.setSize(500, 420);
+        dialog.setSize(550, 500);
         dialog.setLocationRelativeTo(this);
 
         JPanel pnlContent = new JPanel(null);
@@ -180,109 +209,129 @@ public class PromotionGUI extends JPanel {
         lblType.setBounds(20, 20, 120, 25);
         pnlContent.add(lblType);
 
-        JComboBox<String> cbType = new JComboBox<>(new String[]{"Khuyến mãi theo sản phẩm", "Khuyến mãi theo giá tiền"});
-        cbType.setBounds(150, 20, 200, 25);
+        JComboBox<String> cbType = new JComboBox<>(new String[]{"Khuyến mãi chung", "Khuyến mãi theo sản phẩm", "Khuyến mãi theo giá tiền"});
+        cbType.setBounds(150, 20, 250, 25);
+        cbType.setSelectedIndex(tabbedPane.getSelectedIndex());
         pnlContent.add(cbType);
 
         JTextField txtID = new JTextField();
         JTextField txtName = new JTextField();
+        JTextArea txtDesc = new JTextArea();
+        txtDesc.setLineWrap(true);
+        txtDesc.setWrapStyleWord(true);
+        JScrollPane scrollDesc = new JScrollPane(txtDesc);
+        
         JDateChooser txtStartDate = new JDateChooser();
         JDateChooser txtEndDate = new JDateChooser();
 
-        addLabelTextField(pnlContent, "Mã KM:", txtID, 20, 60);
-        addLabelTextField(pnlContent, "Tên KM:", txtName, 20, 100);
-        addLabelDateChooser(pnlContent, "Ngày bắt đầu:", txtStartDate, 20, 140);
-        addLabelDateChooser(pnlContent, "Ngày kết thúc:", txtEndDate, 20, 180);
+        addLabelComponent(pnlContent, "Mã KM:", txtID, 20, 60);
+        addLabelComponent(pnlContent, "Tên KM:", txtName, 20, 100);
+        
+        JLabel lblDesc = new JLabel("Mô tả:");
+        lblDesc.setBounds(20, 140, 120, 25);
+        pnlContent.add(lblDesc);
+        scrollDesc.setBounds(150, 140, 250, 60);
+        pnlContent.add(scrollDesc);
 
+        addLabelDateChooser(pnlContent, "Ngày bắt đầu:", txtStartDate, 20, 210);
+        addLabelDateChooser(pnlContent, "Ngày kết thúc:", txtEndDate, 20, 250);
+
+        // Dynamic fields
         JTextField txtProductID = new JTextField();
         JTextField txtDiscountPercent = new JTextField();
         JTextField txtMinAmount = new JTextField();
-        JTextField txtMaxDiscount = new JTextField();
+
+        JLabel lblDynamic1 = new JLabel();
+        JLabel lblDynamic2 = new JLabel();
+        lblDynamic1.setBounds(20, 290, 120, 25);
+        lblDynamic2.setBounds(20, 330, 120, 25);
+        txtProductID.setBounds(150, 290, 250, 25);
+        txtDiscountPercent.setBounds(150, 330, 250, 25);
+        txtMinAmount.setBounds(150, 290, 250, 25);
 
         cbType.addActionListener(e -> {
-            String type = (String) cbType.getSelectedItem();
-            // Xóa các component cũ
-            pnlContent.remove(txtProductID); pnlContent.remove(txtDiscountPercent);
-            pnlContent.remove(txtMinAmount); pnlContent.remove(txtMaxDiscount);
-            Component[] comps = pnlContent.getComponents();
-            for (Component comp : comps) {
-                if (comp instanceof JLabel && (
-                    ((JLabel) comp).getText().equals("Mã sản phẩm:") || ((JLabel) comp).getText().equals("% giảm giá:") ||
-                    ((JLabel) comp).getText().equals("Mức áp dụng:") || ((JLabel) comp).getText().equals("Giới hạn giảm:"))) {
-                    pnlContent.remove(comp);
-                }
-            }
+            String selection = (String) cbType.getSelectedItem();
+            pnlContent.remove(lblDynamic1); pnlContent.remove(lblDynamic2);
+            pnlContent.remove(txtProductID); pnlContent.remove(txtDiscountPercent); pnlContent.remove(txtMinAmount);
 
-            if ("Khuyến mãi theo sản phẩm".equals(type)) {
-                addLabelTextField(pnlContent, "Mã sản phẩm:", txtProductID, 20, 220);
-                addLabelTextField(pnlContent, "% giảm giá:", txtDiscountPercent, 20, 260);
+            if ("Khuyến mãi chung".equals(selection)) {
+                // No extra fields
+            } else if ("Khuyến mãi theo sản phẩm".equals(selection)) {
+                lblDynamic1.setText("Mã sản phẩm:");
+                lblDynamic2.setText("% giảm giá:");
+                pnlContent.add(lblDynamic1); pnlContent.add(lblDynamic2);
+                pnlContent.add(txtProductID); pnlContent.add(txtDiscountPercent);
             } else {
-                addLabelTextField(pnlContent, "Mức áp dụng:", txtMinAmount, 20, 220);
-                addLabelTextField(pnlContent, "Giới hạn giảm:", txtMaxDiscount, 20, 260);
+                lblDynamic1.setText("Điều kiện (>=):");
+                lblDynamic2.setText("% giảm giá:");
+                pnlContent.add(lblDynamic1); pnlContent.add(lblDynamic2);
+                pnlContent.add(txtMinAmount); pnlContent.add(txtDiscountPercent);
             }
             pnlContent.revalidate();
             pnlContent.repaint();
         });
 
-        cbType.setSelectedIndex(0); // Trigger initial
+        cbType.setSelectedIndex(cbType.getSelectedIndex()); // Trigger initial
 
-        JButton btnSave = new JButton("Lưu");
-        btnSave.setBounds(200, 320, 100, 35);
-//        styleButton(btnSave, new Color(40, 167, 69), Color.WHITE);
+        JButton btnSave = new JButton("Thêm Thành Công");
+        btnSave.setBounds(175, 380, 180, 40);
+        styleButton(btnSave, new Color(40, 167, 69), Color.WHITE);
         pnlContent.add(btnSave);
 
         btnSave.addActionListener(e -> {
             try {
                 String id = txtID.getText().trim();
                 String name = txtName.getText().trim();
-                String type = cbType.getSelectedItem().equals("Khuyến mãi theo sản phẩm") ? "Product" : "Price";
-                
+                String desc = txtDesc.getText().trim();
+                String typeStr = (String) cbType.getSelectedItem();
+                String type = "General";
+                if (typeStr.contains("sản phẩm")) type = "Product";
+                else if (typeStr.contains("giá tiền")) type = "Price";
+
                 if (txtStartDate.getDate() == null || txtEndDate.getDate() == null) {
                     JOptionPane.showMessageDialog(dialog, "Vui lòng chọn ngày tháng!");
                     return;
                 }
-                
-                Date startDate = new Date(txtStartDate.getDate().getTime());
-                Date endDate = new Date(txtEndDate.getDate().getTime());
 
-                String productID = null;
-                Double discountPercent = null;
-                Double minAmount = null;
-                Double maxDiscount = null;
+                Date start = new Date(txtStartDate.getDate().getTime());
+                Date end = new Date(txtEndDate.getDate().getTime());
+
+                String prodID = null;
+                Double disc = null;
+                Double min = null;
 
                 if ("Product".equals(type)) {
-                    productID = txtProductID.getText().trim();
-                    discountPercent = Double.parseDouble(txtDiscountPercent.getText().trim());
-                } else {
-                    minAmount = Double.parseDouble(txtMinAmount.getText().trim());
-                    maxDiscount = Double.parseDouble(txtMaxDiscount.getText().trim());
+                    prodID = txtProductID.getText().trim();
+                    disc = Double.parseDouble(txtDiscountPercent.getText().trim());
+                } else if ("Price".equals(type)) {
+                    min = Double.parseDouble(txtMinAmount.getText().trim());
+                    disc = Double.parseDouble(txtDiscountPercent.getText().trim());
                 }
 
-                String result = promotionBUS.add(id, name, type, productID, discountPercent, minAmount, maxDiscount, startDate, endDate);
-                JOptionPane.showMessageDialog(dialog, result);
-                if ("Thêm thành công".equals(result)) {
+                String res = promotionBUS.add(id, name, type, prodID, disc, min, 0.0, start, end, desc);
+                JOptionPane.showMessageDialog(dialog, res);
+                if (res.equals("Thêm thành công")) {
                     dialog.dispose();
                     loadData();
                 }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(dialog, "Dữ liệu số không hợp lệ!");
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(dialog, "Dữ liệu không hợp lệ! Vui lòng kiểm tra lại các ô số.");
+                ex.printStackTrace();
             }
         });
 
-        dialog.add(pnlContent, BorderLayout.CENTER);
+        dialog.add(pnlContent);
         dialog.setVisible(true);
     }
 
-    // ==========================================
-    // DIALOG CẬP NHẬT KHUYẾN MÃI
-    // ==========================================
     private void showUpdateDialog(String id) {
         Object[] promo = promotionBUS.getByID(id);
         if (promo == null) return;
 
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Cập nhật khuyến mãi", true);
         dialog.setLayout(new BorderLayout());
-        dialog.setSize(500, 420);
+        dialog.setSize(550, 500);
         dialog.setLocationRelativeTo(this);
 
         JPanel pnlContent = new JPanel(null);
@@ -292,128 +341,133 @@ public class PromotionGUI extends JPanel {
         lblType.setBounds(20, 20, 120, 25);
         pnlContent.add(lblType);
 
-        JComboBox<String> cbType = new JComboBox<>(new String[]{"Khuyến mãi theo sản phẩm", "Khuyến mãi theo giá tiền"});
-        cbType.setBounds(150, 20, 200, 25);
-        if ("Product".equals(promo[2])) cbType.setSelectedIndex(0); else cbType.setSelectedIndex(1);
-        pnlContent.add(cbType);
+        String typeEnum = (String) promo[2];
+        String typeLabel = "Khuyến mãi chung";
+        if ("Product".equals(typeEnum)) typeLabel = "Khuyến mãi theo sản phẩm";
+        else if ("Price".equals(typeEnum)) typeLabel = "Khuyến mãi theo giá tiền";
 
-        JTextField txtID = new JTextField((String)promo[0]);
-        txtID.setEditable(false); txtID.setBackground(new Color(240, 240, 240));
-        JTextField txtName = new JTextField((String)promo[1]);
+        JTextField txtTypeDisplay = new JTextField(typeLabel);
+        txtTypeDisplay.setBounds(150, 20, 250, 25);
+        txtTypeDisplay.setEditable(false);
+        pnlContent.add(txtTypeDisplay);
+
+        JTextField txtID = new JTextField((String) promo[0]);
+        txtID.setEditable(false);
+        JTextField txtName = new JTextField((String) promo[1]);
+        JTextArea txtDesc = new JTextArea((String) promo[10]);
+        txtDesc.setLineWrap(true);
+        txtDesc.setWrapStyleWord(true);
+        JScrollPane scrollDesc = new JScrollPane(txtDesc);
         
         JDateChooser txtStartDate = new JDateChooser();
-        txtStartDate.setDate((Date)promo[7]);
+        txtStartDate.setDate((Date) promo[7]);
         JDateChooser txtEndDate = new JDateChooser();
-        txtEndDate.setDate((Date)promo[8]);
+        txtEndDate.setDate((Date) promo[8]);
 
-        addLabelTextField(pnlContent, "Mã KM:", txtID, 20, 60);
-        addLabelTextField(pnlContent, "Tên KM:", txtName, 20, 100);
-        addLabelDateChooser(pnlContent, "Ngày bắt đầu:", txtStartDate, 20, 140);
-        addLabelDateChooser(pnlContent, "Ngày kết thúc:", txtEndDate, 20, 180);
+        addLabelComponent(pnlContent, "Mã KM:", txtID, 20, 60);
+        addLabelComponent(pnlContent, "Tên KM:", txtName, 20, 100);
+        
+        JLabel lblDesc = new JLabel("Mô tả:");
+        lblDesc.setBounds(20, 140, 120, 25);
+        pnlContent.add(lblDesc);
+        scrollDesc.setBounds(150, 140, 250, 60);
+        pnlContent.add(scrollDesc);
 
-        JTextField txtProductID = new JTextField(promo[3] != null ? (String)promo[3] : "");
-        JTextField txtDiscountPercent = new JTextField(promo[4] != null && (Double)promo[4] > 0 ? promo[4].toString() : "");
-        JTextField txtMinAmount = new JTextField(promo[5] != null && (Double)promo[5] > 0 ? promo[5].toString() : "");
-        JTextField txtMaxDiscount = new JTextField(promo[6] != null && (Double)promo[6] > 0 ? promo[6].toString() : "");
+        addLabelDateChooser(pnlContent, "Ngày bắt đầu:", txtStartDate, 20, 210);
+        addLabelDateChooser(pnlContent, "Ngày kết thúc:", txtEndDate, 20, 250);
 
-        cbType.addActionListener(e -> {
-            String type = (String) cbType.getSelectedItem();
-            pnlContent.remove(txtProductID); pnlContent.remove(txtDiscountPercent);
-            pnlContent.remove(txtMinAmount); pnlContent.remove(txtMaxDiscount);
-            Component[] comps = pnlContent.getComponents();
-            for (Component comp : comps) {
-                if (comp instanceof JLabel && (
-                    ((JLabel) comp).getText().equals("Mã sản phẩm:") || ((JLabel) comp).getText().equals("% giảm giá:") ||
-                    ((JLabel) comp).getText().equals("Mức áp dụng:") || ((JLabel) comp).getText().equals("Giới hạn giảm:"))) {
-                    pnlContent.remove(comp);
-                }
-            }
+        JTextField txtDynamic1 = new JTextField();
+        JTextField txtDynamic2 = new JTextField();
+        JLabel lblDynamic1 = new JLabel();
+        JLabel lblDynamic2 = new JLabel();
+        lblDynamic1.setBounds(20, 290, 120, 25);
+        lblDynamic2.setBounds(20, 330, 120, 25);
+        txtDynamic1.setBounds(150, 290, 250, 25);
+        txtDynamic2.setBounds(150, 330, 250, 25);
 
-            if ("Khuyến mãi theo sản phẩm".equals(type)) {
-                addLabelTextField(pnlContent, "Mã sản phẩm:", txtProductID, 20, 220);
-                addLabelTextField(pnlContent, "% giảm giá:", txtDiscountPercent, 20, 260);
-            } else {
-                addLabelTextField(pnlContent, "Mức áp dụng:", txtMinAmount, 20, 220);
-                addLabelTextField(pnlContent, "Giới hạn giảm:", txtMaxDiscount, 20, 260);
-            }
-            pnlContent.revalidate();
-            pnlContent.repaint();
-        });
+        if ("Product".equals(typeEnum)) {
+            lblDynamic1.setText("Mã sản phẩm:");
+            txtDynamic1.setText((String) promo[3]);
+            lblDynamic2.setText("% giảm giá:");
+            txtDynamic2.setText(promo[4].toString());
+            pnlContent.add(lblDynamic1); pnlContent.add(lblDynamic2);
+            pnlContent.add(txtDynamic1); pnlContent.add(txtDynamic2);
+        } else if ("Price".equals(typeEnum)) {
+            lblDynamic1.setText("Điều kiện (>=):");
+            txtDynamic1.setText(promo[5].toString());
+            lblDynamic2.setText("% giảm giá:");
+            txtDynamic2.setText(promo[4].toString());
+            pnlContent.add(lblDynamic1); pnlContent.add(lblDynamic2);
+            pnlContent.add(txtDynamic1); pnlContent.add(txtDynamic2);
+        }
 
-        cbType.setSelectedIndex(cbType.getSelectedIndex()); // Trigger
-
-        JButton btnSave = new JButton("Lưu");
-        btnSave.setBounds(200, 320, 100, 35);
+        JButton btnSave = new JButton("Lưu Cập Nhật");
+        btnSave.setBounds(175, 380, 180, 40);
         styleButton(btnSave, new Color(0, 123, 255), Color.WHITE);
         pnlContent.add(btnSave);
 
         btnSave.addActionListener(e -> {
             try {
                 String name = txtName.getText().trim();
-                String type = cbType.getSelectedItem().equals("Khuyến mãi theo sản phẩm") ? "Product" : "Price";
+                String desc = txtDesc.getText().trim();
                 
                 if (txtStartDate.getDate() == null || txtEndDate.getDate() == null) {
                     JOptionPane.showMessageDialog(dialog, "Vui lòng chọn ngày tháng!");
                     return;
                 }
-                
-                Date startDate = new Date(txtStartDate.getDate().getTime());
-                Date endDate = new Date(txtEndDate.getDate().getTime());
 
-                String productID = null;
-                Double discountPercent = null;
-                Double minAmount = null;
-                Double maxDiscount = null;
+                Date start = new Date(txtStartDate.getDate().getTime());
+                Date end = new Date(txtEndDate.getDate().getTime());
 
-                if ("Product".equals(type)) {
-                    productID = txtProductID.getText().trim();
-                    discountPercent = Double.parseDouble(txtDiscountPercent.getText().trim());
-                } else {
-                    minAmount = Double.parseDouble(txtMinAmount.getText().trim());
-                    maxDiscount = Double.parseDouble(txtMaxDiscount.getText().trim());
+                String prodID = null;
+                Double disc = null;
+                Double min = null;
+
+                if ("Product".equals(typeEnum)) {
+                    prodID = txtDynamic1.getText().trim();
+                    disc = Double.parseDouble(txtDynamic2.getText().trim());
+                } else if ("Price".equals(typeEnum)) {
+                    min = Double.parseDouble(txtDynamic1.getText().trim());
+                    disc = Double.parseDouble(txtDynamic2.getText().trim());
                 }
 
-                String result = promotionBUS.update(id, name, type, productID, discountPercent, minAmount, maxDiscount, startDate, endDate);
-                JOptionPane.showMessageDialog(dialog, result);
-                if ("Cập nhật thành công".equals(result)) {
+                String res = promotionBUS.update(id, name, typeEnum, prodID, disc, min, 0.0, start, end, desc);
+                JOptionPane.showMessageDialog(dialog, res);
+                if (res.equals("Cập nhật thành công")) {
                     dialog.dispose();
                     loadData();
                 }
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(dialog, "Dữ liệu không hợp lệ! Vui lòng kiểm tra lại các ô số.");
+                JOptionPane.showMessageDialog(dialog, "Dữ liệu không hợp lệ!");
             }
         });
 
-        dialog.add(pnlContent, BorderLayout.CENTER);
+        dialog.add(pnlContent);
         dialog.setVisible(true);
     }
 
-    // ==========================================
-    // HÀM TIỆN ÍCH (UTILITIES)
-    // ==========================================
-    private void addLabelTextField(JPanel panel, String label, JTextField field, int x, int y) {
-        JLabel lbl = new JLabel(label);
-        lbl.setBounds(x, y, 150, 25);
-        field.setBounds(x + 130, y, 180, 25); // Chỉnh lại khoảng cách cho đẹp
-        panel.add(lbl);
-        panel.add(field);
-    }
-    
-    private void addLabelDateChooser(JPanel panel, String label, JDateChooser dc, int x, int y) {
-        JLabel lbl = new JLabel(label);
-        lbl.setBounds(x, y, 150, 25);
-        dc.setBounds(x + 130, y, 180, 25);
-        dc.setDateFormatString("yyyy-MM-dd");
-        panel.add(lbl);
-        panel.add(dc);
+    private void addLabelComponent(JPanel p, String text, JComponent c, int x, int y) {
+        JLabel l = new JLabel(text);
+        l.setBounds(x, y, 120, 25);
+        c.setBounds(x + 130, y, 250, 25);
+        p.add(l);
+        p.add(c);
     }
 
-    private void styleButton(JButton button, Color bg, Color fg) {
-        button.setBackground(bg);
-        button.setForeground(fg);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    private void addLabelDateChooser(JPanel p, String text, JDateChooser dc, int x, int y) {
+        JLabel l = new JLabel(text);
+        l.setBounds(x, y, 120, 25);
+        dc.setBounds(x + 130, y, 250, 25);
+        dc.setDateFormatString("dd/MM/yyyy");
+        p.add(l);
+        p.add(dc);
     }
-}
+
+    private void styleButton(JButton btn, Color bg, Color fg) {
+        btn.setBackground(bg);
+        btn.setForeground(fg);
+        btn.setFocusPainted(false);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    }
+}
