@@ -48,6 +48,11 @@ public class PromotionGUI extends JPanel {
         btnDelete = new JButton("Xóa KM");
         btnRefresh = new JButton("Làm Mới");
 
+        styleButton(btnAdd, new Color(240, 240, 240), Color.BLACK);
+        styleButton(btnUpdate, new Color(240, 240, 240), Color.BLACK);
+        styleButton(btnDelete, new Color(240, 240, 240), Color.BLACK);
+        styleButton(btnRefresh, new Color(240, 240, 240), Color.BLACK);
+
         pnlNorth.add(btnAdd);
         pnlNorth.add(btnUpdate);
         pnlNorth.add(btnDelete);
@@ -107,14 +112,13 @@ public class PromotionGUI extends JPanel {
             Double prodDisc = (Double) row[7];
             Double minInv = (Double) row[8];
             Double discAmt = (Double) row[9];
-            Double invDisc = (Double) row[10];
-            Double maxDisc = (Double) row[11];
 
             // Phân loại vào tab
             if (prodID != null && !prodID.isEmpty()) {
                 modelProduct.addRow(new Object[]{id, name, prodID, prodDisc + "%", desc, start, end, statusStr});
-            } else if ((minInv != null && minInv > 0) || (discAmt != null && discAmt > 0) || (invDisc != null && invDisc > 0)) {
-                modelPrice.addRow(new Object[]{id, name, minInv, discAmt, invDisc + "%", maxDisc, statusStr});
+            } else if ((minInv != null && minInv > 0) || (discAmt != null && discAmt > 0)) {
+                // Khuyến mãi theo giá tiền: % Giảm và Giảm tối đa để trống theo yêu cầu
+                modelPrice.addRow(new Object[]{id, name, minInv, discAmt, "", "", statusStr});
             } else {
                 modelGeneral.addRow(new Object[]{id, name, desc, start, end, statusStr});
             }
@@ -165,7 +169,7 @@ public class PromotionGUI extends JPanel {
             String end = (row[4] != null) ? sdf.format((Timestamp) row[4]) : "";
             String status = ((int)row[5] == 1) ? "Đang diễn ra" : "Kết thúc";
             if (row[6] != null) modelProduct.addRow(new Object[]{id, name, row[6], row[7], desc, start, end, status});
-            else if (row[8] != null && (Double)row[8] > 0) modelPrice.addRow(new Object[]{id, name, row[8], row[9], row[10], row[11], status});
+            else if (row[8] != null && (Double)row[8] > 0) modelPrice.addRow(new Object[]{id, name, row[8], row[9], "", "", status});
             else modelGeneral.addRow(new Object[]{id, name, desc, start, end, status});
         }
     }
@@ -177,7 +181,7 @@ public class PromotionGUI extends JPanel {
 
     private void showAddDialog() {
         JDialog d = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm khuyến mãi", true);
-        d.setLayout(new BorderLayout()); d.setSize(550, 550); d.setLocationRelativeTo(this);
+        d.setLayout(new BorderLayout()); d.setSize(550, 500); d.setLocationRelativeTo(this);
         JPanel p = new JPanel(null); p.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         JComboBox<String> cbType = new JComboBox<>(new String[]{"Khuyến mãi chung", "Khuyến mãi theo sản phẩm", "Khuyến mãi theo giá tiền"});
@@ -195,28 +199,35 @@ public class PromotionGUI extends JPanel {
         // Sub fields
         JTextField txtProdID = new JTextField(); JTextField txtProdDisc = new JTextField();
         JTextField txtMinInv = new JTextField(); JTextField txtDiscAmt = new JTextField();
-        JTextField txtInvDisc = new JTextField(); JTextField txtMaxDisc = new JTextField();
-        JLabel l1 = new JLabel(); JLabel l2 = new JLabel(); JLabel l3 = new JLabel(); JLabel l4 = new JLabel();
+        JLabel l1 = new JLabel(); JLabel l2 = new JLabel();
 
         cbType.addActionListener(e -> {
-            p.remove(l1); p.remove(l2); p.remove(l3); p.remove(l4);
-            p.remove(txtProdID); p.remove(txtProdDisc); p.remove(txtMinInv); p.remove(txtDiscAmt); p.remove(txtInvDisc); p.remove(txtMaxDisc);
+            p.remove(l1); p.remove(l2);
+            p.remove(txtProdID); p.remove(txtProdDisc); p.remove(txtMinInv); p.remove(txtDiscAmt);
+            
+            // Mặc định hiện Mô tả, Ẩn nếu là Giá tiền
             String t = (String) cbType.getSelectedItem();
-            if (t.contains("sản phẩm")) {
-                l1.setText("Mã sản phẩm:"); addLabelComponent(p, "", txtProdID, 150, 290); p.add(l1); l1.setBounds(20, 290, 120, 25);
-                l2.setText("% Giảm giá:"); addLabelComponent(p, "", txtProdDisc, 150, 330); p.add(l2); l2.setBounds(20, 330, 120, 25);
-            } else if (t.contains("giá tiền")) {
-                l1.setText("ĐK Bill >=:"); addLabelComponent(p, "", txtMinInv, 150, 290); p.add(l1); l1.setBounds(20, 290, 120, 25);
-                l2.setText("Giảm mặt $(\\u20ab):"); addLabelComponent(p, "", txtDiscAmt, 150, 330); p.add(l2); l2.setBounds(20, 330, 120, 25);
-                l3.setText("% Giảm hóa đơn:"); addLabelComponent(p, "", txtInvDisc, 150, 370); p.add(l3); l3.setBounds(20, 370, 120, 25);
-                l4.setText("Giảm tối đa (\\u20ab):"); addLabelComponent(p, "", txtMaxDisc, 150, 410); p.add(l4); l4.setBounds(20, 410, 120, 25);
+            if (t.contains("giá tiền")) {
+                lblD.setVisible(false); spDesc.setVisible(false);
+                l1.setText("Điều kiện (>=):"); addLabelComponent(p, "", txtMinInv, 150, 140); p.add(l1); l1.setBounds(20, 140, 120, 25);
+                l2.setText("Giảm trực tiếp:"); addLabelComponent(p, "", txtDiscAmt, 150, 180); p.add(l2); l2.setBounds(20, 180, 120, 25);
+                dcStart.setBounds(150, 220, 320, 25); dcEnd.setBounds(150, 260, 320, 25);
+                p.getComponentAt(20, 220).setBounds(20, 220, 120, 25); // Start label
+                p.getComponentAt(20, 260).setBounds(20, 260, 120, 25); // End label
+            } else {
+                lblD.setVisible(true); spDesc.setVisible(true);
+                dcStart.setBounds(150, 210, 320, 25); dcEnd.setBounds(150, 250, 320, 25);
+                if (t.contains("sản phẩm")) {
+                    l1.setText("Mã sản phẩm:"); addLabelComponent(p, "", txtProdID, 150, 290); p.add(l1); l1.setBounds(20, 290, 120, 25);
+                    l2.setText("% Giảm giá:"); addLabelComponent(p, "", txtProdDisc, 150, 330); p.add(l2); l2.setBounds(20, 330, 120, 25);
+                }
             }
             p.revalidate(); p.repaint();
         });
         cbType.setSelectedIndex(tabbedPane.getSelectedIndex());
 
-        JButton btnSave = new JButton("Lưu Khuyến Mãi"); btnSave.setBounds(175, 450, 200, 40);
-        styleButton(btnSave, new Color(40, 167, 69), Color.WHITE); p.add(btnSave);
+        JButton btnSave = new JButton("Lưu Khuyến Mãi"); btnSave.setBounds(175, 400, 200, 40);
+        styleButton(btnSave, new Color(240, 240, 240), Color.BLACK); p.add(btnSave);
         btnSave.addActionListener(e -> {
             try {
                 String type = cbType.getSelectedIndex() == 0 ? "General" : cbType.getSelectedIndex() == 1 ? "Product" : "Price";
@@ -224,10 +235,9 @@ public class PromotionGUI extends JPanel {
                 Double pDisc = txtProdDisc.getText().isEmpty() ? 0.0 : Double.parseDouble(txtProdDisc.getText());
                 Double mInv = txtMinInv.getText().isEmpty() ? 0.0 : Double.parseDouble(txtMinInv.getText());
                 Double dAmt = txtDiscAmt.getText().isEmpty() ? 0.0 : Double.parseDouble(txtDiscAmt.getText());
-                Double iDisc = txtInvDisc.getText().isEmpty() ? 0.0 : Double.parseDouble(txtInvDisc.getText());
-                Double mxD = txtMaxDisc.getText().isEmpty() ? 0.0 : Double.parseDouble(txtMaxDisc.getText());
+                String description = type.equals("Price") ? "" : txtDesc.getText().trim();
 
-                String res = promotionBUS.add(txtID.getText().trim(), txtName.getText().trim(), dcStart.getDate(), dcEnd.getDate(), txtDesc.getText().trim(), type, pid, pDisc, mInv, dAmt, iDisc, mxD);
+                String res = promotionBUS.add(txtID.getText().trim(), txtName.getText().trim(), dcStart.getDate(), dcEnd.getDate(), description, type, pid, pDisc, mInv, dAmt, 0.0, 0.0);
                 JOptionPane.showMessageDialog(d, res); if (res.equals("Thêm thành công")) { d.dispose(); loadData(); }
             } catch (Exception ex) { JOptionPane.showMessageDialog(d, "Lỗi định dạng số!"); }
         });
@@ -237,40 +247,52 @@ public class PromotionGUI extends JPanel {
     private void showUpdateDialog(String id) {
         Object[] pr = promotionBUS.getByID(id); if (pr == null) return;
         JDialog d = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Cập nhật khuyến mãi", true);
-        d.setLayout(new BorderLayout()); d.setSize(550, 580); d.setLocationRelativeTo(this);
+        d.setLayout(new BorderLayout()); d.setSize(550, 520); d.setLocationRelativeTo(this);
         JPanel p = new JPanel(null); p.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         JTextField tid = new JTextField(id); tid.setEditable(false); addLabelComponent(p, "Mã KM:", tid, 20, 20);
         JTextField tnm = new JTextField((String)pr[1]); addLabelComponent(p, "Tên KM:", tnm, 20, 60);
-        JTextArea tdc = new JTextArea((String)pr[2]); JScrollPane sp = new JScrollPane(tdc);
-        JLabel ld = new JLabel("Mô tả:"); ld.setBounds(20, 100, 120, 25); p.add(ld); sp.setBounds(150, 100, 320, 60); p.add(sp);
         
-        JDateChooser ds = new JDateChooser(); ds.setDate((Timestamp)pr[3]); addLabelDateChooser(p, "Ngày BĐ:", ds, 20, 170);
-        JDateChooser de = new JDateChooser(); de.setDate((Timestamp)pr[4]); addLabelDateChooser(p, "Ngày KT:", de, 20, 210);
+        String type = (pr[6] != null) ? "Product" : (pr[8] != null && (Double)pr[8] > 0) ? "Price" : "General";
+        
+        JTextArea tdc = new JTextArea((String)pr[2]); JScrollPane sp = new JScrollPane(tdc);
+        JLabel ld = new JLabel("Mô tả:"); 
+        
+        int nextY = 100;
+        if (!type.equals("Price")) {
+            ld.setBounds(20, nextY, 120, 25); p.add(ld); 
+            sp.setBounds(150, nextY, 320, 60); p.add(sp);
+            nextY += 70;
+        }
+        
+        JDateChooser ds = new JDateChooser(); ds.setDate((Timestamp)pr[3]); addLabelDateChooser(p, "Ngày BĐ:", ds, 20, nextY);
+        nextY += 40;
+        JDateChooser de = new JDateChooser(); de.setDate((Timestamp)pr[4]); addLabelDateChooser(p, "Ngày KT:", de, 20, nextY);
+        nextY += 40;
 
         JComboBox<String> cbst = new JComboBox<>(new String[]{"Kết thúc (0)", "Đang chạy (1)"});
-        cbst.setSelectedIndex((int)pr[5]); addLabelComponent(p, "Trạng thái:", cbst, 20, 250);
+        cbst.setSelectedIndex((int)pr[5]); addLabelComponent(p, "Trạng thái:", cbst, 20, nextY);
+        nextY += 40;
 
-        String type = (pr[6] != null) ? "Product" : (pr[8] != null && (Double)pr[8] > 0) ? "Price" : "General";
         JTextField tpid = new JTextField(pr[6] != null ? (String)pr[6] : "");
         JTextField tpds = new JTextField(pr[7] != null ? pr[7].toString() : "0");
         JTextField tmin = new JTextField(pr[8] != null ? pr[8].toString() : "0");
         JTextField tdam = new JTextField(pr[9] != null ? pr[9].toString() : "0");
-        JTextField tids = new JTextField(pr[10] != null ? pr[10].toString() : "0");
-        JTextField tmax = new JTextField(pr[11] != null ? pr[11].toString() : "0");
 
         if (type.equals("Product")) {
-            addLabelComponent(p, "Mã SP:", tpid, 20, 290); addLabelComponent(p, "% Giảm SP:", tpds, 20, 330);
+            addLabelComponent(p, "Mã sản phẩm:", tpid, 20, nextY); 
+            addLabelComponent(p, "% Giảm giá:", tpds, 20, nextY + 40);
         } else if (type.equals("Price")) {
-            addLabelComponent(p, "Điều kiện Bill:", tmin, 20, 290); addLabelComponent(p, "Giảm mặt $(\\u20ab):", tdam, 20, 330);
-            addLabelComponent(p, "% Giảm Bill:", tids, 20, 370); addLabelComponent(p, "Giảm tối đa:", tmax, 20, 410);
+            addLabelComponent(p, "Điều kiện (>=):", tmin, 20, nextY); 
+            addLabelComponent(p, "Giảm trực tiếp:", tdam, 20, nextY + 40);
         }
 
-        JButton bsv = new JButton("Lưu Cập Nhật"); bsv.setBounds(175, 470, 200, 40);
-        styleButton(bsv, new Color(0, 123, 255), Color.WHITE); p.add(bsv);
+        JButton bsv = new JButton("Lưu Cập Nhật"); bsv.setBounds(175, 410, 200, 40);
+        styleButton(bsv, new Color(240, 240, 240), Color.BLACK); p.add(bsv);
         bsv.addActionListener(e -> {
             try {
-                String rs = promotionBUS.update(id, tnm.getText(), ds.getDate(), de.getDate(), tdc.getText(), cbst.getSelectedIndex(), type, tpid.getText(), Double.parseDouble(tpds.getText()), Double.parseDouble(tmin.getText()), Double.parseDouble(tdam.getText()), Double.parseDouble(tids.getText()), Double.parseDouble(tmax.getText()));
+                String description = type.equals("Price") ? "" : tdc.getText().trim();
+                String rs = promotionBUS.update(id, tnm.getText(), ds.getDate(), de.getDate(), description, cbst.getSelectedIndex(), type, tpid.getText(), Double.parseDouble(tpds.getText()), Double.parseDouble(tmin.getText()), Double.parseDouble(tdam.getText()), 0.0, 0.0);
                 JOptionPane.showMessageDialog(d, rs); if (rs.equals("Cập nhật thành công")) { d.dispose(); loadData(); }
             } catch (Exception ex) { JOptionPane.showMessageDialog(d, "Lỗi số!"); }
         });
