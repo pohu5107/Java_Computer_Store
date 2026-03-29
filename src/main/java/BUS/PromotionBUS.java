@@ -7,15 +7,24 @@ import java.text.SimpleDateFormat;
 public class PromotionBUS {
     private final PromotionDAO promotionDAO = new PromotionDAO();
     private final SimpleDateFormat sqlDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private ArrayList<Object[]> listPromotions;
+
+    public PromotionBUS() {
+        refreshData();
+    }
+
+    public void refreshData() {
+        promotionDAO.updateStatusByDate();
+        this.listPromotions = promotionDAO.getAll();
+    }
 
     public ArrayList<Object[]> getAll() {
-        promotionDAO.updateStatusByDate(); 
-        return promotionDAO.getAll();
+        if (listPromotions == null) refreshData();
+        return listPromotions;
     }
 
     public boolean isDuplicate(String id) {
-        ArrayList<Object[]> list = promotionDAO.getAll();
-        for (Object[] row : list) {
+        for (Object[] row : getAll()) {
             if (row[0].toString().equalsIgnoreCase(id)) return true;
         }
         return false;
@@ -48,6 +57,7 @@ public class PromotionBUS {
         String endStr = sqlDateFormat.format(end);
 
         if (promotionDAO.insert(id, name, startStr, endStr, desc, type, productID, prodDisc, minInv, discAmt, invDisc, maxDisc)) {
+            refreshData(); // Cập nhật RAM
             return "Thêm thành công";
         }
         return "Thêm thất bại";
@@ -75,6 +85,7 @@ public class PromotionBUS {
         String endStr = sqlDateFormat.format(end);
 
         if (promotionDAO.update(id, name, startStr, endStr, desc, status, type, productID, prodDisc, minInv, discAmt, invDisc, maxDisc)) {
+            refreshData(); // Cập nhật RAM
             return "Cập nhật thành công";
         }
         return "Cập nhật thất bại";
@@ -82,7 +93,10 @@ public class PromotionBUS {
 
     public String delete(String id) {
         if (id == null || id.trim().isEmpty()) return "Mã không hợp lệ";
-        if (promotionDAO.delete(id)) return "Xóa thành công";
+        if (promotionDAO.delete(id)) {
+            refreshData(); // Cập nhật RAM
+            return "Xóa thành công";
+        }
         return "Xóa thất bại";
     }
 
@@ -91,11 +105,10 @@ public class PromotionBUS {
             return getAll();
         }
         
-        ArrayList<Object[]> all = promotionDAO.getAll();
         ArrayList<Object[]> result = new ArrayList<>();
         String lowerKey = keyword.toLowerCase();
         
-        for (Object[] p : all) {
+        for (Object[] p : getAll()) {
             if (p[0].toString().toLowerCase().contains(lowerKey) || 
                 p[1].toString().toLowerCase().contains(lowerKey)) {
                 result.add(p);
@@ -105,8 +118,14 @@ public class PromotionBUS {
     }
 
     public Object[] getByID(String id) {
-        return (id == null || id.trim().isEmpty()) ? null : promotionDAO.getByID(id);
+        if (id == null || id.trim().isEmpty()) return null;
+        for (Object[] row : getAll()) {
+            if (row[0].toString().equalsIgnoreCase(id)) return row;
+        }
+        // Nếu không có trong RAM (hiếm khi xảy ra nếu logic đồng bộ tốt), lấy từ DB
+        return promotionDAO.getByID(id);
     }
 }
+
 
 
