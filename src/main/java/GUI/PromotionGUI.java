@@ -41,6 +41,7 @@ public class PromotionGUI extends JPanel {
 
         btnSearch = new JButton("Tìm Kiếm");
         styleButton(btnSearch, new Color(240, 240, 240), Color.BLACK);
+        btnSearch.setPreferredSize(new Dimension(90, 25));
         pnlNorth.add(btnSearch);
 
         btnAdd = new JButton("Thêm Mới");
@@ -48,10 +49,10 @@ public class PromotionGUI extends JPanel {
         btnDelete = new JButton("Xóa KM");
         btnRefresh = new JButton("Làm Mới");
 
-        styleButton(btnAdd, new Color(240, 240, 240), Color.BLACK);
-        styleButton(btnUpdate, new Color(240, 240, 240), Color.BLACK);
-        styleButton(btnDelete, new Color(240, 240, 240), Color.BLACK);
-        styleButton(btnRefresh, new Color(240, 240, 240), Color.BLACK);
+        styleButton(btnAdd, new Color(40, 167, 69), Color.WHITE);
+        styleButton(btnUpdate, new Color(0, 123, 255), Color.WHITE);
+        styleButton(btnDelete, new Color(220, 53, 69), Color.WHITE);
+        styleButton(btnRefresh, new Color(108, 117, 125), Color.WHITE);
 
         pnlNorth.add(btnAdd);
         pnlNorth.add(btnUpdate);
@@ -194,7 +195,12 @@ public class PromotionGUI extends JPanel {
 
         addLabelComponent(p, "Mã KM:", txtID, 20, 60); addLabelComponent(p, "Tên KM:", txtName, 20, 100);
         JLabel lblD = new JLabel("Mô tả:"); lblD.setBounds(20, 140, 120, 25); p.add(lblD); spDesc.setBounds(150, 140, 320, 60); p.add(spDesc);
-        addLabelDateChooser(p, "Ngày bắt đầu:", dcStart, 20, 210); addLabelDateChooser(p, "Ngày kết thúc:", dcEnd, 20, 250);
+        
+        JLabel lblStart = new JLabel("Ngày bắt đầu:"); lblStart.setBounds(20, 210, 120, 25); p.add(lblStart);
+        dcStart.setBounds(150, 210, 320, 25); dcStart.setDateFormatString("dd/MM/yyyy HH:mm"); p.add(dcStart);
+        
+        JLabel lblEnd = new JLabel("Ngày kết thúc:"); lblEnd.setBounds(20, 250, 120, 25); p.add(lblEnd);
+        dcEnd.setBounds(150, 250, 320, 25); dcEnd.setDateFormatString("dd/MM/yyyy HH:mm"); p.add(dcEnd);
 
         // Sub fields
         JTextField txtProdID = new JTextField(); JTextField txtProdDisc = new JTextField();
@@ -205,18 +211,19 @@ public class PromotionGUI extends JPanel {
             p.remove(l1); p.remove(l2);
             p.remove(txtProdID); p.remove(txtProdDisc); p.remove(txtMinInv); p.remove(txtDiscAmt);
             
-            // Mặc định hiện Mô tả, Ẩn nếu là Giá tiền
             String t = (String) cbType.getSelectedItem();
             if (t.contains("giá tiền")) {
                 lblD.setVisible(false); spDesc.setVisible(false);
                 l1.setText("Điều kiện (>=):"); addLabelComponent(p, "", txtMinInv, 150, 140); p.add(l1); l1.setBounds(20, 140, 120, 25);
                 l2.setText("Giảm trực tiếp:"); addLabelComponent(p, "", txtDiscAmt, 150, 180); p.add(l2); l2.setBounds(20, 180, 120, 25);
-                dcStart.setBounds(150, 220, 320, 25); dcEnd.setBounds(150, 260, 320, 25);
-                p.getComponentAt(20, 220).setBounds(20, 220, 120, 25); // Start label
-                p.getComponentAt(20, 260).setBounds(20, 260, 120, 25); // End label
+                
+                lblStart.setBounds(20, 220, 120, 25); dcStart.setBounds(150, 220, 320, 25);
+                lblEnd.setBounds(20, 260, 120, 25); dcEnd.setBounds(150, 260, 320, 25);
             } else {
                 lblD.setVisible(true); spDesc.setVisible(true);
-                dcStart.setBounds(150, 210, 320, 25); dcEnd.setBounds(150, 250, 320, 25);
+                lblStart.setBounds(20, 210, 120, 25); dcStart.setBounds(150, 210, 320, 25);
+                lblEnd.setBounds(20, 250, 120, 25); dcEnd.setBounds(150, 250, 320, 25);
+                
                 if (t.contains("sản phẩm")) {
                     l1.setText("Mã sản phẩm:"); addLabelComponent(p, "", txtProdID, 150, 290); p.add(l1); l1.setBounds(20, 290, 120, 25);
                     l2.setText("% Giảm giá:"); addLabelComponent(p, "", txtProdDisc, 150, 330); p.add(l2); l2.setBounds(20, 330, 120, 25);
@@ -227,7 +234,7 @@ public class PromotionGUI extends JPanel {
         cbType.setSelectedIndex(tabbedPane.getSelectedIndex());
 
         JButton btnSave = new JButton("Lưu Khuyến Mãi"); btnSave.setBounds(175, 400, 200, 40);
-        styleButton(btnSave, new Color(240, 240, 240), Color.BLACK); p.add(btnSave);
+        styleButton(btnSave, new Color(40, 167, 69), Color.WHITE); p.add(btnSave);
         btnSave.addActionListener(e -> {
             try {
                 String type = cbType.getSelectedIndex() == 0 ? "General" : cbType.getSelectedIndex() == 1 ? "Product" : "Price";
@@ -288,7 +295,7 @@ public class PromotionGUI extends JPanel {
         }
 
         JButton bsv = new JButton("Lưu Cập Nhật"); bsv.setBounds(175, 410, 200, 40);
-        styleButton(bsv, new Color(240, 240, 240), Color.BLACK); p.add(bsv);
+        styleButton(bsv, new Color(0, 123, 255), Color.WHITE); p.add(bsv);
         bsv.addActionListener(e -> {
             try {
                 String description = type.equals("Price") ? "" : tdc.getText().trim();
@@ -309,8 +316,14 @@ public class PromotionGUI extends JPanel {
         d.setBounds(x + 130, y, 320, 25); d.setDateFormatString("dd/MM/yyyy HH:mm"); p.add(d);
     }
 
-    private void styleButton(JButton b, Color bg, Color fg) {
-        b.setBackground(bg); b.setForeground(fg); b.setFocusPainted(false); b.setFont(new Font("Segoe UI", Font.BOLD, 12)); b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    private void styleButton(JButton btn, Color bgColor, Color fgColor) {
+        btn.setBackground(bgColor);
+        btn.setForeground(fgColor);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn.setOpaque(true);
+        btn.setBorderPainted(false);
+        btn.setPreferredSize(new Dimension(110, 35));
     }
 }
-
