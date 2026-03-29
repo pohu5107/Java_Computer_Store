@@ -48,6 +48,7 @@ public class MainGUI extends JFrame {
         pnlContent.add(new SaleGUI(), "Bán hàng");
         pnlContent.add(new InvoiceGUI(), "Hóa đơn");
         pnlContent.add(new PurchaseOrderGUI(), "Nhập kho");
+        pnlContent.add(new SupplierGUI(), "Nhà cung cấp");        
         pnlContent.add(new StaffGUI(), "Nhân viên");
         pnlContent.add(new CustomerGUI(), "Khách hàng");
         pnlContent.add(new PromotionGUI(), "Khuyến mãi");
@@ -59,6 +60,7 @@ public class MainGUI extends JFrame {
         createMenuButton("Bán hàng", e -> showCard("Bán hàng"));
         createMenuButton("Hóa đơn", e -> showCard("Hóa đơn"));
         createMenuButton("Nhập kho", e -> showCard("Nhập kho"));
+        createMenuButton("Nhà cung cấp", e -> showCard("Nhà cung cấp"));
         createMenuButton("Nhân viên", e -> showCard("Nhân viên"));
         createMenuButton("Khách hàng", e -> showCard("Khách hàng"));                
         createMenuButton("Khuyến mãi", e -> showCard("Khuyến mãi"));

@@ -7,6 +7,7 @@ D:\E\Workspace\java\Java_Computer_Store\src\main\java\BUS\PromotionBUS.java
 D:\E\Workspace\java\Java_Computer_Store\src\main\java\BUS\PurchaseOrderBUS.java
 D:\E\Workspace\java\Java_Computer_Store\src\main\java\BUS\StaffBUS.java
 D:\E\Workspace\java\Java_Computer_Store\src\main\java\BUS\StatisticBUS.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\BUS\SupplierBUS.java
 D:\E\Workspace\java\Java_Computer_Store\src\main\java\ConnectDB\ConnectDB.java
 D:\E\Workspace\java\Java_Computer_Store\src\main\java\ConnectDB\testDb.java
 D:\E\Workspace\java\Java_Computer_Store\src\main\java\DAO\BrandDAO.java
@@ -30,4 +31,5 @@ D:\E\Workspace\java\Java_Computer_Store\src\main\java\GUI\PurchaseOrderGUI.java
 D:\E\Workspace\java\Java_Computer_Store\src\main\java\GUI\SaleGUI.java
 D:\E\Workspace\java\Java_Computer_Store\src\main\java\GUI\StaffGUI.java
 D:\E\Workspace\java\Java_Computer_Store\src\main\java\GUI\StatisticGUI.java
+D:\E\Workspace\java\Java_Computer_Store\src\main\java\GUI\SupplierGUI.java
 D:\E\Workspace\java\Java_Computer_Store\src\main\java\java_computer_store\Java_Computer_Store.java
