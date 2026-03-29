@@ -28,8 +28,8 @@ public class SupplierGUI extends JPanel {
         
         txtSearch = new JTextField(30);
         txtSearch.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        txtSearch.setText("Nhập tên hoặc mã nhà cung cấp...");
         txtSearch.setForeground(Color.GRAY);
+
         
         btnTimKiem = new JButton("Tìm Kiếm");
         styleButton(btnTimKiem, new Color(0, 123, 255));
@@ -61,7 +61,7 @@ public class SupplierGUI extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Mã NCC
-        gbc.gridx = 0; gbc.gridy = 0; pnlInput.add(new JLabel("Mã Nhân Viên:"), gbc);
+        gbc.gridx = 0; gbc.gridy = 0; pnlInput.add(new JLabel("Mã nhà cung cấp:"), gbc);
         gbc.gridx = 1; gbc.weightx = 1.0; txtMaHieu = new JTextField(); pnlInput.add(txtMaHieu, gbc);
 
         // Số ĐT
@@ -69,7 +69,7 @@ public class SupplierGUI extends JPanel {
         gbc.gridx = 3; gbc.weightx = 1.0; txtSoDT = new JTextField(); pnlInput.add(txtSoDT, gbc);
 
         // Tên NCC
-        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0; pnlInput.add(new JLabel("Tên:"), gbc);
+        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0; pnlInput.add(new JLabel("Tên nhà cung cấp:"), gbc);
         gbc.gridx = 1; gbc.weightx = 1.0; txtTenHieu = new JTextField(); pnlInput.add(txtTenHieu, gbc);
 
         // --- 3. ACTION PANEL: CÁC NÚT THÊM, SỬA, XÓA ---
@@ -93,8 +93,8 @@ public class SupplierGUI extends JPanel {
         table = new JTable(model);
         table.setRowHeight(30);
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
-        table.setSelectionBackground(new Color(232, 242, 254));
-        
+        table.setSelectionBackground(new Color(0, 123, 255));
+//232, 242, 254 - 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBackground(Color.WHITE);
         scrollPane.getViewport().setBackground(Color.WHITE);
