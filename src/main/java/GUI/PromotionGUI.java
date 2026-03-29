@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package GUI;
 
 import BUS.PromotionBUS;
@@ -89,9 +93,9 @@ public class PromotionGUI extends JPanel {
         for (Object[] row : list) {
             model.addRow(new Object[]{
                 row[0], row[1],
-                sdf.format((Date)row[7]), // StartDate nằm ở index 7 trong getActive()
-                sdf.format((Date)row[8]), // EndDate nằm ở index 8
-                row[9]                    // Status nằm ở index 9
+                sdf.format((Date)row[7]), 
+                sdf.format((Date)row[8]), 
+                row[9]                    
             });
         }
     }
@@ -164,9 +168,7 @@ public class PromotionGUI extends JPanel {
         });
     }
 
-    // ==========================================
-    // DIALOG THÊM MỚI KHUYẾN MÃI
-    // ==========================================
+
     private void showAddDialog() {
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thêm khuyến mãi", true);
         dialog.setLayout(new BorderLayout());

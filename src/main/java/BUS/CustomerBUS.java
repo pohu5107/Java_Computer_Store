@@ -14,7 +14,7 @@ public class CustomerBUS {
 
     public DefaultTableModel getAll() {
 
-        String[] columnNames = {"CustomerID", "CustomerName", "Address", "Phone"};
+        String[] columnNames = {"CustomerID", "FirstName", "LastName", "Phone"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 
         ArrayList<Object[]> list = customerDAO.getAll();
@@ -36,12 +36,12 @@ public class CustomerBUS {
         return false;
     }
     
-    public String add(String id, String firstName, String lastName, String address, String phone) {
+    public String add(String id, String firstName, String lastName, String phone) {
         if (id.trim().isEmpty() || firstName.trim().isEmpty() || lastName.trim().isEmpty()) return "ID và Tên không được để trống";
 
         if (isDuplicate(id)) return "Lỗi: Hệ thống đã có mã";
 
-        if (customerDAO.insert(id, firstName, lastName, address, phone)) return "Thêm thành công";
+        if (customerDAO.insert(id, firstName, lastName, phone)) return "Thêm thành công";
         return "Thêm thất bại";
     }
     
@@ -55,12 +55,12 @@ public class CustomerBUS {
         return "Xóa thất bại";
     }
     
-    public String update(String id, String firstName, String lastName, String address, String phone) {
+    public String update(String id, String firstName, String lastName, String phone) {
         if (firstName.trim().isEmpty() || lastName.trim().isEmpty()) {
             return "Họ và Tên khống được để trống";
         }
         
-        if (customerDAO.update(id, firstName, lastName, address, phone)) {
+        if (customerDAO.update(id, firstName, lastName, phone)) {
             return "Cập nhật thành công";
         }
         return "Cập nhật thất bại";
