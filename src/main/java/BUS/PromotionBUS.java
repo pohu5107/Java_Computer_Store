@@ -6,105 +6,113 @@ package BUS;
 
 import DAO.PromotionDAO;
 import java.util.ArrayList;
-import java.sql.Date;
+import java.text.SimpleDateFormat;
 
 public class PromotionBUS {
     private final PromotionDAO promotionDAO = new PromotionDAO();
+    private final SimpleDateFormat sqlDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private ArrayList<Object[]> listPromotions;
 
-    public ArrayList<Object[]> getAll() {
-        promotionDAO.updateStatus(); 
-        return promotionDAO.getAll();
+    public PromotionBUS() {
+        refreshData();
     }
 
-    public ArrayList<Object[]> getActive() {
-        promotionDAO.updateStatus();
-        return promotionDAO.getActive();
+    public void refreshData() {
+        promotionDAO.updateStatusByDate();
+        this.listPromotions = promotionDAO.getAll();
+    }
+
+    public ArrayList<Object[]> getAll() {
+        if (listPromotions == null) refreshData();
+        return listPromotions;
     }
 
     public boolean isDuplicate(String id) {
-        ArrayList<Object[]> list = promotionDAO.getAll();
-        for (Object[] row : list) {
+        for (Object[] row : getAll()) {
             if (row[0].toString().equalsIgnoreCase(id)) return true;
         }
         return false;
     }
 
-    public String add(String id, String name, String type, String productID, Double discountPercent, Double minAmount, Double maxDiscount, Date startDate, Date endDate) {
+    public String add(String id, String name, java.util.Date start, java.util.Date end, String desc, String type, 
+                      String productID, Double prodDisc, Double minInv, Double discAmt, Double invDisc, Double maxDisc) {
+        
         if (id == null || id.trim().isEmpty() || name == null || name.trim().isEmpty()) {
-            return "ID và Tên không được để trống";
+            return "Mã và Tên không được để trống";
         }
         if (isDuplicate(id)) {
-            return "Lỗi: ID đã tồn tại";
+            return "Lỗi: Mã khuyến mãi đã tồn tại";
         }
-        if (startDate == null || endDate == null) {
-            return "Ngày bắt đầu và ngày kết thúc không được để trống";
+        if (start == null || end == null) {
+            return "Ngày bắt đầu và kết thúc không được để trống";
         }
-        if (startDate.after(endDate)) {
+        if (start.after(end)) {
             return "Ngày bắt đầu phải trước ngày kết thúc";
         }
 
         if ("Product".equals(type)) {
             if (productID == null || productID.trim().isEmpty()) return "Mã sản phẩm không được để trống";
-            if (discountPercent == null || discountPercent <= 0 || discountPercent > 100) return "% giảm giá phải từ 1 đến 100";
+            if (prodDisc == null || prodDisc <= 0 || prodDisc > 100) return "% giảm giá phải từ 1 đến 100";
         } else if ("Price".equals(type)) {
-            if (minAmount == null || minAmount <= 0) return "Mức áp dụng phải lớn hơn 0";
-            if (maxDiscount == null || maxDiscount <= 0) return "Giới hạn giảm phải lớn hơn 0";
-        } else {
-            return "Loại khuyến mãi không hợp lệ";
+            if (minInv == null || minInv < 0) return "Mức áp dụng không hợp lệ";
         }
 
-        if (promotionDAO.insert(id, name, type, productID, discountPercent, minAmount, maxDiscount, startDate, endDate)) {
+        String startStr = sqlDateFormat.format(start);
+        String endStr = sqlDateFormat.format(end);
+
+        if (promotionDAO.insert(id, name, startStr, endStr, desc, type, productID, prodDisc, minInv, discAmt, invDisc, maxDisc)) {
+            refreshData(); // Cập nhật RAM
             return "Thêm thành công";
         }
         return "Thêm thất bại";
     }
 
-    public String update(String id, String name, String type, String productID, Double discountPercent, Double minAmount, Double maxDiscount, Date startDate, Date endDate) {
+    public String update(String id, String name, java.util.Date start, java.util.Date end, String desc, int status, String type, 
+                         String productID, Double prodDisc, Double minInv, Double discAmt, Double invDisc, Double maxDisc) {
+        
         if (name == null || name.trim().isEmpty()) {
             return "Tên không được để trống";
         }
-        if (startDate == null || endDate == null) {
-            return "Ngày bắt đầu và ngày kết thúc không được để trống";
+        if (start == null || end == null) {
+            return "Ngày bắt đầu và kết thúc không được để trống";
         }
-        if (startDate.after(endDate)) {
+        if (start.after(end)) {
             return "Ngày bắt đầu phải trước ngày kết thúc";
         }
 
         if ("Product".equals(type)) {
             if (productID == null || productID.trim().isEmpty()) return "Mã sản phẩm không được để trống";
-            if (discountPercent == null || discountPercent <= 0 || discountPercent > 100) return "% giảm giá phải từ 1 đến 100";
-        } else if ("Price".equals(type)) {
-            if (minAmount == null || minAmount <= 0) return "Mức áp dụng phải lớn hơn 0";
-            if (maxDiscount == null || maxDiscount <= 0) return "Giới hạn giảm phải lớn hơn 0";
-        } else {
-            return "Loại khuyến mãi không hợp lệ";
+            if (prodDisc == null || prodDisc <= 0 || prodDisc > 100) return "% giảm giá phải từ 1 đến 100";
         }
 
-        // Gọi DAO
-        if (promotionDAO.update(id, name, type, productID, discountPercent, minAmount, maxDiscount, startDate, endDate)) {
+        String startStr = sqlDateFormat.format(start);
+        String endStr = sqlDateFormat.format(end);
+
+        if (promotionDAO.update(id, name, startStr, endStr, desc, status, type, productID, prodDisc, minInv, discAmt, invDisc, maxDisc)) {
+            refreshData(); // Cập nhật RAM
             return "Cập nhật thành công";
         }
         return "Cập nhật thất bại";
     }
 
-    // Xóa khuyến mãi
     public String delete(String id) {
-        if (id == null || id.trim().isEmpty()) return "ID không hợp lệ";
-        if (promotionDAO.delete(id)) return "Xóa thành công";
+        if (id == null || id.trim().isEmpty()) return "Mã không hợp lệ";
+        if (promotionDAO.delete(id)) {
+            refreshData(); // Cập nhật RAM
+            return "Xóa thành công";
+        }
         return "Xóa thất bại";
     }
 
-    // Tìm kiếm
     public ArrayList<Object[]> search(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             return getAll();
         }
         
-        ArrayList<Object[]> allPromotion = promotionDAO.getAll();
         ArrayList<Object[]> result = new ArrayList<>();
         String lowerKey = keyword.toLowerCase();
         
-        for (Object[] p : allPromotion) {
+        for (Object[] p : getAll()) {
             if (p[0].toString().toLowerCase().contains(lowerKey) || 
                 p[1].toString().toLowerCase().contains(lowerKey)) {
                 result.add(p);
@@ -113,8 +121,14 @@ public class PromotionBUS {
         return result;
     }
 
-    // Lấy chi tiết theo ID
     public Object[] getByID(String id) {
-        return (id == null || id.trim().isEmpty()) ? null : promotionDAO.getByID(id);
+        if (id == null || id.trim().isEmpty()) return null;
+        for (Object[] row : getAll()) {
+            if (row[0].toString().equalsIgnoreCase(id)) return row;
+        }
+        // Nếu không có trong RAM (hiếm khi xảy ra nếu logic đồng bộ tốt), lấy từ DB
+        return promotionDAO.getByID(id);
     }
 }
+
+

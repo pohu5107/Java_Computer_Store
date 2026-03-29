@@ -32,6 +32,7 @@ GUI\CategoryGUI$2.class
 DAO\SupplierDAO.class
 GUI\CategoryGUI$3.class
 GUI\MainGUI.class
+GUI\PromotionGUI$4.class
 GUI\SaleGUI.class
 BUS\PurchaseOrderBUS.class
 DAO\PurchaseOrderDAO.class
@@ -45,6 +46,7 @@ GUI\PurchaseOrderGUI$DialogCreateOrder$1.class
 GUI\CustomerGUI$1.class
 GUI\StatisticGUI.class
 GUI\CustomerGUI.class
+GUI\PromotionGUI$3.class
 ConnectDB\ConnectDB.class
 GUI\MainGUI$1.class
 GUI\StaffGUI$2.class
