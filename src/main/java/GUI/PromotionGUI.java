@@ -244,7 +244,7 @@ public class PromotionGUI extends JPanel {
                 Double dAmt = txtDiscAmt.getText().isEmpty() ? 0.0 : Double.parseDouble(txtDiscAmt.getText());
                 String description = type.equals("Price") ? "" : txtDesc.getText().trim();
 
-                String res = promotionBUS.add(txtID.getText().trim(), txtName.getText().trim(), dcStart.getDate(), dcEnd.getDate(), description, type, pid, pDisc, mInv, dAmt, 0.0, 0.0);
+                String res = promotionBUS.add(txtID.getText().trim(), txtName.getText().trim(), dcStart.getDate(), dcEnd.getDate(), description, type, pid, pDisc, mInv, dAmt);
                 JOptionPane.showMessageDialog(d, res); if (res.equals("Thêm thành công")) { d.dispose(); loadData(); }
             } catch (Exception ex) { JOptionPane.showMessageDialog(d, "Lỗi định dạng số!"); }
         });
@@ -299,7 +299,7 @@ public class PromotionGUI extends JPanel {
         bsv.addActionListener(e -> {
             try {
                 String description = type.equals("Price") ? "" : tdc.getText().trim();
-                String rs = promotionBUS.update(id, tnm.getText(), ds.getDate(), de.getDate(), description, cbst.getSelectedIndex(), type, tpid.getText(), Double.parseDouble(tpds.getText()), Double.parseDouble(tmin.getText()), Double.parseDouble(tdam.getText()), 0.0, 0.0);
+                String rs = promotionBUS.update(id, tnm.getText(), ds.getDate(), de.getDate(), description, cbst.getSelectedIndex(), type, tpid.getText(), Double.parseDouble(tpds.getText()), Double.parseDouble(tmin.getText()), Double.parseDouble(tdam.getText()));
                 JOptionPane.showMessageDialog(d, rs); if (rs.equals("Cập nhật thành công")) { d.dispose(); loadData(); }
             } catch (Exception ex) { JOptionPane.showMessageDialog(d, "Lỗi số!"); }
         });
