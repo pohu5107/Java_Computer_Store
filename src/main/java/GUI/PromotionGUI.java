@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package GUI;
 
 import BUS.PromotionBUS;
@@ -244,7 +248,11 @@ public class PromotionGUI extends JPanel {
                 Double dAmt = txtDiscAmt.getText().isEmpty() ? 0.0 : Double.parseDouble(txtDiscAmt.getText());
                 String description = type.equals("Price") ? "" : txtDesc.getText().trim();
 
+<<<<<<< HEAD
                 String res = promotionBUS.add(txtID.getText().trim(), txtName.getText().trim(), dcStart.getDate(), dcEnd.getDate(), description, type, pid, pDisc, mInv, dAmt);
+=======
+                String res = promotionBUS.add(txtID.getText().trim(), txtName.getText().trim(), dcStart.getDate(), dcEnd.getDate(), description, type, pid, pDisc, mInv, dAmt, 0.0, 0.0);
+>>>>>>> phat
                 JOptionPane.showMessageDialog(d, res); if (res.equals("Thêm thành công")) { d.dispose(); loadData(); }
             } catch (Exception ex) { JOptionPane.showMessageDialog(d, "Lỗi định dạng số!"); }
         });
@@ -299,7 +307,11 @@ public class PromotionGUI extends JPanel {
         bsv.addActionListener(e -> {
             try {
                 String description = type.equals("Price") ? "" : tdc.getText().trim();
+<<<<<<< HEAD
                 String rs = promotionBUS.update(id, tnm.getText(), ds.getDate(), de.getDate(), description, cbst.getSelectedIndex(), type, tpid.getText(), Double.parseDouble(tpds.getText()), Double.parseDouble(tmin.getText()), Double.parseDouble(tdam.getText()));
+=======
+                String rs = promotionBUS.update(id, tnm.getText(), ds.getDate(), de.getDate(), description, cbst.getSelectedIndex(), type, tpid.getText(), Double.parseDouble(tpds.getText()), Double.parseDouble(tmin.getText()), Double.parseDouble(tdam.getText()), 0.0, 0.0);
+>>>>>>> phat
                 JOptionPane.showMessageDialog(d, rs); if (rs.equals("Cập nhật thành công")) { d.dispose(); loadData(); }
             } catch (Exception ex) { JOptionPane.showMessageDialog(d, "Lỗi số!"); }
         });

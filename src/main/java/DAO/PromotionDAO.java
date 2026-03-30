@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package DAO;
 
 import ConnectDB.ConnectDB;
@@ -8,151 +12,164 @@ import java.util.ArrayList;
  * Lớp DAO: Xử lý 3 bảng Khuyến mãi (Chung, SP, Hóa đơn).
  */
 public class PromotionDAO {
-    // Câu truy vấn kết hợp 3 bảng
-    private final String SELECT_ALL = "SELECT pc.*, pp.ProductID, pp.DiscountPercent AS ProdDiscount, " +
-            "ipc.MinInvoiceValue, ipc.DiscountAmount, ipc.DiscountPercent AS InvDiscount, ipc.MaxDiscountValue " +
-            "FROM PromotionCampaigns pc " +
-            "LEFT JOIN ProductPromotions pp ON pc.PromotionID = pp.PromotionID " +
-            "LEFT JOIN InvoicePromotionConfigs ipc ON pc.PromotionID = ipc.PromotionID";
 
-    // Lấy toàn bộ danh sách
+    // 1. Lấy tất cả danh sách khuyến mãi
     public ArrayList<Object[]> getAll() {
         ArrayList<Object[]> list = new ArrayList<>();
-        try (Connection conn = ConnectDB.getConnection();
-                Statement st = conn.createStatement();
-                ResultSet rs = st.executeQuery(SELECT_ALL)) {
-            while (rs.next())
-                list.add(mapRsToRow(rs));
+        String sql = "SELECT * FROM promotioncampaigns";
+        Connection conn = ConnectDB.getConnection();
+        try (Statement st = conn.createStatement();
+                ResultSet rs = st.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Object[] row = {
+                        rs.getString("PromotionID"),
+                        rs.getString("PromotionName"),
+                        rs.getString("Type"),
+                        rs.getString("ProductID"),
+                        rs.getDouble("DiscountPercent"),
+                        rs.getDouble("MinAmount"),
+                        rs.getDouble("MaxDiscount"),
+                        rs.getDate("StartDate"),
+                        rs.getDate("EndDate"),
+                        rs.getString("Status")
+                };
+                list.add(row);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return list;
     }
 
-    // Chuyển kết quả ResultSet sang mảng Object
-    private Object[] mapRsToRow(ResultSet rs) throws SQLException {
-        return new Object[] {
-                rs.getString("PromotionID"), rs.getString("PromotionName"), rs.getString("Description"),
-                rs.getTimestamp("StartDate"), rs.getTimestamp("EndDate"), rs.getInt("Status"),
-                rs.getString("ProductID"), rs.getDouble("ProdDiscount"), rs.getDouble("MinInvoiceValue"),
-                rs.getDouble("DiscountAmount"), rs.getDouble("InvDiscount"), rs.getDouble("MaxDiscountValue")
-        };
-    }
+    // 2. Lấy các khuyến mãi đang hoạt động
+    public ArrayList<Object[]> getActive() {
+        ArrayList<Object[]> list = new ArrayList<>();
+        String sql = "SELECT * FROM promotioncampaigns WHERE Status = N'Đang diễn ra'";
 
-    // Thêm mới dùng Transaction (Giao dịch)
-    public boolean insert(String id, String name, String start, String end, String desc, String type,
-            String pid, Double pDsc, Double mInv, Double dAmt) {
-        Connection conn = ConnectDB.getConnection();
-        try {
-            conn.setAutoCommit(false);
-            // Ghi bảng chính
-            try (PreparedStatement pst = conn.prepareStatement("INSERT INTO PromotionCampaigns VALUES (?,?,?,?,?,?)")) {
-                pst.setString(1, id);
-                pst.setString(2, name);
-                pst.setString(3, start);
-                pst.setString(4, end);
-                pst.setInt(5, 1);
-                pst.setString(6, desc);
-                pst.executeUpdate();
-            }
-            // Ghi bảng phụ theo loại
-            if ("Product".equalsIgnoreCase(type)) {
-                try (PreparedStatement pst = conn.prepareStatement("INSERT INTO ProductPromotions VALUES (?,?,?)")) {
-                    pst.setString(1, id);
-                    pst.setString(2, pid);
-                    pst.setDouble(3, pDsc);
-                    pst.executeUpdate();
-                }
-            } else if ("Price".equalsIgnoreCase(type)) {
-                try (PreparedStatement pst = conn
-                        .prepareStatement("INSERT INTO InvoicePromotionConfigs VALUES (?,?,?,0,NULL)")) {
-                    pst.setString(1, id);
-                    pst.setDouble(2, mInv != null ? mInv : 0);
-                    pst.setDouble(3, dAmt != null ? dAmt : 0);
-                    pst.executeUpdate();
-                }
-            }
-            conn.commit();
-            return true;
-        } catch (SQLException e) {
-            try {
-                conn.rollback();
-            } catch (SQLException ex) {
-            }
-            e.printStackTrace();
-            return false;
-        } finally {
-            try {
-                conn.setAutoCommit(true);
-            } catch (SQLException e) {
-            }
-        }
-    }
-
-    // Cập nhật (Xóa cũ - Ghi mới bảng phụ)
-    public boolean update(String id, String name, String start, String end, String desc, int status, String type,
-            String pid, Double pDsc, Double mInv, Double dAmt) {
-        Connection conn = ConnectDB.getConnection();
-        try {
-            conn.setAutoCommit(false);
-            try (PreparedStatement pst = conn.prepareStatement(
-                    "UPDATE PromotionCampaigns SET PromotionName=?, StartDate=?, EndDate=?, Status=?, Description=? WHERE PromotionID=?")) {
-                pst.setString(1, name);
-                pst.setString(2, start);
-                pst.setString(3, end);
-                pst.setInt(4, status);
-                pst.setString(5, desc);
-                pst.setString(6, id);
-                pst.executeUpdate();
-            }
-            // Làm sạch bảng phụ trước khi ghi mới
-            try (PreparedStatement pst = conn.prepareStatement("DELETE FROM ProductPromotions WHERE PromotionID=?")) {
-                pst.setString(1, id);
-                pst.executeUpdate();
-            }
-            try (PreparedStatement pst = conn
-                    .prepareStatement("DELETE FROM InvoicePromotionConfigs WHERE PromotionID=?")) {
-                pst.setString(1, id);
-                pst.executeUpdate();
-            }
-
-            if ("Product".equalsIgnoreCase(type)) {
-                try (PreparedStatement pst = conn.prepareStatement("INSERT INTO ProductPromotions VALUES (?,?,?)")) {
-                    pst.setString(1, id);
-                    pst.setString(2, pid);
-                    pst.setDouble(3, pDsc);
-                    pst.executeUpdate();
-                }
-            } else if ("Price".equalsIgnoreCase(type)) {
-                try (PreparedStatement pst = conn
-                        .prepareStatement("INSERT INTO InvoicePromotionConfigs VALUES (?,?,?,0,NULL)")) {
-                    pst.setString(1, id);
-                    pst.setDouble(2, mInv != null ? mInv : 0);
-                    pst.setDouble(3, dAmt != null ? dAmt : 0);
-                    pst.executeUpdate();
-                }
-            }
-            conn.commit();
-            return true;
-        } catch (SQLException e) {
-            try {
-                conn.rollback();
-            } catch (SQLException ex) {
-            }
-            e.printStackTrace();
-            return false;
-        } finally {
-            try {
-                conn.setAutoCommit(true);
-            } catch (SQLException e) {
-            }
-        }
-    }
-
-    // Xóa theo ID
-    public boolean delete(String id) {
         try (Connection conn = ConnectDB.getConnection();
-                PreparedStatement pst = conn.prepareStatement("DELETE FROM PromotionCampaigns WHERE PromotionID=?")) {
+                Statement st = conn.createStatement();
+                ResultSet rs = st.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Object[] row = {
+                        rs.getString("PromotionID"),
+                        rs.getString("PromotionName"),
+                        rs.getString("Type"),
+                        rs.getString("ProductID"),
+                        rs.getDouble("DiscountPercent"),
+                        rs.getDouble("MinAmount"),
+                        rs.getDouble("MaxDiscount"),
+                        rs.getDate("StartDate"),
+                        rs.getDate("EndDate"),
+                        rs.getString("Status")
+                };
+                list.add(row);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // 3. Thêm mới khuyến mãi
+    public boolean insert(String id, String name, String type, String productID, Double discountPercent,
+            Double minAmount, Double maxDiscount, Date startDate, Date endDate) {
+        String sql = "INSERT INTO promotioncampaigns (PromotionID, PromotionName, Type, ProductID, DiscountPercent, MinAmount, MaxDiscount, StartDate, EndDate, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = ConnectDB.getConnection();
+                PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setString(1, id);
+            pst.setString(2, name);
+            pst.setString(3, type);
+
+            if (productID != null && !productID.isEmpty())
+                pst.setString(4, productID);
+            else
+                pst.setNull(4, Types.VARCHAR);
+
+            if (discountPercent != null)
+                pst.setDouble(5, discountPercent);
+            else
+                pst.setNull(5, Types.DOUBLE);
+
+            if (minAmount != null)
+                pst.setDouble(6, minAmount);
+            else
+                pst.setNull(6, Types.DOUBLE);
+
+            if (maxDiscount != null)
+                pst.setDouble(7, maxDiscount);
+            else
+                pst.setNull(7, Types.DOUBLE);
+
+            pst.setDate(8, startDate);
+            pst.setDate(9, endDate);
+
+            // Tự động xét trạng thái dựa trên ngày hiện tại và ngày kết thúc
+            String status = LocalDate.now().isAfter(endDate.toLocalDate()) ? "Kết thúc" : "Đang diễn ra";
+            pst.setString(10, status);
+
+            return pst.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // 4. Cập nhật khuyến mãi
+    public boolean update(String id, String name, String type, String productID, Double discountPercent,
+            Double minAmount, Double maxDiscount, Date startDate, Date endDate) {
+        String sql = "UPDATE promotioncampaigns SET PromotionName = ?, Type = ?, ProductID = ?, DiscountPercent = ?, MinAmount = ?, MaxDiscount = ?, StartDate = ?, EndDate = ?, Status = ? WHERE PromotionID = ?";
+
+        try (Connection conn = ConnectDB.getConnection();
+                PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setString(1, name);
+            pst.setString(2, type);
+
+            if (productID != null && !productID.isEmpty())
+                pst.setString(3, productID);
+            else
+                pst.setNull(3, Types.VARCHAR);
+
+            if (discountPercent != null)
+                pst.setDouble(4, discountPercent);
+            else
+                pst.setNull(4, Types.DOUBLE);
+
+            if (minAmount != null)
+                pst.setDouble(5, minAmount);
+            else
+                pst.setNull(5, Types.DOUBLE);
+
+            if (maxDiscount != null)
+                pst.setDouble(6, maxDiscount);
+            else
+                pst.setNull(6, Types.DOUBLE);
+
+            pst.setDate(7, startDate);
+            pst.setDate(8, endDate);
+
+            String status = LocalDate.now().isAfter(endDate.toLocalDate()) ? "Kết thúc" : "Đang diễn ra";
+            pst.setString(9, status);
+            pst.setString(10, id);
+
+            return pst.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // 5. Xóa khuyến mãi
+    public boolean delete(String id) {
+        String sql = "DELETE FROM Promotions WHERE PromotionID = ?";
+
+        try (Connection conn = ConnectDB.getConnection();
+                PreparedStatement pst = conn.prepareStatement(sql)) {
+
             pst.setString(1, id);
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -161,14 +178,27 @@ public class PromotionDAO {
         }
     }
 
-    // Tìm kiếm cụ thể theo ID
+    // 6. Lấy 1 khuyến mãi theo ID
     public Object[] getByID(String id) {
+        String sql = "SELECT * FROM promotioncampaigns WHERE PromotionID = ?";
         try (Connection conn = ConnectDB.getConnection();
                 PreparedStatement pst = conn.prepareStatement(SELECT_ALL + " WHERE pc.PromotionID=?")) {
             pst.setString(1, id);
             try (ResultSet rs = pst.executeQuery()) {
-                if (rs.next())
-                    return mapRsToRow(rs);
+                if (rs.next()) {
+                    return new Object[] {
+                            rs.getString("PromotionID"),
+                            rs.getString("PromotionName"),
+                            rs.getString("Type"),
+                            rs.getString("ProductID"),
+                            rs.getDouble("DiscountPercent"),
+                            rs.getDouble("MinAmount"),
+                            rs.getDouble("MaxDiscount"),
+                            rs.getDate("StartDate"),
+                            rs.getDate("EndDate"),
+                            rs.getString("Status")
+                    };
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -176,10 +206,12 @@ public class PromotionDAO {
         return null;
     }
 
-    // Tự động quét cập nhật trạng thái hết hạn
-    public void updateStatusByDate() {
-        String sql = "UPDATE PromotionCampaigns SET Status = CASE WHEN EndDate < CURRENT_TIMESTAMP THEN 0 ELSE Status END";
-        try (Connection conn = ConnectDB.getConnection(); Statement st = conn.createStatement()) {
+    // Cập nhật lại toàn bộ trạng thái (Dùng khi khởi động App để update hạn khuyến
+    // mãi)
+    public void updateStatus() {
+        String sql = "UPDATE promotioncampaigns SET Status = CASE WHEN EndDate < CURDATE() THEN N'Kết thúc' ELSE N'Đang diễn ra' END";
+        try (Connection conn = ConnectDB.getConnection();
+                Statement st = conn.createStatement()) {
             st.executeUpdate(sql);
         } catch (SQLException e) {
             e.printStackTrace();
